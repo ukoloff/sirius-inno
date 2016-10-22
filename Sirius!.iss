@@ -21,6 +21,7 @@ Source: "src\*.*"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "src\system32\*.ocx"; DestDir: "{app}\system32"; Flags: regserver
 
 [Icons]
+Name: "{commondesktop}\Sirius"; Filename: {app}\SIRIUS.EXE
 Name: "{group}\Sirius"; Filename: {app}\SIRIUS.EXE
 Name: "{group}\Генератор заданий"; Filename: {app}\makejob.exe
 Name: "{group}\Печать и простотр геометрии"; Filename: {app}\PDBS.EXE
