@@ -1,4 +1,4 @@
-[Languages]
+п»ї[Languages]
 Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Setup]
@@ -23,12 +23,12 @@ Source: "src\system32\*.ocx"; DestDir: "{app}\system32"; Flags: regserver
 [Icons]
 Name: "{commondesktop}\Sirius"; Filename: {app}\SIRIUS.EXE
 Name: "{group}\Sirius"; Filename: {app}\SIRIUS.EXE
-Name: "{group}\Генератор заданий"; Filename: {app}\makejob.exe
-Name: "{group}\Печать и простотр геометрии"; Filename: {app}\PDBS.EXE
-Name: "{group}\Кодирование геометрии"; Filename: {app}\Pgd.exe
-Name: "{group}\Симулятор программ"; Filename: {app}\NCM\NCM.exe
-Name: "{group}\Отчеты"; Filename: {app}\Report.exe
-Name: "{group}\Запустить SiriusProject"; Filename: {app}\SiriusProject.exe
-Name: "{group}\База данных"; Filename: {app}\SiriusDB.exe
-Name: "{group}\Рассчет стоимости резки"; Filename: {app}\CostSharp.exe
-Name: "{group}\Удалить Sirius"; Filename: {app}\unInstall\unins000.exe
+Name: "{group}\Р“РµРЅРµСЂР°С‚РѕСЂ Р·Р°РґР°РЅРёР№"; Filename: {app}\makejob.exe
+Name: "{group}\РџРµС‡Р°С‚СЊ Рё РїСЂРѕСЃС‚РѕС‚СЂ РіРµРѕРјРµС‚СЂРёРё"; Filename: {app}\PDBS.EXE
+Name: "{group}\РљРѕРґРёСЂРѕРІР°РЅРёРµ РіРµРѕРјРµС‚СЂРёРё"; Filename: {app}\Pgd.exe
+Name: "{group}\РЎРёРјСѓР»СЏС‚РѕСЂ РїСЂРѕРіСЂР°РјРј"; Filename: {app}\NCM\NCM.exe
+Name: "{group}\РћС‚С‡РµС‚С‹"; Filename: {app}\Report.exe
+Name: "{group}\Р—Р°РїСѓСЃС‚РёС‚СЊ SiriusProject"; Filename: {app}\SiriusProject.exe
+Name: "{group}\Р‘Р°Р·Р° РґР°РЅРЅС‹С…"; Filename: {app}\SiriusDB.exe
+Name: "{group}\Р Р°СЃСЃС‡РµС‚ СЃС‚РѕРёРјРѕСЃС‚Рё СЂРµР·РєРё"; Filename: {app}\CostSharp.exe
+Name: "{group}\РЈРґР°Р»РёС‚СЊ Sirius"; Filename: {app}\unInstall\unins000.exe
