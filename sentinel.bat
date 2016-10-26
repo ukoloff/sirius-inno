@@ -104,4 +104,9 @@ function readFile(name)
 }
 
 var t = template(readFile('Sirius!.prjx'))
-WScript.Echo(t.source)
+
+var files=[]
+'A B C'.split(' ').forEach(function(x){
+  files.push({name: x, src: 'src/'+x, dst: 'dst/'+x})
+})
+WScript.Echo(t({files: files}))
