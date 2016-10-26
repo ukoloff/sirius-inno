@@ -31,4 +31,4 @@ Name: "{group}\Отчеты"; Filename: {app}\Report.exe
 Name: "{group}\Запустить SiriusProject"; Filename: {app}\SiriusProject.exe
 Name: "{group}\База данных"; Filename: {app}\SiriusDB.exe
 Name: "{group}\Рассчет стоимости резки"; Filename: {app}\CostSharp.exe
-Name: "{group}\Удалить Sirius"; Filename: {app}\unInstall\unins000.exe
+Name: "{group}\Удалить Sirius"; Filename: {uninstallexe}
