@@ -3,6 +3,48 @@
 cscript //nologo //e:javascript "%~f0" %*
 goto :EOF */0;
 
+// Array::forEach polyfill
+
+if(!Array.prototype.forEach)
+Array.prototype.forEach = function(fn) {
+  for (var i = 0, len = this.length; i < len; i++)
+    fn(this[i], i, this)
+}
+
+function fso()
+{
+  var fs = new ActiveXObject("Scripting.FileSystemObject")
+  return (fso = z)()
+  function z()
+  {
+    return fs
+  }
+}
+
+function root()
+{
+  return fso().GetParentFolderName(WScript.ScriptFullName)
+}
+
+function readFile(name)
+{
+  return fso().OpenTextFile(root() + "/" + name).ReadAll()
+}
+
+// Создаать папки для (не)защищённых версий программ
+function createFolders()
+{
+  var proj = fso
+}
+
+var t = template(readFile('Sirius!.prjx'))
+
+var files=[]
+'A B C'.split(' ').forEach(function(x){
+  files.push({name: x, src: 'src/'+x, dst: 'dst/'+x})
+})
+WScript.Echo(t({files: files}))
+
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 // JavaScript micro-templating, similar to John Resig's implementation.
@@ -86,27 +128,3 @@ function template(text) {
 
   return template;
 };
-
-// Array::forEach polyfill
-
-if(!Array.prototype.forEach)
-Array.prototype.forEach = function(fn) {
-  for (var i = 0, len = this.length; i < len; i++)
-    fn(this[i], i, this)
-}
-
-function readFile(name)
-{
-  var
-    fso = new ActiveXObject("Scripting.FileSystemObject")
-    name = fso.GetParentFolderName(WScript.ScriptFullName)+"/"+name
-    return fso.OpenTextFile(name).ReadAll()
-}
-
-var t = template(readFile('Sirius!.prjx'))
-
-var files=[]
-'A B C'.split(' ').forEach(function(x){
-  files.push({name: x, src: 'src/'+x, dst: 'dst/'+x})
-})
-WScript.Echo(t({files: files}))
