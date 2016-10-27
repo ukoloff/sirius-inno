@@ -42,12 +42,25 @@ function createFolders()
   fso().CreateFolder(src = fso().BuildPath(proj, 'original'))
   fso().CreateFolder(dst = fso().BuildPath(proj, 'protected'))
 
+  var files = []
+
+  for(var e = new Enumerator(fso().GetFolder(root('src')).Files);
+    !e.atEnd(); e.moveNext())
+  {
+    var f = e.item()
+    var n = f.Name
+    if(fso().GetExtensionName(n).toLowerCase() != 'exe') continue;
+    WScript.Echo(f.Path, src)
+    f.Copy(fso().BuildPath(src, n))
+    files.push({
+      src: 'original/'+n,
+      dst: 'protected/'+n,
+      name: n
+    })
+  }
+
   var t = template(readFile('Sirius!.prjx'))
 
-  var files=[]
-  'A B C'.split(' ').forEach(function(x){
-    files.push({name: x, src: 'original/'+x, dst: 'protected/'+x})
-  })
   fso().CreateTextFile(fso().BuildPath(proj, 'Sirius!.prjx'))
   .WriteLine(t({files: files}))
 }
