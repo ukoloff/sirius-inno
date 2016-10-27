@@ -6,6 +6,7 @@ AppName=Sirius
 AppVersion=2016Q4
 DefaultDirName=C:\Sirius
 DefaultGroupName=Sirius
+AllowNoIcons=yes
 SolidCompression=yes
 DisableWelcomePage=no
 
