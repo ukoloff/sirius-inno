@@ -50,7 +50,7 @@ function createFolders()
     var f = e.item()
     var n = f.Name
     if(fso().GetExtensionName(n).toLowerCase() != 'exe') continue;
-    WScript.Echo(f.Path, src)
+    if(/[.]/.test(fso().GetBaseName(n))) continue; // *.vhost.exe
     f.Copy(fso().BuildPath(src, n))
     files.push({
       src: 'original/'+n,
