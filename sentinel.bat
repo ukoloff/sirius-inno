@@ -5,34 +5,34 @@ goto :EOF */0;
 
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
-
-templateSettings = {
-  variable    : '$',
-  evaluate    : /<%([\s\S]+?)%>/g,
-  interpolate : /<%=([\s\S]+?)%>/g,
-  escape      : /<%-([\s\S]+?)%>/g
-};
-
-var escapes = {
-  "'":      "'",
-  '\\':     '\\',
-  '\r':     'r',
-  '\n':     'n',
-  '\u2028': 'u2028',
-  '\u2029': 'u2029'
-};
-
-var escaper = /\\|'|\r|\n|\u2028|\u2029/g;
-
-var escapeChar = function(match) {
-  return '\\' + escapes[match];
-};
-
 // JavaScript micro-templating, similar to John Resig's implementation.
 // Underscore templating handles arbitrary delimiters, preserves whitespace,
 // and correctly escapes quotes within interpolated code.
 // NB: `oldSettings` only exists for backwards compatibility.
 function template(text) {
+  templateSettings = {
+    variable    : '$',
+    evaluate    : /<%([\s\S]+?)%>/g,
+    interpolate : /<%=([\s\S]+?)%>/g,
+    escape      : /<%-([\s\S]+?)%>/g
+  };
+
+  var escapes = {
+    "'":      "'",
+    '\\':     '\\',
+    '\r':     'r',
+    '\n':     'n',
+    '\u2028': 'u2028',
+    '\u2029': 'u2029'
+  };
+
+  var escaper = /\\|'|\r|\n|\u2028|\u2029/g;
+
+  var escapeChar = function(match) {
+    return '\\' + escapes[match];
+  };
+
+
   var settings = templateSettings;
 
   // Combine delimiters into one regular expression via alternation.
