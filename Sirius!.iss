@@ -21,6 +21,10 @@ UninstallFilesDir={app}\unInstall
 Source: "src\*.*"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "src\system32\*.ocx"; DestDir: "{app}\system32"; Flags: regserver
 
+[Dirs]
+Name: {app}\job
+Name: {app}\report
+
 [Icons]
 Name: "{commondesktop}\Sirius"; Filename: {app}\SIRIUS.EXE
 Name: "{group}\Sirius"; Filename: {app}\SIRIUS.EXE
