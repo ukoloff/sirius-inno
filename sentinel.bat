@@ -3,13 +3,8 @@
 cscript //nologo //e:javascript "%~f0" %*
 goto :EOF */0;
 
-// Array::forEach polyfill
-
-if(!Array.prototype.forEach)
-Array.prototype.forEach = function(fn) {
-  for (var i = 0, len = this.length; i < len; i++)
-    fn(this[i], i, this)
-}
+es5()
+createFolders()
 
 function fso()
 {
@@ -21,29 +16,51 @@ function fso()
   }
 }
 
-function root()
+function root(path)
 {
-  return fso().GetParentFolderName(WScript.ScriptFullName)
+  var root = fso().GetParentFolderName(WScript.ScriptFullName)
+  if(path) root = fso().BuildPath(root, path)
+  return root
 }
 
 function readFile(name)
 {
-  return fso().OpenTextFile(root() + "/" + name).ReadAll()
+  return fso().OpenTextFile(root(name)).ReadAll()
 }
 
 // Создаать папки для (не)защищённых версий программ
 function createFolders()
 {
-  var proj = fso
+  var proj = root('Sentinel')
+  if(fso().FolderExists(proj))
+  {
+    WScript.Echo("Folder '" + proj + "' already exists!")
+    WScript.Quit(1)
+  }
+  fso().CreateFolder(proj)
+  var src, dst
+  fso().CreateFolder(src = fso().BuildPath(proj, 'original'))
+  fso().CreateFolder(dst = fso().BuildPath(proj, 'protected'))
+
+  var t = template(readFile('Sirius!.prjx'))
+
+  var files=[]
+  'A B C'.split(' ').forEach(function(x){
+    files.push({name: x, src: 'original/'+x, dst: 'protected/'+x})
+  })
+  fso().CreateTextFile(fso().BuildPath(proj, 'Sirius!.prjx'))
+  .WriteLine(t({files: files}))
 }
 
-var t = template(readFile('Sirius!.prjx'))
-
-var files=[]
-'A B C'.split(' ').forEach(function(x){
-  files.push({name: x, src: 'src/'+x, dst: 'dst/'+x})
-})
-WScript.Echo(t({files: files}))
+// Array::forEach polyfill
+function es5()
+{
+  if(Array.prototype.forEach) return
+  Array.prototype.forEach = function(fn) {
+    for (var i = 0, len = this.length; i < len; i++)
+      fn(this[i], i, this)
+  }
+}
 
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
@@ -73,7 +90,6 @@ function template(text) {
   var escapeChar = function(match) {
     return '\\' + escapes[match];
   };
-
 
   var settings = templateSettings;
 
