@@ -29,4 +29,29 @@
 
 Если что-то не устраивает, можно поправить [исходный шаблон](Sirius!.prjx).
 
+## [Удаление программных][-SL] (SL) ключей Sentinel
+
+- Чтобы удалить ключ Provisional SL-AdminMode, нужно удалить файл `*HASP_id_ключа*_provisional.v2c`
+из директории `C:\Program Files\Common Files\SafeNet Sentinel\Sentinel LDK\installed\*Vendor_id*`.
+
+- Provisional SL-UserMode из директории (Windows Vista и выше):
+`C:\ProgramData\SafeNet Sentinel\Sentinel LDK\installed\* Vendor_id*\`.
+
+- Provisional SL-UserMode из директории (Windows XP и ниже):
+`C:\Documents and Settings\All Users\Application Data\SafeNet Sentinel\Sentinel LDK\installed\* Vendor_id*\`.
+
+- Чтобы удалить ключ SL-UserMode, необходимо удалить файл `*HASP_id_ключа*_base.v2c` из директории (Windows XP и ниже):
+`C:\Documents and Settings\All Users\Application Data\SafeNet Sentinel\Sentinel LDK\installed\* Vendor_id*\`.
+
+- SL-UserMode из директории(Windows Vista и выше):
+`C:\ProgramData\SafeNet Sentinel\Sentinel LDK\installed\* Vendor_id*\`.
+
+- Чтобы удалить ключ SL-AdminMode, необходимо удалить файл `*HASP_id_ключа*_base.v2c` из директории:
+`C:\Program Files\Common Files\SafeNet Sentinel\Sentinel LDK\installed\*Vendor_id*``.
+
+Чтобы изменения вступили в силу, необходимо выполнить перезапуск службы Sentinel LDK License Manager,
+либо перезагрузить ПК. Если этого не сделать,
+изменения вступят в силу не сразу, а спустя некоторое время, ориентировочно 5-10 минут.
+
 [Inno Setup]: <http://www.jrsoftware.org/isinfo.php>
+[-SL]: <http://safenet-sentinel.ru/faq/dev/sentinel/#6428>
