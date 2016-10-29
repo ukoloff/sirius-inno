@@ -8,7 +8,10 @@ DefaultDirName=C:\Sirius
 DefaultGroupName=Sirius
 AllowNoIcons=yes
 SolidCompression=yes
+
 DisableWelcomePage=no
+DisableDirPage=no
+DisableProgramGroupPage=no
 
 SetupMutex="iSiriusSetup"
 SetupLogging=yes
@@ -24,6 +27,7 @@ Source: "src\system32\*.ocx"; DestDir: "{app}\system32"; Flags: regserver
 [Dirs]
 Name: {app}\job
 Name: {app}\report
+Name: {drive:{app}}\GeoDet\S
 
 [Icons]
 Name: "{commondesktop}\Sirius"; Filename: {app}\SIRIUS.EXE
