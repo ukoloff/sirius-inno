@@ -21,7 +21,7 @@ OutputBaseFilename="Sirius!"
 UninstallFilesDir={app}\unInstall
 
 [Files]
-Source: "src\*.*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "src\*.*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion
 Source: "src\system32\*.ocx"; DestDir: "{app}\system32"; Flags: regserver
 
 [Dirs]
