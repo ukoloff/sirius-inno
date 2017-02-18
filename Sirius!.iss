@@ -3,7 +3,7 @@ Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Setup]
 AppName=Sirius
-AppVersion=2016Q4
+AppVersion=2017Q1
 DefaultDirName=C:\Sirius
 DefaultGroupName=Sirius
 AllowNoIcons=yes
