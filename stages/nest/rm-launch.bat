@@ -89,11 +89,11 @@ return'"'+(""+n).replace(/[\r\n"\\]/g,function(n){return"\\"+(r[n]||n)})+'"'}}).
 var o,e,i,u,f;for(f="[",o=e=0,i=n.length;e<i;o=++e)u=n[o],o&&(f+=","),f+=t(u,r);return f+"]"}}).call(t,r(65));
 },function(n,t,r){(function(t){n.X=function(n,r){var o,e,i,u,f;for(f="[",o=e=0,i=n.length;e<i;o=++e)u=n[o],
 o&&(f+=","),r&&(f+="\n  "),f+=t(u,r);return f+"]"}}).call(t,r(64))},,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,function(n,t,r){
-(function(n,t,o,e,i,u,f,c,a,l,s){var p,h,v,x,g,d,m;x=n(r(173)),d=x(t),(d.h||1!==d.length)&&(o("Usage: "+e.bn()+" [options] path/to/file.dbs\n\nOptions:"),
-x(),i()),d.l&&("number"==typeof d.l&&(d.l="%TEMP%/"+e.n()+".log"),d.l=u.ExpandEnvironmentStrings(d.l),v=f.OpenTextFile(d.l,8,!0),
-v.WriteLine("\n"+e.n()+" started: "+new Date+"\nArguments: "+t.join(" ")),v.Close(),u.Run('"'+e+'" '+d[0]+" >>"+d.l+" 2>&1",0,!1),
-i()),o("Loading:",d[0]),o("Full path:",c(d[0]).abs()),m=a(d[0]),o("Found:",m.length,"part(s)"),o("Exporting:",g=c(d[0]+".json")),
-g.save(l(m,!0)),h=function(n){var t,r,e;for(o("Looking for:",n),e=s("."),r={};!r[e=e.abs()];){if(r[e]=!0,(t=c(e,n)).y())return t;
-e=e.up()}throw Error("Not found!")},p=h("RouteManager.exe"),o("Found:",p),o("Running:",p.bn(),g.bn()),u.Run('"'+p+'" "'+g,1,!1);
+(function(n,t,o,e,i,u,f,c,a,l,s){var p,h,v,x,g,d,m,w;g=n(r(173)),m=g(t),(m.h||1!==m.length)&&(o("Usage: "+e.bn()+" [options] path/to/dbs-file\n\nOptions:"),
+g(),i()),m.l&&("number"==typeof m.l&&(m.l="%TEMP%/"+e.n()+".log"),m.l=u.ExpandEnvironmentStrings(m.l),x=f.OpenTextFile(m.l,8,!0),
+x.WriteLine("\n"+e.n()+" started: "+new Date+"\nArguments: "+t.join(" ")),x.Close(),u.Run('"'+e+'" '+m[0]+" >>"+m.l+" 2>&1",0,!1),
+i()),o("Loading:",m[0]),o("Full path:",h=c(m[0]+".dbs").abs()),w=a(h),o("Found:",w.length,"part(s)"),o("Exporting:",d=c(m[0]+".dbs.json")),
+d.save(l(w,!0)),v=function(n){var t,r,e;for(o("Looking for:",n),e=s("."),r={};!r[e=e.abs()];){if(r[e]=!0,(t=c(e,n)).y())return t;
+e=e.up()}throw Error("Not found!")},p=v("RouteManager.exe"),o("Found:",p),o("Running:",p.bn(),d.bn()),u.Run('"'+p+'" "'+d,1,!1);
 }).call(t,r(62),r(61),r(6),r(19),r(18),r(67),r(4),r(2),r(38),r(70),r(5))},,,,,,,,,,,,,,,,,,,function(n,t){n.X={
 "help":"Show this help","log":"Log everything to %TEMP%\\rm-launch.log"}}]);
