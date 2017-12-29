@@ -27,6 +27,7 @@ Source: "src\system32\*.ocx"; DestDir: "{app}\system32"; Flags: regserver
 [Dirs]
 Name: {app}\job
 Name: {app}\report
+Name: {app}\tbls
 Name: {drive:{app}}\GeoDet\S
 
 [Icons]
