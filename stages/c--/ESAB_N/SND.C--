@@ -1,0 +1,214 @@
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER,Napr,NomSpVr,PozSpVr;
+extern long NMB,NMB1,nomR1[100],nomR2[100];
+float P77,P7,D,min1,min,Vmin[200];
+long KolSp,KolSp1,KolSp2,nom1,nom2,i,j,k,n,VN[200],Vrem1[200],Vrem2[200],Ns,nb1,nb2;
+
+NEWFUN(302,0,KNT[NMB]);               // искать адрес текущего контура//
+P77=HEAP[25];
+NEWFUN(305,0,P77);         // получить число спанов в контуре
+KolSpan2=HEAP[47];
+if (KolSpan2<2) return;
+KolSp=1;
+While(KolSP<=KolSpan2)      //определЯем координаты вершин контура2//
+{
+ NEWFUN(306,KolSP,P77);
+ xk2[KolSp]=HEAP[35];
+ yk2[KolSp]=HEAP[36];
+ Tk2[KolSp]=HEAP[37];
+ KolSp++;
+}
+KolSp1=1;
+KolSp2=1;
+D=sqrt((xk2[KolSp2]-xk1[KolSp1])*(xk2[KolSp2]-xk1[KolSp1])+(yk2[KolSp2]-yk1[KolSp1])*(yk2[KolSp2]-yk1[KolSp1]));
+min1=D;
+nom1=KolSp1;
+nom2=KolSp2;
+KolSP2=2;
+While(KolSp2<KolSpan2)
+{
+ D=sqrt((xk2[KolSp2]-xk1[KolSp1])*(xk2[KolSp2]-xk1[KolSp1])+(yk2[KolSp2]-yk1[KolSp1])*(yk2[KolSp2]-yk1[KolSp1]));
+ if(D<min1)
+  {
+   min1=D;
+   nom1=KolSp1;
+   nom2=KolSp2;
+  }
+ KolSp2++;
+}
+i=1;
+KolSp1=2;
+min=min1;
+//nomR1[NMB1]=nom1;
+//nomR2[NMB1]=nom2;
+Vrem1[1]=nom1;
+Vrem2[1]=nom2;
+Vmin[1]=min;
+k=KolSp1;
+While(KolSp1<KolSpan1)
+{
+ KolSp2:=1;
+ D=sqrt((xk2[KolSp2]-xk1[KolSp1])*(xk2[KolSp2]-xk1[KolSp1])+(yk2[KolSp2]-yk1[KolSp1])*(yk2[KolSp2]-yk1[KolSp1]));
+ min1=D;
+ nom1=KolSp1;
+ nom2=KolSp2;
+ KolSP2=2;
+ While(KolSp2<KolSpan2)
+ {
+  D=sqrt((xk2[KolSp2]-xk1[KolSp1])*(xk2[KolSp2]-xk1[KolSp1])+(yk2[KolSp2]-yk1[KolSp1])*(yk2[KolSp2]-yk1[KolSp1]));
+  if(D<min1)
+   {
+    min1=D;
+    nom1=KolSp1;
+    nom2=KolSp2;
+   }
+  KolSp2++;
+ }
+ i++;
+ Vrem1[i]=nom1;
+ Vrem2[i]=nom2;
+ Vmin[i]=min1;
+
+ if(min1<min)                         //поиск минимального расст//
+ {
+  min=min1;
+  //nomR1[NMB1]=nom1;
+  //nomR2[NMB1]=nom2;
+  //i++;
+ // Vrem1[i]=nom1;
+ // Vrem2[i]=nom2;
+
+  k=KolSp1;
+ 
+
+
+ }
+ KolSp1++;
+}
+
+
+
+
+
+
+j=1;
+k=1;
+while(j<=i)
+{ 
+ if(Vmin[j]<Vmin[k]) k=j;     //мин раст//
+ j++;
+}
+
+
+
+j=1;
+n=0;
+While(j<=i)
+{
+ if(Vmin[j]<=(Vmin[k]+5))     //неск мин раст//
+ {
+  n++;
+  Vn[n]=j;
+ }
+ j++;
+}
+
+
+
+
+
+
+if(n==1)
+{
+ nomR1[NMB1]=Vrem1[k];
+ nomR2[NMB1]=Vrem2[k];
+}
+
+if(n!=1)
+{
+ if(NMB1==1)
+ {
+  if(PozSpVr==1)
+  {
+   if(NomSpVr==(KolSpan1-1)) Ns=1;
+   else Ns=Round(NomSpVr)+1;
+  }
+  else Ns=Round(NomSpVr);
+ }
+ if(NMB1!=1) Ns=nomR2[NMB1-1]; 
+
+
+ i=1;
+ nom1=Vrem1[Vn[1]];
+ nom2=Vrem1[Vn[1]];
+ nb1=Vrem2[Vn[1]];
+ nb2=Vrem2[Vn[1]];
+ While(i<=n)
+ {
+  if(Vrem1[Vn[i]]<nom1)
+   {
+    nom1=Vrem1[Vn[i]];
+    nb1=Vrem2[Vn[i]];
+   } 
+  if(Vrem1[Vn[i]]>nom2)
+   {
+    nom2=Vrem1[Vn[i]]; 
+    nb2=Vrem2[Vn[i]];
+   }
+  i++;
+ }
+
+
+ if(Napr==1)
+ {
+  k=1;
+  While(k==1)
+  {
+   if(Ns==(KolSpan1-1)) Ns=1;
+   else Ns=Ns+1; 
+   if(Ns==nom1)
+   {
+    nomR1[NMB1]=nom1;
+    nomR2[NMB1]=nb1;  
+    k=0;
+   }
+   if(Ns==nom2)
+   {
+    nomR1[NMB1]=nom2; 
+    nomR2[NMB1]=nb2;
+    k=0;
+   }
+
+  }
+
+  
+ }
+
+ if(Napr==2)
+ {
+  k=1;
+  While(k==1)
+  {
+   if(Ns==1) Ns=Round(KolSpan1-1);
+   else Ns=Ns-1; 
+   if(Ns==nom1)
+   {
+    nomR1[NMB1]=nom1;
+    nomR2[NMB1]=nb1; 
+    k=0;
+   }
+   if(Ns==nom2)
+   {
+    nomR1[NMB1]=nom2;
+    nomR2[NMB1]=nb2; 
+    k=0;
+   }
+
+  }
+ }
+
+
+}
+
+
+
+DPER=sqrt((xk2[nomR2[NMB1]]-xk1[nomR1[NMB1]])*(xk2[nomR2[NMB1]]-xk1[nomR1[NMB1]])+(yk2[nomR2[NMB1]]-yk1[nomR1[NMB1]])*(yk2[nomR2[NMB1]]-yk1[nomR1[NMB1]]));

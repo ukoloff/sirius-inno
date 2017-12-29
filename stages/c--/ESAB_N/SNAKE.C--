@@ -1,0 +1,446 @@
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+
+
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER,PER,DST,Napr,NomSpVr,PozSpVr;
+extern float Xper1[200],Yper1[200],Xper2[200],Yper2[200],POZ1[100],POZ2[100];
+extern long NMB,NMB1,nomR1[100],nomR2[100],NomSP1[100],NomSP2[100];
+char putin[100],stroka[150];
+float P77,P7,P78,NM,NM1,Xc[100],Yc[100],D[100],n,KNTv[100],PERv,Xv[100],Yv[100],Tv[100],Q,Xcv,Ycv,Xd,Yd,rc,cons,KolSPv,Lange1;
+long Filt,i,j,KolKon,KolSp,k,NMc,Kpor[100],FL,NMBv;
+
+
+
+
+
+
+
+i=1;
+While(i<99)
+{
+ Xk1[i]=0;
+ yk1[i]=0;
+ Xk2[i]=0;
+ yk2[i]=0;
+ KNT[i]=0;
+ Tk1[i]=0;
+ Tk2[i]=0;
+ Xper1[i]=0;
+ Xper2[i]=0;
+ Yper1[i]=0;
+ Yper2[i]=0;
+ POZ1[i]=0;
+ POZ2[i]=0;
+ nomR1[i]=0;
+ nomR2[i]=0;
+ nomSP1[i]=0;
+ nomSP2[i]=0; 
+
+i++;
+}
+
+
+
+
+
+
+
+
+
+
+
+putin=PATHNAM+"REZVREM.RRR";
+NEWFUN(323,0,0);                 //Сортировка контуров//
+NEWFUN(322,0,0);
+
+
+
+Filt:=fopen(putin,"rt");         //Выбор внешних контуров//
+NMB=1;
+fscan(Filt,stroka);
+Napr:=Val(substr(stroka,61,6));        //Направление реза//
+NM=Val(substr(stroka,53,6));
+KNT[NMB]=Val(substr(stroka,1,7));
+while(! feof(Filt))
+{  
+ fscan(Filt,stroka);
+ NM1=Val(substr(stroka,53,6));
+ if(NM!=NM1) 
+  {
+   NMB++;
+   KNT[NMB]=Val(substr(stroka,1,7));
+   NM=NM1;
+
+  }
+  else KNT[NMB]=Val(substr(stroka,1,7));
+
+}
+
+fseek(Filt,0);
+i=1;
+NMBv=0;
+while(! feof(Filt))
+{
+ fscan(Filt,stroka);
+
+ if(KNT[i]==Val(substr(stroka,1,7))) i++;
+  else
+   {
+    NMBv++;
+    KNTv[NMBv]=Val(substr(stroka,1,7));
+   }
+}
+if(KNTv[NMBv]==KNT[NMB-1]) NMBv--;
+
+
+print("Укажите точку врезки");
+W(-2);                           //Координаты ближайшей точки контура//
+P7=HEAP[3];
+NomSpVr=HEAP[4];
+PozSpVr=HEAP[8];
+i=1;
+While(i<NMB)                    //координаты центра опис пр//
+{
+ if(KNT[i]!=P7)
+  { 
+   NEWFUN(320,0,KNT[i]);
+   Xc[i]=HEAP[56]+(HEAP[57]-HEAP[56])/2;
+   Yc[i]=HEAP[58]+(HEAP[59]-HEAP[58])/2;
+  }
+  else
+  {
+   NEWFUN(320,0,KNT[i]);
+   Xc[i]=HEAP[56]+(HEAP[57]-HEAP[56])/2;
+   Yc[i]=HEAP[58]+(HEAP[59]-HEAP[58])/2;
+   NMc=i;
+   
+  }
+i++;
+}
+
+i=1;
+While(i<NMB)
+{
+ D[i]=sqrt((Xc[i]-Xc[NMc])*(Xc[i]-Xc[NMc])+(Yc[i]-Yc[NMc])*(Yc[i]-Yc[NMc]));
+ i++;
+}
+
+ 
+
+i=1;
+While(i<NMB)      //Сортировка контуров//
+{
+ j=0;
+ While(j<(NMB-2))
+ {
+  if(D[i]<D[j+1])
+  {
+   n=D[i];
+   D[i]=D[j+1];
+   D[j+1]=n;
+   
+   n=KNT[i];
+   KNT[i]=KNT[j+1];
+   KNT[j+1]=n;
+
+  }
+  j++;
+ }
+i++;
+}
+
+
+
+
+if (PozSpVr>=0.5) PozSpVr=1; 
+else PozSpVr=0;               //Если курсор ближе к концу спана//
+NEWFUN(302,0,P7);               // искать адрес текущего контура//
+P77=HEAP[25];
+NEWFUN(305,0,P77);         // получить число спанов в контуре//
+KolSpan1=HEAP[47];
+if (KolSpan1<2) return;
+KolSp=1;
+While(KolSP<=KolSpan1)         //определим координаты вершин контура1//
+{
+ NEWFUN(306,KolSP,P77);
+ xk1[KolSp]=HEAP[35];
+ yk1[KolSp]=HEAP[36];
+ Tk1[KolSp]=HEAP[37];
+ KolSp++;
+}
+
+
+
+//print(NMB);
+
+DPER=0;
+PER=0;
+DST=0;
+KolKon=NMB;
+NMB=1;
+NMB1=0;
+i=1;
+While(i<KolKon-1)
+{
+ NMB++;
+ NMB1++;
+ SND();
+ SNPR();
+ SNPR1();
+
+
+ DST=DST+sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+ k=1;
+ While(k<=KolSpan2)
+  {
+   xk1[k]=xk2[k];
+   yk1[k]=yk2[k];
+   Tk1[k]=Tk2[k];     
+   k++;
+  }
+ KolSpan1=KolSpan2;
+ i++;
+}
+
+
+
+
+
+
+
+PERv=0;
+
+if(NMBv!=0)                    
+{
+ i=1;
+ While(i<=NMBv)                        //Резка внутренних контуров//
+ {
+  NEWFUN(302,0,KNTv[i]);               // искать адрес текущего контура//
+  P78=HEAP[25];
+  NEWFUN(305,0,P78);                  // получить число спанов в контуре//
+  KolSPv=HEAP[47];
+  if (KolSPv<2) return;
+  j=1;
+  While(j<=KolSPv)                   //определим координаты вершин контура//
+  {
+   NEWFUN(306,j,P78);
+   Xv[j]=HEAP[35];
+   Yv[j]=HEAP[36];
+   Tv[j]=HEAP[37];
+   j++;
+  }
+  j=1;
+  While(j<KolSPv)
+  {
+   if(Tv[j]!=0)
+    {
+     if(Tv[j]<0) Q=4*arctg((-Tv[j]))*180/3.1416;
+      else Q=4*arctg(Tv[j])*180/3.1416;
+     if(j!=(KolSPv-1))
+     {
+      cons = ( Tv[j]-1./ Tv[j])*0.25;
+      Xcv = (Xv[j] + Xv[j+1])*0.5+(Yv[j+1] - Yv[j])*cons;
+      Ycv = (Yv[j] + Yv[j+1])*0.5-(Xv[j+1] - Xv[j])*cons;
+      xd =  Xv[j]-Xcv;
+      yd =  Yv[j]-Ycv;
+      rc = (xd*xd+yd*yd)**0.5;                         //Радиус центра окр//
+     }
+     else
+     {
+      cons = ( Tv[j]-1./ Tv[j])*0.25;
+      Xcv = (Xv[j] + Xv[1])*0.5+(Yv[1] - Yv[j])*cons;
+      Ycv = (Yv[j] + Yv[1])*0.5-(Xv[1] - Xv[j])*cons;
+      xd =  Xv[j]-Xcv;
+      yd =  Yv[j]-Ycv;
+      rc = (xd*xd+yd*yd)**0.5; 
+     }
+     PERv=PERv+(3.1416*rc*Q)/180; 
+    }
+   else
+    {
+     if(j!=(KolSPv-1)) PERv=PERv+sqrt((Xv[j+1]-Xv[j])*(Xv[j+1]-Xv[j])+(Yv[j+1]-Yv[j])*(Yv[j+1]-Yv[j])); 
+      else PERv=PERv+sqrt((Xv[1]-Xv[j])*(Xv[1]-Xv[j])+(Yv[1]-Yv[j])*(Yv[1]-Yv[j]));
+    }
+  j++;
+  }
+  Lange1=Lange;
+  NEWFUN(320,0,KNTv[i]);
+  if((Lange > 0.5*(HEAP[57]-HEAP[56]))||(Lange > 0.5*(HEAP[59]-HEAP[58])))            //Проверка на малый контур//
+   {
+    if((HEAP[57]-HEAP[56]) <= (HEAP[59]-HEAP[58])) Lange1=0.5*(HEAP[57]-HEAP[56]);
+     else Lange1=0.5*(HEAP[59]-HEAP[58]);
+   }
+
+
+  TOF(123);
+  MOVE(KNTv[i],Lange1,1,0,spanvx);  
+  TON(123); 
+  PROF(KNTv[i],0,1,0,0,1,0,0); 
+  i++; 
+ }
+}
+
+
+if(Napr==1)
+{
+ OFT();
+ MOVE(KNT[1],Lange,NomSpVr,PozSpVr,spanvx); 
+ KL();
+ PROF(KNT[1],0,NomSpVr,PozSpVr,0,NomSP1[1],POZ1[1],0);
+ i=2;
+ While(i<(KolKon-1))
+ {
+  PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],0);
+  i++;
+ }
+
+ PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP2[i-1],POZ2[i-1],0);
+ if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
+
+ if(POZ2[i-1]==0)
+ {
+  if(NomSP2[i-1]==1)
+  {
+   NEWFUN(302,0,KNT[i]);               
+   NEWFUN(305,0,HEAP[25]);                 
+   K=Round(HEAP[47])-1; 
+  }
+  if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1])-1;
+  MOVE(KNT[i],0,k,1,spanvx);
+ }
+
+
+
+ i--;
+ While(i>1)
+ {
+  PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSP2[i-1],POZ2[i-1],0);
+
+
+  if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
+
+  if(POZ2[i-1]==0)
+  {
+   if(NomSP2[i-1]==1)
+   {
+    NEWFUN(302,0,KNT[i]);               
+    NEWFUN(305,0,HEAP[25]);                 
+    K=Round(HEAP[47])-1; 
+   }
+   if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1])-1;
+   MOVE(KNT[i],0,k,1,spanvx);
+  }
+
+
+  i--;
+ }
+ PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSpVr,PozSpVr,0);
+ if(PozSpVr!=0) MOVE(KNT[i],0,NomSpVr,PozSpVr,spanvx);
+
+ if(PozSpVr==0)
+ {
+  if(NomSpVr==1)
+  {
+   NEWFUN(302,0,KNT[i]);               
+   NEWFUN(305,0,HEAP[25]);                 
+   K=Round(HEAP[47])-1; 
+  }
+  if(NomSpVr!=1) k=Round(NomSpVr)-1;
+  MOVE(KNT[i],0,k,1,spanvx);
+ }
+
+ OFT();
+}
+
+
+if(Napr==2)
+{
+ OFT();
+ MOVE(KNT[1],Lange,NomSpVr,PozSpVr,spanvx); 
+ KR();
+ PROF(KNT[1],0,NomSpVr,PozSpVr,0,NomSP1[1],POZ1[1],0);
+ i=2;
+ While(i<(KolKon-1))
+ {
+  PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],0);
+  i++;
+ }
+
+ PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP2[i-1],POZ2[i-1],0);
+ if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
+
+ if(POZ2[i-1]==0)
+ {
+  if(NomSP2[i-1]==1)
+  {
+   NEWFUN(302,0,KNT[i]);               
+   NEWFUN(305,0,HEAP[25]);                 
+   K=Round(HEAP[47])-1; 
+  }
+  if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1]);
+  MOVE(KNT[i],0,k,0,-spanvx);
+ }
+
+
+
+ i--;
+ While(i>1)
+ {
+  PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSP2[i-1],POZ2[i-1],0);
+
+
+  if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
+
+  if(POZ2[i-1]==0)
+  {
+   if(NomSP2[i-1]==1)
+   {
+    NEWFUN(302,0,KNT[i]);               
+    NEWFUN(305,0,HEAP[25]);                 
+    K=Round(HEAP[47])-1; 
+   }
+   if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1]);
+   MOVE(KNT[i],0,k,0,-spanvx);
+  }
+
+
+  i--;
+ }
+ PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSpVr,PozSpVr,0);
+ if(PozSpVr!=0) MOVE(KNT[i],0,NomSpVr,PozSpVr,spanvx);
+
+ if(PozSpVr==0)
+ {
+  if(NomSpVr==1)
+  {
+   NEWFUN(302,0,KNT[i]);               
+   NEWFUN(305,0,HEAP[25]);                 
+   K=Round(HEAP[47])-1; 
+  }
+  if(NomSpVr!=1) k=Round(NomSpVr);
+  MOVE(KNT[i],0,k,0,-spanvx);
+ }
+
+ OFT();
+}
+
+
+
+
+FL:=fopen("ОТЧЕТ.txt","w+");
+fprint(FL,"Количество контуров: ",(KolKon-1)+NMBv,"\n");
+fprint(FL,"Количество внешних контуров: ",KolKon-1,"\n");
+fprint(FL,"Суммарный периметр реза контуров: ",PER+PERv,"\n");
+fprint(FL,"Суммарный периметр реза внешних контуров: ",PER,"\n");
+fprint(FL,"Длина перехода между контурами: ",DST,"\n");
+//fprint(FL,"Периметр движения резака: ",PER+PERv+DST,"\n");
+
+fclose(FL);
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+param char OK1;
+extern float W6;
+extern long W100;
+extern long npodpr;
+CHAR CH;
+ if(W6>0)
+ {
+   N(-W6);
+   D(W6);
+   Progon();
+ }
+  if(npodpr>0)
+   {
+   W100:=W100-npodpr;
+   npodpr=0;
+   }
+

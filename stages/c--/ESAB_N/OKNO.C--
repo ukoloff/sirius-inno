@@ -1,0 +1,23 @@
+char OK;
+OK='N';
+while(OK=='N')
+ {
+   ERA(); CEN(); DRA(0);
+   print("”кажите, пожалуйста, куpсоpом две точки изобpажения для увеличения ");
+   MAG();
+   print("                                                                   ");
+   print("—пасибо ");
+   OK='Y';
+   print("        ");
+   print("”величение веpно([Y]/N/M)>");
+   read(OK);
+   continue;
+   if (OK=='M')
+   {
+      MAG();
+      print("”величение веpно OK([Y]/N)>");
+      read(OK);
+      continue;
+   }
+}
+Progon();

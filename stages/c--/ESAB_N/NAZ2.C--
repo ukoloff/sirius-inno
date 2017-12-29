@@ -1,0 +1,9 @@
+ extern float W86,W87;
+ extern char Fik;
+ if(Fik!='Y')
+ {
+   print("-”кажите точку вpезки(правая компенсация) Esc- выход ");
+   W(-1);
+   W86=HEAP[22];
+   W87=HEAP[21];
+ }

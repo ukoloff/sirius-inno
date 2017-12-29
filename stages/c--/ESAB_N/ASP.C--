@@ -1,0 +1,52 @@
+extern float x0,y0,t0;
+extern float x1,y1,t1;
+extern float areas;
+
+float tol;
+float pi;
+float at;
+float dx;
+float dy;
+float chd;
+float r;
+float theta;
+float c;
+float temp;
+float a1;
+float a2;
+float a3;
+
+tol = 0.0001;
+pi = 3.141592;
+at=0.0;
+dx=0.0;
+dy=0.0;
+chd=0.0;
+r=0.0;
+theta=0.0;
+c=0.0;
+temp=0.0;
+a1=0.0;
+a2=0.0;
+a3=0.0;
+// üşôóûü òû÷øñûßõò ßûşùğôü ßşô ñßğışü
+at=abs(t0);
+dx=x1-x0;
+dy=y1-y0;
+areas=areas+dx*(y0+y1)*0.5;
+chd=(dx*dx+dy*dy)**0.5;
+//    òû÷øñûõıøõ pğôøóñğ
+if((at<tol) || (chd<tol)) return;
+r=abs(t0+1.0/t0)*chd*0.25;
+theta=4.0*arctg(at);
+c=pi*2.0-theta;
+// ßûşøğôü òpõóşûüıøúğ
+temp=r*r*0.5;
+// ßûşùğôü ñõóüõıòğ
+a1=temp*sin(c);
+a2=temp*theta;
+// ßpşòõpúğ ÷ığúğ ÷ığ÷õıøß t
+a3=a2+a1;
+if(t0>0.0) a3=-a3;
+areas=areas+a3;
+return;

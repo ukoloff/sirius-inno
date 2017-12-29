@@ -1,0 +1,58 @@
+ char OK,ch,First,Ok2,Ok1;
+ extern float W70,W111,DX[100],DY[100],AngleGr,AngleRad,Kof;
+ extern float W86,W87,W110,W120,Ygol1[100],Ygol2[100],Lange,VV;
+ extern float DCutt;
+ extern long pin;
+ extern long W100;
+ extern char Fik;
+ float  W10,W11,Temp,XP1,YP1,XP2,YP2;
+ long    Adres,kon;
+/*  W70 - тангенсальная составляющая на спане */
+ extern float W7,W2,W4;
+ kon:=0;
+ OK :='Y';
+ OK1='Y';
+ First:='Y';
+ NAZ1();
+ if (S_GETCH==27 && Fik!='Y')return;
+ if (Fik!='Y') LINEM(W86,W87,W111);
+ while(kon==0)
+ {
+  print("                                                                ");
+  print("-¬ыберите первую точку контура(P- начало подпрограммы,ESC-выход) ");
+  W(-2);
+  W7=HEAP[3];
+  W2=HEAP[4];
+  XP1=HEAP[22];
+  YP1=HEAP[21];
+  if (S_GETCH==80)  OK1='P'; // клавиша P 
+ 
+  if (S_GETCH==27) //клавиша ESC 
+  {
+   if(First=='Y' && Fik!='Y')
+   {
+    N(-1);
+    D(1);
+   } 	
+   if(First=='Y') return;
+   kon:=1;
+   OFT();
+   ppkon();
+   break;
+  }
+  W70=HEAP[9];
+  if(OK1=='P'&&First=='Y') nsubr();
+  if(First=='Y')
+  {
+    KL();
+    LL();
+  }
+  print("                                                                ");
+  print("-¬ыберите следующую точку контура ");
+  W(-2);
+  XP2=HEAP[22];
+  YP2=HEAP[21];
+  PROF(W7,0,XP1,YP1,XP2,YP2);
+  First:='N';
+ }
+BLOK();

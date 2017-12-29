@@ -1,0 +1,23 @@
+  long W30,loop;
+  loop:=1;
+  while(loop==1)
+  {
+    print("Паpам=1,Auto=2,Копиp=3,Выход=4> ");
+    read(W30);
+    switch(W30)
+    {
+      case 2: AUTOS();
+              R();
+              DRA(0);
+              N(9999);
+              break;
+      case 1: PARAMETR();
+              ERA();CUR();DRA(0);
+              break;
+      case 3: ARRAY();
+              break;
+      case 4: loop:=0;
+              break;
+      default:;
+    }
+  }

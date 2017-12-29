@@ -1,0 +1,17 @@
+ char ch;
+ extern float W101;
+ extern long W100;
+ extern long pin;
+ if (pin==1)
+  {
+   print("                                                               ");
+   ch='Y';
+   print("Хотите завершить подпрограмму?([Y]/N)>");
+   read(ch);
+   if (ch!='N')
+    {
+      W101=W100;
+      pin=0;
+      TMARK(2,W101);
+    }
+  }

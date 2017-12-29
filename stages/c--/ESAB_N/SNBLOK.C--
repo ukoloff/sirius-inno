@@ -1,0 +1,370 @@
+Extern float ODKont[300][300],MasKt[4][300],BLOK[300][300],Hk1[4][300],Hk2[4][300],Bk1[4][300],Bk2[4][300];
+Extern Long KBl1,KolBl,KolBl1,NambN;
+Long i,j,stop,end,KolKt,n,ed,m,k,m1;
+Float Px0,Py0,Px1,Py1,Ly,Mx,k1,H1,H2,B1,B2,Xck[4][300],Yck[4][300],Hv1[4][300],Hv2[4][300],Bv1[4][300],Bv2[4][300];
+Float KVr[3][300],Pnx,Pny,Pn1x,Pn1y,CosF,F,F1,n1,Vr,Fx,F2,CosFx,Vrem[10],ParBl[10][300];
+
+
+
+
+i=1;
+While(i<=ODKont[1][KBl1])
+{
+ NEWFUN(320,0,ODKont[i+1][KBl1]);
+ Hv1[i][1]=HEAP[58];
+ Hv2[i][1]=HEAP[59];
+ Bv1[i][1]=HEAP[56];
+ Bv2[i][1]=HEAP[57];
+ Xck[i][1]=HEAP[56]+(HEAP[57]-HEAP[56])/2;
+ Yck[i][1]=HEAP[58]+(HEAP[59]-HEAP[58])/2;
+ i++;
+}
+
+
+Vr=1;
+
+Px0=0;
+PY0=1;
+Px1=1;
+Py1=0;
+//KolBl=0;
+stop=0;
+end=0;
+KolKt=1;
+k1=ODKont[1][KBl1];
+
+While(stop==0)
+ {
+  k1=ODKont[1][KBl1];
+  KolBl1++;
+  Ly=Hv1[1][1];                     //опред крайнего контура//
+  Mx=Bv1[1][1];
+  n=1;
+  i=2;
+  While(i<=k1)
+  {
+   if(floor(Bv1[i][1])<floor(Mx))
+    {
+     Mx=Bv1[i][1];
+     Ly=Hv1[i][1];
+     n=i;
+    }
+   if(floor(Bv1[i][1])==floor(Mx))
+    if(Hv1[i][1]<Ly)
+    { 
+     Mx=Bv1[i][1];
+     Ly=Hv1[i][1];
+     n=i;                         //n-номер крайнего контура//
+    }
+   i++;
+  }
+ Vrem[1]=Bv1[n][1];
+ Vrem[2]=Bv2[n][1];
+ Vrem[3]=Hv1[n][1];
+ Vrem[4]=Hv2[n][1];
+ 
+ //print(ODKont[n+1][KBl1]);
+
+ KolKt=1;
+ end=0;
+ ed=0;
+ While(end==0)
+ {
+  H1=Hv1[n][1]-30;
+  H2=Hv2[n][1]+30;
+  B1=Bv1[n][1]-30;
+  B2=Bv2[n][1]+30;
+  i=1;
+  j=0;
+  While(i<=k1)                                   //определение соседей//
+  {
+   if(ODKont[i+1][KBl1]!=(ODKont[n+1][KBl1]))
+   {
+    if( ((Hv1[i][1]<=H2)&&(Hv2[i][1]>=H1)) && ((Bv2[i][1]>=B1)&&(Bv1[i][1]<=B2)) ) 
+    {
+     j++;
+     Kvr[j][1]=ODKont[i+1][KBl1];
+     Kvr[j][2]=i;
+    }
+   }
+   i++;
+  }
+                               //j-кол-во соседних контуров//   
+  if(j==0)                          //если одиночный контур//
+  {
+   if(KolKt==1)
+   {
+    KolBl1--;
+    end=1;
+    ed=1;
+   }
+   else end=1;
+
+  } 
+
+
+ if(j!=0)                                                     //опред след контура//
+ {
+ if(KolKt==1)
+ {
+  if(j==1)
+  {
+   KolKt++;
+   BLOK[1][KolBl1]=KolKt;
+   BLOK[2][KolBl1]=ODKont[n+1][KBl1];
+   BLOK[KolKt+1][KolBl1]=Kvr[j][1];
+   Pnx=Xck[Round(Kvr[j][2])][1]-Xck[n][1];
+   Pny=Yck[Round(Kvr[j][2])][1]-Yck[n][1];   
+   n=Round(Kvr[j][2]);
+   Vrem[5]=Bv1[n][1];
+   Vrem[6]=Bv2[n][1];
+   Vrem[7]=Hv1[n][1];
+   Vrem[8]=Hv2[n][1];
+  }
+  else
+  {
+   Pnx=Xck[Round(Kvr[j][2])][1]-Xck[n][1];
+   Pny=Yck[Round(Kvr[j][2])][1]-Yck[n][1];
+   CosF=(Px0*Pnx+Py0*Pny)/(sqrt(Px0*Px0+Py0*Py0)*sqrt(Pnx*Pnx+Pny*Pny));
+   CosFx=(Px1*Pnx+Py1*Pny)/(sqrt(Px1*Px1+Py1*Py1)*sqrt(Pnx*Pnx+Pny*Pny));
+   F=arccos(CosF);
+   Fx=arccos(CosFx);
+   k=1;
+   m=j;
+   m1=j;
+   While(K<j)
+   {
+    Pnx=Xck[Round(Kvr[k][2])][1]-Xck[n][1];
+    Pny=Yck[Round(Kvr[k][2])][1]-Yck[n][1];
+    CosF=(Px0*Pnx+Py0*Pny)/(sqrt(Px0*Px0+Py0*Py0)*sqrt(Pnx*Pnx+Pny*Pny));
+    CosFx=(Px1*Pnx+Py1*Pny)/(sqrt(Px1*Px1+Py1*Py1)*sqrt(Pnx*Pnx+Pny*Pny));
+    F1=arccos(CosF);
+    F2=arccos(CosFx);
+    if(F1<F)
+    {
+     n1=F;
+     F=F1;
+     F1=n1;
+     m=k;
+    }
+    if(F2<Fx)
+    {
+     n1=Fx;
+     Fx=F2;
+     F2=n1;
+     m1=k;
+    }
+    k++;
+   }
+   if(Fx<F) m=m1;
+   KolKt++;
+   BLOK[1][KolBl1]=KolKt;
+   BLOK[2][KolBl1]=ODKont[n+1][KBl1];
+   BLOK[KolKt+1][KolBl1]=Kvr[m][1];
+
+   Pnx=Xck[Round(Kvr[m][2])][1]-Xck[n][1];
+   Pny=Yck[Round(Kvr[m][2])][1]-Yck[n][1];
+   n=Round(Kvr[m][2]);
+   Vrem[5]=Bv1[n][1];
+   Vrem[6]=Bv2[n][1];
+   Vrem[7]=Hv1[n][1];
+   Vrem[8]=Hv2[n][1];
+  }
+ }
+
+
+ else
+ {
+  if(j==1)
+  {
+   Pn1x=Xck[Round(Kvr[j][2])][1]-Xck[n][1];
+   Pn1y=Yck[Round(Kvr[j][2])][1]-Yck[n][1];
+
+   CosF=(Pnx*Pn1x+Pny*Pn1y)/(sqrt(Pnx*Pnx+Pny*Pny)*sqrt(Pn1x*Pn1x+Pn1y*Pn1y));
+   F=arccos(CosF);
+   if(F<(3.1416/12))
+   {
+    KolKt++;
+    BLOK[1][KolBl1]=KolKt;
+  //  BLOK[2][KolBl]=MasKt[n][1];
+    BLOK[KolKt+1][KolBl1]=Kvr[j][1];
+    n=Round(Kvr[j][2]);
+    Pnx=Pn1x;
+    Pny=Pn1y;
+   Vrem[5]=Bv1[n][1];
+   Vrem[6]=Bv2[n][1];
+   Vrem[7]=Hv1[n][1];
+   Vrem[8]=Hv2[n][1];
+   }
+   else end=1;
+  }
+  else
+  {
+   Pn1x=Xck[Round(Kvr[j][2])][1]-Xck[n][1];
+   Pn1y=Yck[Round(Kvr[j][2])][1]-Yck[n][1];
+   CosF=(Px0*Pn1x+Py0*Pn1y)/(sqrt(Px0*Px0+Py0*Py0)*sqrt(Pn1x*Pn1x+Pn1y*Pn1y));
+   CosFx=(Px1*Pn1x+Py1*Pn1y)/(sqrt(Px1*Px1+Py1*Py1)*sqrt(Pn1x*Pn1x+Pn1y*Pn1y));
+   F=arccos(CosF);
+   Fx=arccos(CosFx);
+   k=1;
+   m=j;
+   m1=j;
+   While(K<j)
+   {
+    Pn1x=Xck[Round(Kvr[k][2])][1]-Xck[n][1];
+    Pn1y=Yck[Round(Kvr[k][2])][1]-Yck[n][1];
+    CosF=(Px0*Pn1x+Py0*Pn1y)/(sqrt(Px0*Px0+Py0*Py0)*sqrt(Pn1x*Pn1x+Pn1y*Pn1y));
+    CosFx=(Px1*Pn1x+Py1*Pn1y)/(sqrt(Px1*Px1+Py1*Py1)*sqrt(Pn1x*Pn1x+Pn1y*Pn1y));
+    F1=arccos(CosF);
+    F2=arccos(CosFx);
+    if(F1<F)
+    {
+     n1=F;
+     F=F1;
+     F1=n1;
+     m=k;
+    }
+    if(F2<Fx)
+    {
+     n1=Fx;
+     Fx=F2;
+     F2=n1;
+     m1=k;
+    }
+    k++;
+   }
+   if(Fx<F) m=m1;
+   Pn1x=Xck[Round(Kvr[m][2])][1]-Xck[n][1];
+   Pn1y=Yck[Round(Kvr[m][2])][1]-Yck[n][1];
+
+   CosF=(Pnx*Pn1x+Pny*Pn1y)/(sqrt(Pnx*Pnx+Pny*Pny)*sqrt(Pn1x*Pn1x+Pn1y*Pn1y));
+   F=arccos(CosF);
+   if(F<(3.1416/12))
+   {
+    KolKt++;
+    BLOK[1][KolBl1]=KolKt;
+   // BLOK[2][KolBl]=MasKt[n][1];
+    BLOK[KolKt+1][KolBl1]=Kvr[m][1];
+    n=Round(Kvr[m][2]);
+    Pnx=Pn1x;
+    Pny=Pn1y;
+   Vrem[5]=Bv1[n][1];
+   Vrem[6]=Bv2[n][1];
+   Vrem[7]=Hv1[n][1];
+   Vrem[8]=Hv2[n][1];
+   }
+   else end=1;
+  }
+ }
+
+
+}
+
+
+ }
+
+if(ed==0)
+ {
+ i=1;
+ k=0;
+ While(i<=NambN)                              //удаление контуров//
+ {
+  j=1;
+  m=0;
+  While(j<=BLOK[1][KolBl1])
+  {
+   if(MasKt[i][1]==BLOK[j+1][KolBl1]) m=1; 
+   j++;
+  }
+  if(m==0)
+  {
+   k++;
+   MasKt[k][1]=MasKt[i][1]; 
+   MasKt[k][2]=MasKt[i][2];
+   Bk1[k][1]=Bk1[i][1];
+   Bk2[k][1]=Bk2[i][1];
+   Hk1[k][1]=Hk1[i][1];
+   Hk2[k][1]=Hk2[i][1];
+  }
+
+  i++;
+ }
+
+ MasKt[k+1][1]=-100;                       //признак блока в массиве контуров//
+ MasKt[k+1][2]=KolBl1;
+ if(Vrem[1]<Vrem[5]) Bk1[k+1][1]=Vrem[1];
+  else Bk1[k+1][1]=Vrem[5];
+ if(Vrem[2]>Vrem[6]) Bk2[k+1][1]=Vrem[2];
+  else Bk2[k+1][1]=Vrem[6];
+ if(Vrem[3]<Vrem[7]) Hk1[k+1][1]=Vrem[3];
+  else Hk1[k+1][1]=Vrem[7];
+ if(Vrem[4]>Vrem[8]) Hk2[k+1][1]=Vrem[4];
+  else Hk2[k+1][1]=Vrem[8];
+                                       
+ NambN=k+1;
+
+ i=1;
+ k=0;
+ While(i<=ODKont[1][KBl1])
+ {
+  j=1;
+  m=0;
+  While(j<=BLOK[1][KolBl1])
+  {
+   if(ODKont[i+1][KBl1]==BLOK[j+1][KolBl1]) m=1; 
+   j++;
+  }
+  if(m==0)
+  {
+   k++;
+   ODKont[k+1][KBl1]=ODKont[i+1][KBl1];
+   Hv1[k][1]=Hv1[i][1];
+   Hv2[k][1]=Hv2[i][1];
+   Bv1[k][1]=Bv1[i][1];
+   Bv2[k][1]=Bv2[i][1];
+   Xck[k][1]=Xck[i][1];
+   Yck[k][1]=Yck[i][1]; 
+  } 
+   i++;
+  }
+ ODKont[1][KBl1]=ODKont[1][KBl1]-BLOK[1][KolBl1];
+ }
+ else
+ {
+  i=1;
+  k=0;
+  While(i<=ODKont[1][KBl1])
+  {
+   m=0;
+   if(ODKont[i+1][KBl1]==ODKont[n+1][KBl1]) m=1;
+   if(m==0)
+   {
+    k++;
+    ODKont[k+1][KBl1]=ODKont[i+1][KBl1];
+    Hv1[k][1]=Hv1[i][1];
+    Hv2[k][1]=Hv2[i][1];
+    Bv1[k][1]=Bv1[i][1];
+    Bv2[k][1]=Bv2[i][1];
+    Xck[k][1]=Xck[i][1];
+    Yck[k][1]=Yck[i][1]; 
+
+   } 
+   i++;
+  }
+ ODKont[1][KBl1]=ODKont[1][KBl1]-1;
+ }
+ Vr++;
+// if(Vr==4) stop=1;
+ if(ODKont[1][KBl1]==0) stop=1;
+
+
+
+ }
+
+//print(KolBl);
+
+//print(BLOK[1][1]);
+//print(BLOK[2][1]);
+//print(BLOK[3][1]);
+//print(BLOK[4][4]);
+//print(BLOK[5][3]);

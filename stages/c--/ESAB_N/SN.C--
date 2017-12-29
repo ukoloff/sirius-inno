@@ -1,0 +1,153 @@
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+
+
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER,PER,DST;
+extern float Xper1[200],Yper1[200],Xper2[200],Yper2[200],POZ1[100],POZ2[100];
+extern long NMB,NMB1,nomR1[100],nomR2[100],NomSP1[100],NomSP2[100];
+char putin[100],stroka[150];
+float NomSpVr,PozSpVr,P77,P7,P78,Napr,NM,NM1,Xc[100],Yc[100],D[100],n,KNTv[100],PERv,Xv[100],Yv[100],Tv[100],Q,Xcv,Ycv,Xd,Yd,rc,cons,KolSPv,Lange1;
+long Filt,i,j,KolKon,KolSp,k,NMc,Kpor[100],FL,NMBv;
+Extern float BLOK[300][300],SPv;
+Extern Long KolBl;
+
+
+
+
+
+
+NEWFUN(302,0,KNT[1]);               // искать адрес текущего контура//
+P77=HEAP[25];
+NEWFUN(305,0,P77);         // получить число спанов в контуре//
+KolSpan1=HEAP[47];
+if (KolSpan1<2) return;
+KolSp=1;
+While(KolSP<=KolSpan1)         //определим координаты вершин контура1//
+{
+ NEWFUN(306,KolSP,P77);
+ xk1[KolSp]=HEAP[35];
+ yk1[KolSp]=HEAP[36];
+ Tk1[KolSp]=HEAP[37];
+ KolSp++;
+}
+
+
+
+
+
+DPER=0;
+PER=0;
+DST=0;
+KolKon=NMB;
+NMB=1;
+NMB1=0;
+i=1;
+While(i<KolKon-1)
+{
+ NMB++;
+ NMB1++;
+ SND();
+ SNPR();
+ SNPR1();
+ DST=DST+sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+ k=1;
+ While(k<=KolSpan2)
+  {
+   xk1[k]=xk2[k];
+   yk1[k]=yk2[k];
+   Tk1[k]=Tk2[k];     
+   k++;
+  }
+ KolSpan1=KolSpan2;
+ i++;
+}
+
+
+
+
+
+TOF(123);
+MOVE(KNT[1],Lange,SPv,0,spanvx);                      //Резка внешних контуров//
+TON(123);
+PROF(KNT[1],0,SPv,0,0,NomSP1[1],POZ1[1],spanvx);
+i=2;
+While(i<(KolKon-1))
+{
+ PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],spanvx);
+ i++;
+}
+
+PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP2[i-1],POZ2[i-1],0);
+if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
+
+if(POZ2[i-1]==0)
+{
+ if(NomSP2[i-1]==1)
+ {
+  NEWFUN(302,0,KNT[i]);               
+  NEWFUN(305,0,HEAP[25]);                 
+  K=Round(HEAP[47])-1; 
+ }
+ if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1])-1;
+ MOVE(KNT[i],0,k,1,spanvx);
+}
+
+
+i--;
+While(i>1)
+{
+ PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSP2[i-1],POZ2[i-1],0);
+
+ if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
+
+ if(POZ2[i-1]==0)
+ {
+  if(NomSP2[i-1]==1)
+  {
+   NEWFUN(302,0,KNT[i]);               
+   NEWFUN(305,0,HEAP[25]);                 
+   K=Round(HEAP[47])-1; 
+  }
+  if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1])-1;
+  MOVE(KNT[i],0,k,1,spanvx);
+ }
+
+
+ i--;
+}
+
+PROF(KNT[i],0,NomSP1[i],POZ1[i],0,SPv,0,0);
+if(PozSpVr!=0) MOVE(KNT[i],0,NomSpVr,PozSpVr,spanvx);
+
+if(SPv==1)
+{
+ NEWFUN(302,0,KNT[i]);               
+ NEWFUN(305,0,HEAP[25]);                 
+ K=Round(HEAP[47])-1; 
+}
+if(SPv!=1) k=Round(SPv)-1;
+MOVE(KNT[i],0,k,1,spanvx);
+
+
+
+
+
+
+
+FL:=fopen("ОТЧЕТ.txt","w+");
+fprint(FL,"Количество контуров: ",(KolKon-1)+NMBv,"\n");
+fprint(FL,"Количество внешних контуров: ",KolKon-1,"\n");
+fprint(FL,"Суммарный периметр реза контуров: ",PER+PERv,"\n");
+fprint(FL,"Суммарный периметр реза внешних контуров: ",PER,"\n");
+fprint(FL,"Длина перехода между контурами: ",DST,"\n");
+//fprint(FL,"Периметр движения резака: ",PER+PERv+DST,"\n");
+
+fclose(FL);
+
+
+
+
+
+
+
+

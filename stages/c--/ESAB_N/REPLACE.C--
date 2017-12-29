@@ -1,0 +1,52 @@
+static char OK1;  /* переменная для поддержки диалога  */
+char OK;
+long loop;
+static char OLD[64],OLP[64]; /* переменные для ввода имен команд */
+print("¬ведите имя старой команды для поиска(замены)>");
+read(OLD);    /* ввод символа  Y или  N или ничего , */
+print("¬ведите имя новой команды для поиска(замены)>");
+read(OLP);    /* ввод символа  Y или  N или ничего , */
+OK='Y';
+print("’отите Y-«аменить,I-вставить до,J-вставить после ([Y]/I,J)>");                /* печатать на нижней ком строке               */
+read(OK1);    /* ввод символа  Y или  N или ничего , */
+loop=1;
+while(loop==1)
+{
+  switch(OK1)
+  {
+     case 'Y':L(OLD);
+              V(); V();
+              if (NISTAT!=0) return;
+              print("’отите заменить([Y]/N/E)>");
+              read(OK);
+              if (OK=='E') return;
+              if (OK!='N')
+                {
+                 D();
+                 WIPOLN(OLP);
+                }
+              break;
+     case 'I':L(OLD);
+              V(); V();
+              if (NISTAT!=0) return;
+              print("’отите вставить([Y]/N/≈)>");
+              read(OK);
+              if (OK=='E') return;
+              if (OK!='N') WIPOLN(OLP);
+              break;
+     case 'J':L(OLD);
+              V(); V();
+              if (NISTAT!=0) return;
+              print("’отите вставить([Y]/N/≈)>");
+              read(OK);
+              if (OK=='E') return;
+              if (OK!='N')
+               {
+                  N();
+                  WIPOLN(OLP);
+               }
+              break;
+              default: loop=0;
+	}
+}
+l100:;

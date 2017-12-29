@@ -1,0 +1,44 @@
+extern float Width,Lange,DCutt;
+extern float W130, W111, VV;
+extern char P111[10];
+  Width=3;Lange=5;
+  DCutt=3;VV=6100;
+P111="S2635";  
+  W111  =1; W130 =1;
+  print("Толщина листа мм [3]> ");
+  read(Width);
+  if(Width>1&&Width<=2)
+  {
+    VV   = 9100;
+    DCutt= 3;
+    Lange=2.25;
+   P111="S2530";  
+  }
+  if(Width>2&&Width<=3)
+  {
+    VV   = 6100;
+    DCutt= 3  ;
+    Lange=2.3 ;
+   P111="S2635";  
+  }
+  if(Width>3&&Width<=6)
+  {
+    VV   = 4600;
+    DCutt= 3  ;
+    Lange= 3.3 ;
+    P111="S2645";  
+  }
+  if(Width>6&&Width<=9)
+  {
+    VV   = 3800;
+    DCutt= 4.2  ;
+    Lange= 3.5 ;
+    P111="S3650";   
+  }
+  if(Width>9&&Width<12)
+  {
+    VV   = 3000;
+    DCutt= 4.2  ;
+    Lange= 3.8 ;
+    P111="S3855";   
+  }

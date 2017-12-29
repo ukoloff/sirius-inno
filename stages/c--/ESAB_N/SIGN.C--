@@ -1,0 +1,10 @@
+extern float W86,W87,W26,W27;
+extern float W10,W11;
+if ((W86-W10)>0)
+W26=1;
+else
+W26=-1;
+if ((W87-W11)>0)
+W27=1;
+else
+W27=-1;

@@ -1,0 +1,74 @@
+ extern float W86,W87,W111,W120,W110,Ygol1[100],Ygol2[100], AngleRad,VV;
+ extern float W70,DCutt,DX[100],DY[100],W10,W11,Lange,AngleGr;
+ extern char Fik,OK1;
+ extern long pin;
+ extern float  W7,W2,W4,Temp;
+ extern long W100;
+ char   OK,CH;
+ long    Adres;
+ float VrCutt;
+ VrCutt=CUTTER;
+ CUTTER(0);
+ NAZ1();
+ if (Fik!='Y')
+   LINEM(W86,W87,W111);
+ OK1:='Y';
+ print("—пособ pезки (<восьмеpка> левая) устpаивает? ([Y]/P/ESC)> ");
+ read(OK1);
+ if(OK1==27)   // нажата клавиша ESC
+  {
+   if (Fik!='Y')
+    {
+     N(-1);
+     D(1);
+    }
+    CUTTER(VrCutt);
+    return;
+  }
+ print("-”кажите 1-й спан 1-го контуpа");
+ W(-3);
+ W7 = HEAP[3];
+ W2 = HEAP[4];
+ W70= HEAP[9];
+ if (Fik=='Y')
+ {
+    RAPID();
+    AngleGr=90;
+    if(AngleGr==90)
+     MOVE (W7,Lange,W2,0,0);
+    else
+    {
+      Temp=Lange*tg(AngleRad);
+      MOVE (W7,Temp,W2,0,Temp);
+    }
+   W86=XCURR;
+   W87=YCURR;
+ }
+ if(OK1=='P') nsubr(); // маркировка начала подпрограммы
+ KL();
+ print("-”кажите N-й спан 1-го контуpа");
+ W(-2);
+ W4=HEAP[4];
+ LL();
+ if(Fik=='Y')
+ {
+   MOVE (W7,DCutt,W2,0,0);
+ }
+ PROF(W7,DCutt/2.0,W2,0,0,W4,1,0);
+ MOVE(W7,DCutt/2.0,W4,1,DCutt/2.0);
+ UPCUT();
+ print("-”кажите 1-й спан 2-го контуpа");
+ W(-2);
+ W7= HEAP[3];
+ W2= HEAP[4];
+ print("-”кажите N-й спан 2-го контуpа");
+ W(-2);
+ W4=HEAP[4];
+ LEAD(0);
+ PROF (W7,DCutt/2.0,W2,1,0,W4,0,0);
+ MOVE(W7,DCutt/2.0,W4,0,-DCutt/2.0);
+ OFT();
+ CUTTER(VrCutt);
+ ppkon();
+ BLOK();
+ return;

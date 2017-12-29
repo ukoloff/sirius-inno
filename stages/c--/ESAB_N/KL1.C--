@@ -1,0 +1,4 @@
+ extern char Korr;
+ CLIMB();
+ if (Korr=='Y') LKOMP();
+ M(7);

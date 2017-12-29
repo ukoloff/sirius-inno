@@ -1,0 +1,155 @@
+ char OK,ch,First,Ok2,OK1;
+ extern float W70,DX[100],DY[100],AngleRad,AngleGr,Kof;
+ extern float W86,W87,W120,Ygol1[100],Ygol2[100],Lange,VV;
+ extern float XFrom,YFrom;
+ extern float NextPx,NextPy;
+ extern float pinok;
+ extern long shag;
+ extern long undos[500];
+ extern float DCutt;
+ extern long pin;
+ extern long W100,zikl;
+ extern char Fik,UGOL1;
+ long    Adres,kon,mnogo;
+ float  Temp,Kont,Span;
+ float DIM1,DIM2,DIM3,DIM4,DIM5,DIM6;
+ float W10,W11,W12,W13,W14,W15,W16,W17,W19,W18;
+ float W1000,W101;
+ float W102,W103,W104,W105,W106,W107,W108,W109,W110,W111,W112;
+ float W3,W7,W116,W8,W5,W6,W118,W119,W117;
+
+/*  W70 - тангенсальная составляющая на спане */
+ float W1,W2,W4;
+
+ DIM1=50.0;
+ DIM2=100.0;
+ DIM3=10.0;
+ DIM4=12.0;
+// DIM5=20.0;      //  радиус петли
+ DIM5=5.0;         //  радиус петли
+ DIM6=12.0;
+
+ kon:=0;
+ mnogo:=0;
+ OK :='Y';
+ OK1:='Y';
+ First:='Y';
+
+  print("-¬ыберите первый спан для петли (ESC -выход) ");
+  W(-2);
+  print("                                                                    ");
+  W2=HEAP[4];
+  W1=HEAP[3];
+  TON(123);
+  PROF(W1,0,W2,0,0.01,W2,1,0.001);
+  MOVE(W1,0,W2,1,0);
+  LEAD(0);
+  Kont=W1;
+//  BEVLOOP0();
+  W10=HEAP[13];
+  W11=HEAP[12];
+  W12=HEAP[11];
+  W13=HEAP[10];
+  W14=HEAP[9];
+
+  W15=DIM4;
+//  BEVLOOP1();
+  W16=W12-W10;
+  W17=W13-W11;
+  W16=(W16*W16+W17*W17)**0.5;
+  W16=W15/W16;
+  W19=(W13-W11)*W16+W13;
+  W18=(W12-W10)*W16+W12;
+  W15=2.0*W14/(1.0+W14*W14);
+  W17=(1.0-W14*W14)/(1.0+W14*W14);
+  W16=(W18-W12)*W17;
+  W16=W16-(W19-W13)*W15+W12;
+  W17=(W19-W13)*W17+W13;
+  W17=W17+(W18-W12)*W15;
+// ***********************
+  W1000=W16;
+  W101=W17;
+  print("-¬ыберите второй спан для петли");
+  W(-2);
+  W8=HEAP[4];
+  Span=W8;
+//  BEVLOOP0();
+  W10=HEAP[13];
+  W11=HEAP[12];
+  W12=HEAP[11];
+  W13=HEAP[10];
+  W14=HEAP[9];
+
+  W15=W10;
+  W10=W12;
+  W12=W15;
+  W15=W11;
+  W11=W13;
+  W13=W15;
+  W14=-1.0*W14;
+  W15=DIM4;
+//  BEVLOOP1();
+  W16=W12-W10;
+  W17=W13-W11;
+  W16=(W16*W16+W17*W17)**0.5;
+  W16=W15/W16;
+  W19=(W13-W11)*W16+W13;
+  W18=(W12-W10)*W16+W12;
+  W15=2.0*W14/(1.0+W14*W14);
+  W17=(1.0-W14*W14)/(1.0+W14*W14);
+  W16=(W18-W12)*W17;
+  W16=W16-(W19-W13)*W15+W12;
+  W17=(W19-W13)*W17+W13;
+  W17=W17+(W18-W12)*W15;
+// ************************
+  W10=W12;
+  W11=W13;
+  W102=W16;
+  W103=W17;
+  W104=W102-W1000;
+  W105=W103-W101;
+  W106=0.5*((W104*W104+W105*W105)**0.5)/DIM4;
+  W107=cos(DIM6*3.141592/360.0);
+  if (W106>W107) return;  //  паралельность
+  W107=0.5*((W106*W106+3.0)**0.5);
+  W104=(W102-W10)*DIM5/DIM4+W10;
+  W105=(W103-W11)*DIM5/DIM4+W11;
+  W108=W11-W105+W10;
+  W109=W104-W10+W11;
+  W104=(W1000-W10)*DIM5/DIM4+W10;
+  W105=(W101-W11)*DIM5/DIM4+W11;
+  W110=W105-W11+W10;
+  W111=W10-W104+W11;
+  W104=(W108+W110)/2.0;
+  W105=(W109+W111)/2.0;
+  W112=2.0*W107/W106;
+  W1000=W112*(W10-W104)+W104;
+  W101=W112*(W11-W105)+W105;
+  W102=(W1000+W108)/2.0;
+  W103=(W101+W109)/2.0;
+  W104=(W1000+W110)/2.0;
+  W105=(W101+W111)/2.0;
+  W3=sin(DIM6*3.141592/180.0);
+  W4=cos(DIM6*3.141592/180.0);
+  W7=360.0/DIM6;
+  W116=2.0*DIM5*sin(DIM6*3.141592/360.0);
+  W8=0;
+  W117=10000.0;
+  while(W117>W116)
+  {
+   LINEM(W104,W105,0.0);
+   W1=W104-W1000;
+   W2=W105-W101;
+   W5=W1*W4-W2*W3+W1000;
+   W6=W1*W3+W2*W4+W101;
+   W104=W5;
+   W105=W6;
+   W118=W104-W102;
+   W119=W105-W103;
+   W117=(W118*W118+W119*W119)**0.5;
+   W8=W8+1.0;
+   if (W8>W7) break;
+  }
+  LINEM(W104,W105,0.0);
+  PROF(Kont,0,Span,0,0.01,Span,1,0.001);
+  BLOK();

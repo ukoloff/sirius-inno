@@ -1,0 +1,669 @@
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER,PER;
+extern float Xper1[200],Yper1[200],Xper2[200],Yper2[200],POZ1[100],POZ2[100];
+extern long NMB,NMB1,nomR1[100],nomR2[100],NomSP1[100],NomSP2[100];
+float k1,k2,b1,b2,D,L1,L2,Xv1,Xv2,Yv1,Yv2,R,n;
+float cons,xc,yc,xd,yd,rc,a,b,c,Dk,x1,x2,y1,y2,Q,S1,P1,S2,P2,Pr1,Pr2;
+long i,j,ysl,ysl1;
+
+if(Round(Xk2[nomR2[NMB1]]-Xk1[nomR1[NMB1]])!=0)
+ {
+  k1=(yk2[nomR2[NMB1]]-yk1[nomR1[NMB1]])/(Xk2[nomR2[NMB1]]-Xk1[nomR1[NMB1]]);
+  b1=(yk1[nomR1[NMB1]]*Xk2[nomR2[NMB1]]-Xk1[nomR1[NMB1]]*yk2[nomR2[NMB1]])/(Xk2[nomR2[NMB1]]-Xk1[nomR1[NMB1]]);
+ }
+ else k1=100000;     //указывает на || оси Y//
+
+i=1;
+j=1;
+While(i<Kolspan1)
+{
+ 
+ if(tk1[i]!=0)                   //указывает на криволинейный спан//
+ {
+  Pr1=0;
+  Pr2=0;
+  if(tk1[i]<0) Q=4*arctg((-tk1[i]))*180/3.1416;
+    else Q=4*arctg(tk1[i])*180/3.1416; 
+
+ if(i!=(Kolspan1-1))
+  {
+   cons = ( tk1[i]-1./ tk1[i])*0.25;
+   xc = (Xk1[i] + Xk1[i+1])*0.5+(Yk1[i+1] - Yk1[i])*cons;
+   yc = (Yk1[i] + Yk1[i+1])*0.5-(Xk1[i+1] - Xk1[i])*cons;
+
+   xd =  Xk1[i]-xc;
+   yd =  Yk1[i]-yc;
+   rc = (xd*xd+yd*yd)**0.5;                    //–адиус центра окр//
+  }
+  else
+  {
+   cons = ( tk1[i]-1./ tk1[i])*0.25;
+   xc = (Xk1[i] + Xk1[1])*0.5+(Yk1[1] - Yk1[i])*cons;
+   yc = (Yk1[i] + Yk1[1])*0.5-(Xk1[1] - Xk1[i])*cons;
+
+   xd =  Xk1[i]-xc;
+   yd =  Yk1[i]-yc;
+   rc = (xd*xd+yd*yd)**0.5;
+   j=i+1;
+   Xk1[j]=Xk1[1];
+   yk1[j]=yk1[1]; 
+  }
+
+  if(NMB1==1) PER=PER+(3.1416*rc*Q)/180;            //ƒлина дуги//
+
+  if(k1!=100000)
+   {
+    a=(1+k1*k1);
+    b=(2*k1*b1-2*k1*yc-2*xc);
+    c=(-(rc*rc)+(yc*yc)-(2*b1*yc)+(b1*b1)+(xc*xc));
+    Dk=b*b-4*a*c;
+    if((Dk<0)&&(Dk>-0.5)) DK=0;
+    if(Dk>=0)
+    {
+     x1=(-b+sqrt(Dk))/(2*a);
+     x2=(-b-sqrt(Dk))/(2*a);
+     y1=k1*x1+b1;
+     y2=k1*x2+b1;
+    }
+   }
+   else
+   {
+    a=1;
+    b=-2*yc;
+    c=yc*yc+(Xk1[nomR1[NMB1]]-xc)*(Xk1[nomR1[NMB1]]-xc)-rc*rc;
+    Dk=b*b-4*a*c;
+    if((Dk<0)&&(Dk>-0.5)) DK=0;
+    if(Dk>=0)
+    {
+     y1=(-b+sqrt(Dk))/(2*a);
+     y2=(-b-sqrt(Dk))/(2*a);
+     x1=Xk1[nomR1[NMB1]];
+     x2=Xk1[nomR1[NMB1]];
+    }
+   }
+ 
+  
+
+   if(Dk>=0)
+    {
+    // print(Q);
+    if(Round(Q)<180)
+     {
+      S1=((x1-xc)*(xk1[i+1]-xc)+(y1-yc)*(yk1[i+1]-yc))/(rc*rc);
+      P1=((x1-xc)*(xk1[i]-xc)+(y1-yc)*(yk1[i]-yc))/(rc*rc);
+      if(S1>1) S1=1;
+      if(S1<-1) S1=-1;
+      if(P1>1) P1=1;
+      if(P1<-1) P1=-1;
+      S1=arccos(S1)*180/3.1416;
+      P1=arccos(P1)*180/3.1416;
+      if(Round(S1+P1)<=(Round(Q)+20)) Pr1=1;
+ 
+      S2=((x2-xc)*(xk1[i+1]-xc)+(y2-yc)*(yk1[i+1]-yc))/(rc*rc);
+      P2=((x2-xc)*(xk1[i]-xc)+(y2-yc)*(yk1[i]-yc))/(rc*rc);
+      if(S2>1) S2=1;
+      if(S2<-1) S2=-1;
+      if(P2>1) P2=1;
+      if(P2<-1) P2=-1;
+      S2=arccos(S2)*180/3.1416;
+      P2=arccos(P2)*180/3.1416;
+      if(Round(S2+P2)<=(Round(Q)+20)) Pr2=1;
+      
+     }
+
+
+      if(Round(Q)==180)
+     {
+      P1=((x1-xc)*(xk1[i]-xc)+(y1-yc)*(yk1[i]-yc))/(rc*rc);
+      if(P1>1) P1=1;
+      if(P1<-1) P1=-1;
+      P1=arccos(P1)*180/3.1416;
+      S1=(x1-xc)*(yk1[i+1]-yc)-(y1-yc)*(xk1[i+1]-xc);
+      if((Round(S1>=0)&&(tk1[i]>=0))||(Round(S1<=0)&&(tk1[i]<=0))) Pr1=1;
+
+      P2=((x2-xc)*(xk1[i]-xc)+(y2-yc)*(yk1[i]-yc))/(rc*rc);
+      if(P2>1) P2=1;
+      if(P2<-1) P2=-1;
+      P2=arccos(P2)*180/3.1416;
+      S2=(x2-xc)*(yk1[i+1]-yc)-(y2-yc)*(xk1[i+1]-xc);
+      if((Round(S2>=0)&&(tk1[i]>=0))||(Round(S2<=0)&&(tk1[i]<=0))) Pr2=1;
+   
+     }
+
+
+
+
+    if(Round(Q)>180)
+     {
+      S1=((x1-xc)*(xk1[i+1]-xc)+(y1-yc)*(yk1[i+1]-yc))/(rc*rc);
+      P1=((x1-xc)*(xk1[i]-xc)+(y1-yc)*(yk1[i]-yc))/(rc*rc);
+      if(S1>1) S1=1;
+      if(S1<-1) S1=-1;
+      if(P1>1) P1=1;
+      if(P1<-1) P1=-1;
+      S1=arccos(S1)*180/3.1416;
+      P1=arccos(P1)*180/3.1416;
+     if(Round(S1+P1)!=Round(360-Q))
+       {
+        Pr1=1;
+        a=sqrt((xk1[i]-X1)*(xk1[i]-X1)+(yk1[i]-Y1)*(yk1[i]-Y1));
+        b=sqrt((xk1[i+1]-X1)*(xk1[i+1]-X1)+(yk1[i+1]-Y1)*(yk1[i+1]-Y1));
+        if(b<a) P1=Q-S1;
+       }
+
+      S2=((x2-xc)*(xk1[i+1]-xc)+(y2-yc)*(yk1[i+1]-yc))/(rc*rc);
+      P2=((x2-xc)*(xk1[i]-xc)+(y2-yc)*(yk1[i]-yc))/(rc*rc);
+      if(S2>1) S2=1;
+      if(S2<-1) S2=-1;
+      if(P2>1) P2=1;
+      if(P2<-1) P2=-1;
+      S2=arccos(S2)*180/3.1416;
+      P2=arccos(P2)*180/3.1416;
+      if(Round(S2+P2)!=Round(360-Q))
+       {
+        Pr2=1;
+        a=sqrt((xk1[i]-X2)*(xk1[i]-X2)+(yk1[i]-Y2)*(yk1[i]-Y2));
+        b=sqrt((xk1[i+1]-X2)*(xk1[i+1]-X2)+(yk1[i+1]-Y2)*(yk1[i+1]-Y2));
+        if(b<a) P2=Q-S2;
+       }
+     } 
+
+
+
+
+    if((Pr1!=0)&&(Pr2==0))
+     {    
+ 
+      D=sqrt((xk2[nomR2[NMB1]]-X1)*(xk2[nomR2[NMB1]]-X1)+(yk2[nomR2[NMB1]]-Y1)*(yk2[nomR2[NMB1]]-Y1));
+      if(Floor(D)<=Ceil(DPER)+5)
+      {
+       DPER=D;
+       Xper1[NMB1]=x1;
+       Yper1[NMB1]=y1;
+       NomSP1[NMB1]=i;
+       L1=(3.1416*rc*Q)/180;
+       L2=(3.1416*rc*P1)/180;
+       POZ1[NMB1]=L2/L1;
+       if(POZ1[NMB1]<0.1) POZ1[NMB1]=0;
+       if(POZ1[NMB1]>0.9) POZ1[NMB1]=1;
+      }
+     }
+
+    if((Pr2!=0)&&(Pr1==0))
+     {
+      D=sqrt((xk2[nomR2[NMB1]]-X2)*(xk2[nomR2[NMB1]]-X2)+(yk2[nomR2[NMB1]]-Y2)*(yk2[nomR2[NMB1]]-Y2));
+      if(Floor(D)<=Ceil(DPER)+5)
+      {
+       DPER=D;
+       Xper1[NMB1]=x2;
+       Yper1[NMB1]=y2;
+       NomSP1[NMB1]=i;
+       L1=(3.1416*rc*Q)/180;
+       L2=(3.1416*rc*P2)/180;
+       POZ1[NMB1]=L2/L1;
+       if(POZ1[NMB1]<0.1) POZ1[NMB1]=0;
+       if(POZ1[NMB1]>0.9) POZ1[NMB1]=1;
+
+      }
+     }
+    
+    if((Pr1!=0)&&(Pr2!=0))
+     {
+      a=sqrt((xk2[nomR2[NMB1]]-X1)*(xk2[nomR2[NMB1]]-X1)+(yk2[nomR2[NMB1]]-Y1)*(yk2[nomR2[NMB1]]-Y1));
+      b=sqrt((xk2[nomR2[NMB1]]-X2)*(xk2[nomR2[NMB1]]-X2)+(yk2[nomR2[NMB1]]-Y2)*(yk2[nomR2[NMB1]]-Y2));
+      if(a<b) D=a;
+       else
+        {
+         D=b;
+         x1=x2;
+         y1=y2;
+         P1=P2;
+        }
+
+      if(Floor(D)<=Ceil(DPER)+5)
+      {
+       DPER=D;
+       Xper1[NMB1]=x1;
+       Yper1[NMB1]=y1;
+       NomSP1[NMB1]=i;
+       L1=(3.1416*rc*Q)/180;
+       L2=(3.1416*rc*P1)/180;
+       POZ1[NMB1]=L2/L1;
+       if(POZ1[NMB1]<0.1) POZ1[NMB1]=0;
+       if(POZ1[NMB1]>0.9) POZ1[NMB1]=1;
+      }
+ 
+     } 
+
+   }
+
+ }
+ else
+ {
+  if(i!=(Kolspan1-1))
+  {
+   if(Round(Xk1[i+1]-Xk1[i])!=0)
+   {
+    k2=(yk1[i+1]-yk1[i])/(Xk1[i+1]-Xk1[i]);
+    b2=(yk1[i]*Xk1[i+1]-Xk1[i]*yk1[i+1])/(Xk1[i+1]-Xk1[i]);
+   }
+   else k2=100000; 
+  }
+   else
+   {
+    if(Round(Xk1[1]-Xk1[i])!=0)
+    {
+     k2=(yk1[1]-yk1[i])/(Xk1[1]-Xk1[i]);
+     b2=(yk1[i]*Xk1[1]-Xk1[i]*yk1[1])/(Xk1[1]-Xk1[i]);
+    }
+    else k2=100000; 
+    j=i+1;
+    Xk1[j]=Xk1[1];
+    yk1[j]=yk1[1]; 
+   }
+
+   if(NMB1==1) PER=PER+sqrt((xk1[i+1]-xk1[i])*(xk1[i+1]-xk1[i])+(yk1[i+1]-yk1[i])*(yk1[i+1]-yk1[i]));    //ƒлина отрезка//
+
+
+  if(k1!=k2)                       //прямые не параллельны//
+  {
+   if(k1==100000)
+    {
+     X1= Xk1[nomR1[NMB1]];
+     Y1=k2*X1+b2;
+    }
+   if(k2==100000)
+    {
+     X1=Xk1[i];
+     Y1=k1*X1+b1;
+    }
+   if((k1!=100000)&&(k2!=100000))
+    {
+     X1=(b2-b1)/(k1-k2);
+     Y1=(k1*(b2-b1))/(k1-k2)+b1;
+    }
+
+   ysl=1;
+
+
+   R=(sqrt((Xk1[i+1]-Xk1[i])*(Xk1[i+1]-Xk1[i])+(Yk1[i+1]-Yk1[i])*(Yk1[i+1]-Yk1[i]))+10)/2;
+   Xv1=Xk1[i];
+   Xv2=Xk1[i+1];
+   Yv1=Yk1[i];
+   Yv2=Yk1[i+1];
+   
+   if(Xv2<Xv1)
+   {
+    n=Xv1;
+    Xv1=Xv2;
+    Xv2=n;
+   }
+   if(Yv2<Yv1)
+   {
+    n=Yv1;
+    Yv1=Yv2;
+    Yv2=n;
+   }
+
+   Xc=Xv1+(Xv2-Xv1)/2;
+   Yc=Yv1+(Yv2-Yv1)/2;
+   if(((x1-xc)*(x1-xc)+(y1-yc)*(y1-yc))>R*R) ysl=0;
+
+   
+   if(ysl!=0)
+   {
+   // print("AAA");
+    D=sqrt((xk2[nomR2[NMB1]]-X1)*(xk2[nomR2[NMB1]]-X1)+(yk2[nomR2[NMB1]]-Y1)*(yk2[nomR2[NMB1]]-Y1));
+    if(Floor(D)<=Ceil(DPER)+5)
+     {
+      DPER=D;
+      Xper1[NMB1]=X1;
+      Yper1[NMB1]=Y1;
+      NomSP1[NMB1]=i;
+      L1=sqrt((xk1[i+1]-xk1[i])*(xk1[i+1]-xk1[i])+(yk1[i+1]-yk1[i])*(yk1[i+1]-yk1[i]));
+      L2=sqrt((Xper1[NMB1]-xk1[i])*(Xper1[NMB1]-xk1[i])+(Yper1[NMB1]-yk1[i])*(Yper1[NMB1]-yk1[i]));
+      POZ1[NMB1]=L2/L1;
+      if(POZ1[NMB1]<0.1) POZ1[NMB1]=0;
+      if(POZ1[NMB1]>0.9) POZ1[NMB1]=1;
+
+     }
+   }
+ }
+ }
+
+ i++;
+ j++;
+}
+ 
+
+
+if(Round(Xper1[NMB1]-Xk2[nomR2[NMB1]])!=0)
+ {
+  k1=(Yper1[NMB1]-yk2[nomR2[NMB1]])/(Xper1[NMB1]-Xk2[nomR2[NMB1]]);
+  b1=(yk2[nomR2[NMB1]]*Xper1[NMB1]-Xk2[nomR2[NMB1]]*Yper1[NMB1])/(Xper1[NMB1]-Xk2[nomR2[NMB1]]);
+ }
+ else k1=100000;     //указывает на || оси Y//
+
+
+
+i=1;
+j=1;
+While(i<Kolspan2)
+{
+
+ if(tk2[i]!=0)                   //указывает на криволинейный спан//
+ {
+
+  Pr1=0;
+  Pr2=0;
+  if(tk2[i]<0) Q=4*arctg((-tk2[i]))*180/3.1416;
+     else Q=4*arctg(tk2[i])*180/3.1416;
+ 
+ if(i!=(Kolspan2-1))
+  {
+   cons = ( tk2[i]-1./ tk2[i])*0.25;
+   xc = (Xk2[i] + Xk2[i+1])*0.5+(Yk2[i+1] - Yk2[i])*cons;
+   yc = (Yk2[i] + Yk2[i+1])*0.5-(Xk2[i+1] - Xk2[i])*cons;
+
+   xd =  Xk2[i]-xc;
+   yd =  Yk2[i]-yc;
+   rc = (xd*xd+yd*yd)**0.5;                    //–адиус центра окр//
+  }
+  else
+  {
+   cons = ( tk2[i]-1./ tk2[i])*0.25;
+   xc = (Xk2[i] + Xk2[1])*0.5+(Yk2[1] - Yk2[i])*cons;
+   yc = (Yk2[i] + Yk2[1])*0.5-(Xk2[1] - Xk2[i])*cons;
+
+   xd =  Xk2[i]-xc;
+   yd =  Yk2[i]-yc;
+   rc = (xd*xd+yd*yd)**0.5;
+   j=i+1;
+   Xk2[j]=Xk2[1];
+   yk2[j]=yk2[1];
+
+  }
+
+  PER=PER+(3.1416*rc*Q)/180; 
+
+  if(k1!=100000)
+   {
+    a=(1+k1*k1);
+    b=(2*k1*b1-2*k1*yc-2*xc);
+    c=(-(rc*rc)+(yc*yc)-(2*b1*yc)+(b1*b1)+(xc*xc));
+    Dk=b*b-4*a*c;
+    if((Dk<0)&&(Dk>-0.5)) DK=0;
+    if(Dk>=0)
+    {
+     x1=(-b+sqrt(Dk))/(2*a);
+     x2=(-b-sqrt(Dk))/(2*a);
+     y1=k1*x1+b1;
+     y2=k1*x2+b1;
+    }
+
+   }
+   else
+   {
+    a=1;
+    b=-2*yc;
+    c=yc*yc+(Xk2[nomR2[NMB1]]-xc)*(Xk2[nomR2[NMB1]]-xc)-rc*rc;
+    Dk=b*b-4*a*c;
+    if((Dk<0)&&(Dk>-0.5)) DK=0;
+    if(Dk>=0)
+    {
+     y1=(-b+sqrt(Dk))/(2*a);
+     y2=(-b-sqrt(Dk))/(2*a);
+     x1=Xk2[nomR2[NMB1]];
+     x2=Xk2[nomR2[NMB1]];
+    }
+   
+   }
+
+   if(Dk>=0)
+    {  
+    if(Round(Q)<180)
+     {
+      S1=((x1-xc)*(xk2[i+1]-xc)+(y1-yc)*(yk2[i+1]-yc))/(rc*rc);
+      P1=((x1-xc)*(xk2[i]-xc)+(y1-yc)*(yk2[i]-yc))/(rc*rc);
+      if(S1>1) S1=1;
+      if(S1<-1) S1=-1;
+      if(P1>1) P1=1;
+      if(P1<-1) P1=-1;
+      S1=arccos(S1)*180/3.1416;
+      P1=arccos(P1)*180/3.1416;
+      if(Round(S1+P1)<=(Round(Q)+20)) Pr1=1;
+ 
+      S2=((x2-xc)*(xk2[i+1]-xc)+(y2-yc)*(yk2[i+1]-yc))/(rc*rc);
+      P2=((x2-xc)*(xk2[i]-xc)+(y2-yc)*(yk2[i]-yc))/(rc*rc);
+      if(S2>1) S2=1;
+      if(S2<-1) S2=-1;
+      if(P2>1) P2=1;
+      if(P2<-1) P2=-1;
+
+      S2=arccos(S2)*180/3.1416;
+      P2=arccos(P2)*180/3.1416;
+      if(Round(S2+P2)<=(Round(Q)+20)) Pr2=1;
+
+     }
+
+
+     if(Round(Q)==180)
+     {
+      P1=((x1-xc)*(xk2[i]-xc)+(y1-yc)*(yk2[i]-yc))/(rc*rc);
+      if(P1>1) P1=1;
+      if(P1<-1) P1=-1;
+      P1=arccos(P1)*180/3.1416;
+      S1=(x1-xc)*(yk2[i+1]-yc)-(y1-yc)*(xk2[i+1]-xc);
+      if((Round(S1>=0)&&(tk2[i]>=0))||(Round(S1<=0)&&(tk2[i]<=0))) Pr1=1;
+
+      P2=((x2-xc)*(xk2[i]-xc)+(y2-yc)*(yk2[i]-yc))/(rc*rc);
+      if(P2>1) P2=1;
+      if(P2<-1) P2=-1;
+      P2=arccos(P2)*180/3.1416;
+      S2=(x2-xc)*(yk2[i+1]-yc)-(y2-yc)*(xk2[i+1]-xc);
+      if((Round(S2>=0)&&(tk2[i]>=0))||(Round(S2<=0)&&(tk2[i]<=0))) Pr2=1;
+      
+     }
+
+
+    if(Round(Q)>180)
+     {
+      S1=((x1-xc)*(xk2[i+1]-xc)+(y1-yc)*(yk2[i+1]-yc))/(rc*rc);
+      P1=((x1-xc)*(xk2[i]-xc)+(y1-yc)*(yk2[i]-yc))/(rc*rc);
+      if(S1>1) S1=1;
+      if(S1<-1) S1=-1;
+      if(P1>1) P1=1;
+      if(P1<-1) P1=-1;
+      S1=arccos(S1)*180/3.1416;
+      P1=arccos(P1)*180/3.1416;
+     if(Round(S1+P1)!=Round(360-Q))
+       {
+        Pr1=1;
+        a=sqrt((xk2[i]-X1)*(xk2[i]-X1)+(yk2[i]-Y1)*(yk2[i]-Y1));
+        b=sqrt((xk2[i+1]-X1)*(xk2[i+1]-X1)+(yk2[i+1]-Y1)*(yk2[i+1]-Y1));
+        if(b<a) P1=Q-S1;
+       }
+
+      S2=((x2-xc)*(xk2[i+1]-xc)+(y2-yc)*(yk2[i+1]-yc))/(rc*rc);
+      P2=((x2-xc)*(xk2[i]-xc)+(y2-yc)*(yk2[i]-yc))/(rc*rc);
+      if(S2>1) S2=1;
+      if(S2<-1) S2=-1;
+      if(P2>1) P2=1;
+      if(P2<-1) P2=-1;
+      S2=arccos(S2)*180/3.1416;
+      P2=arccos(P2)*180/3.1416;
+      if(Round(S2+P2)!=Round(360-Q))
+       {
+        Pr2=1;
+        a=sqrt((xk2[i]-X2)*(xk2[i]-X2)+(yk2[i]-Y2)*(yk2[i]-Y2));
+        b=sqrt((xk2[i+1]-X2)*(xk2[i+1]-X2)+(yk2[i+1]-Y2)*(yk2[i+1]-Y2));
+        if(b<a) P2=Q-S2;
+       }
+     } 
+
+
+
+
+    if((Pr1!=0)&&(Pr2==0))
+     {
+      D=sqrt((Xper1[NMB1]-X1)*(Xper1[NMB1]-X1)+(Yper1[NMB1]-Y1)*(Yper1[NMB1]-Y1));
+      if(Floor(D)<=Ceil(DPER)+5)
+      {
+       DPER=D;
+       Xper2[NMB1]=x1;
+       Yper2[NMB1]=y1;
+       NomSP2[NMB1]=i;
+       L1=(3.1416*rc*Q)/180;
+       L2=(3.1416*rc*P1)/180;
+       POZ2[NMB1]=L2/L1;
+       if(POZ2[NMB1]<0.1) POZ2[NMB1]=0;
+       if(POZ2[NMB1]>0.9) POZ2[NMB1]=1;
+      
+      }
+     }
+
+    if((Pr2!=0)&&(Pr1==0))
+     {
+
+      D=sqrt((Xper1[NMB1]-X2)*(Xper1[NMB1]-X2)+(Yper1[NMB1]-Y2)*(Yper1[NMB1]-Y2));
+      if(Floor(D)<=Ceil(DPER)+5)
+      {
+       DPER=D;
+       Xper2[NMB1]=x2;
+       Yper2[NMB1]=y2;
+       NomSP2[NMB1]=i;
+       L1=(3.1416*rc*Q)/180;
+       L2=(3.1416*rc*P2)/180;
+       POZ2[NMB1]=L2/L1;
+       if(POZ2[NMB1]<0.1) POZ2[NMB1]=0;
+       if(POZ2[NMB1]>0.9) POZ2[NMB1]=1;
+
+      }
+     }
+
+
+
+    
+    if((Pr1!=0)&&(Pr2!=0))
+     {
+      a=sqrt((Xper1[NMB1]-X1)*(Xper1[NMB1]-X1)+(Yper1[NMB1]-Y1)*(Yper1[NMB1]-Y1));
+      b=sqrt((Xper1[NMB1]-X2)*(Xper1[NMB1]-X2)+(Yper1[NMB1]-Y2)*(Yper1[NMB1]-Y2));
+      if(a<b) D=a;
+       else
+        {
+         D=b;
+         x1=x2;
+         y1=y2;
+         P1=P2;
+        }
+      if(Floor(D)<=Ceil(DPER)+5)
+      {
+       DPER=D;
+       Xper2[NMB1]=x1;
+       Yper2[NMB1]=y1;
+       NomSP2[NMB1]=i;
+       L1=(3.1416*rc*Q)/180;
+       L2=(3.1416*rc*P1)/180;
+       POZ2[NMB1]=L2/L1;
+       if(POZ2[NMB1]<0.1) POZ2[NMB1]=0;
+       if(POZ2[NMB1]>0.9) POZ2[NMB1]=1;
+
+      }
+ 
+     } 
+
+   }
+  
+ }
+ else
+ {
+
+ if(i!=(Kolspan2-1))
+ {
+  if(Round(Xk2[i+1]-Xk2[i])!=0)
+  {
+   k2=(yk2[i+1]-yk2[i])/(Xk2[i+1]-Xk2[i]);
+   b2=(yk2[i]*Xk2[i+1]-Xk2[i]*yk2[i+1])/(Xk2[i+1]-Xk2[i]);
+  }
+  else k2=100000; 
+ }
+  else
+  {
+   if(Round(Xk2[1]-Xk2[i])!=0)
+   {
+    k2=(yk2[1]-yk2[i])/(Xk2[1]-Xk2[i]);
+    b2=(yk2[i]*Xk2[1]-Xk2[i]*yk2[1])/(Xk2[1]-Xk2[i]);
+   }
+   else k2=100000; 
+   j=i+1;
+   Xk2[j]=Xk2[1];
+   yk2[j]=yk2[1]; 
+  }
+ PER=PER+sqrt((xk2[i+1]-xk2[i])*(xk2[i+1]-xk2[i])+(yk2[i+1]-yk2[i])*(yk2[i+1]-yk2[i]));  //длина отрезка//
+ 
+ if(k1!=k2)                       //прямые не параллельны//
+ {
+  if(k1==100000)
+   {
+    X2= Xk2[nomR2[NMB1]];
+    Y2=k2*X2+b2;
+   }
+  if(k2==100000)
+   {
+    X2=Xk2[j];
+    Y2=k1*X2+b1;
+   }
+  if((k1!=100000)&&(k2!=100000))
+   {
+    X2=(b2-b1)/(k1-k2);
+    Y2=(k1*(b2-b1))/(k1-k2)+b1;
+   }
+
+  ysl=1;
+
+  R=(sqrt((Xk2[i+1]-Xk2[i])*(Xk2[i+1]-Xk2[i])+(Yk2[i+1]-Yk2[i])*(Yk2[i+1]-Yk2[i]))+10)/2;
+  Xv1=Xk2[i];
+  Xv2=Xk2[i+1];
+  Yv1=Yk2[i];
+  Yv2=Yk2[i+1];
+   
+  if(Xv2<Xv1)
+  {
+   n=Xv1;
+   Xv1=Xv2;
+   Xv2=n;
+  }
+  if(Yv2<Yv1)
+  {
+   n=Yv1;
+   Yv1=Yv2;
+   Yv2=n;
+  }
+
+  Xc=Xv1+(Xv2-Xv1)/2;
+  Yc=Yv1+(Yv2-Yv1)/2;
+  if(((x2-xc)*(x2-xc)+(y2-yc)*(y2-yc))>R*R) ysl=0;
+
+  if(ysl!=0)
+   {
+    D=sqrt((Xper1[NMB1]-X2)*(Xper1[NMB1]-X2)+(Yper1[NMB1]-y2)*(Yper1[NMB1]-y2));
+    if(Floor(D)<=Ceil(DPER)+5)
+     {
+      DPER=D;
+      Xper2[NMB1]=X2;
+      Yper2[NMB1]=Y2;
+      NomSP2[NMB1]=i;
+      L1=sqrt((xk2[i+1]-xk2[i])*(xk2[i+1]-xk2[i])+(yk2[i+1]-yk2[i])*(yk2[i+1]-yk2[i]));
+      L2=sqrt((Xper2[NMB1]-xk2[i])*(Xper2[NMB1]-xk2[i])+(Yper2[NMB1]-yk2[i])*(Yper2[NMB1]-yk2[i]));
+      POZ2[NMB1]=L2/L1;
+      if(POZ2[NMB1]<0.1) POZ2[NMB1]=0;
+      if(POZ2[NMB1]>0.9) POZ2[NMB1]=1;
+     }
+   }
+ }
+ }
+
+ i++;
+ j++;
+}
+
+

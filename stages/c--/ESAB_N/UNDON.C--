@@ -1,0 +1,9 @@
+extern long shag;
+extern long undos[500];
+float Kom1;
+K();
+shag++;
+Kom1=HEAP[7];
+if (shag<0) shag=0;
+if (shag>=500) shag=0;
+undos[shag]=trunc(Kom1);

@@ -1,0 +1,23 @@
+extern float W110,W120,W111,W6,W100,W86,W87;
+float W10,W11,W20,W21;
+char OK;
+L506:
+ print("-Укажите выpезаемый контуp");
+ W(-2);
+ W21=HEAP[3];
+ W20=HEAP[4];
+ W10=HEAP[16];
+ W11=HEAP[15];
+ W86=W10+W110;
+ W87=W11+W120;
+ LINEM(W86,W87,W111);
+ TMARK(3,W100);
+ W6=W6+2;
+ OK='Y';
+ print(" Пpавильно? ([Y]/N)> ");
+ read (OK);
+if(OK=='N')
+{
+  UDA();
+  GOTO L506;
+}

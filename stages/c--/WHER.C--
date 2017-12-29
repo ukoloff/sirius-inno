@@ -1,0 +1,49 @@
+/*      »змерение расстояния между элементами   */
+char ch,ch1;
+float x1,y1,x2,y2,X,Y,dim,dim1,cons,d1;
+float xc,yc,tp,tp1,xp,yp,xp1,yp1,xv,yv,xv1,yv1,xd,yd,rc,tv;
+long i,j,k,W31,W35;
+x1=0.0;
+y1=0.0;
+print("                                                                 ");
+print("¬ыберите точку обьекта>");
+W(-2);
+print("                                                                 ");
+x1=HEAP[22];     // ближайщая точка к спану
+y1=HEAP[21];     // ближайщая точка к спану
+xp=HEAP[13];     // первая точка спана
+yp=HEAP[12];     // первая точка спана
+xp1=HEAP[11];    // вторая точка спана
+yp1=HEAP[10];    // вторая точка спана
+tp=HEAP[9];      // фактор кривизны
+if (tp!=0)
+ {
+   cons = ( tp-1./ tp)*0.25;
+   xc = ( HEAP[13]+ HEAP[11])*0.5+( HEAP[10]- HEAP[12])*cons;
+   yc = ( HEAP[12]+ HEAP[10])*0.5-( HEAP[11]- HEAP[13])*cons;
+   x1=xc;
+   y1=yc;
+ }
+ x=abs(x1-xp);
+ y=abs(y1-yp);
+ dim=(x*x+y*y)**0.5;
+ x=abs(x1-xp1);
+ y=abs(y1-yp1);
+ dim1=(x*x+y*y)**0.5;
+ if (dim>dim1)
+  {
+    x1=xp1;
+    y1=yp1;
+  }
+ else
+  {
+    x1=xp;
+    y1=yp;
+  }
+
+if (tp!=0)
+print("X ="+str(x1,10)+" Y="+str(y1,10)+" I="+str(xc,10)+" J="+str(yc,10));
+else
+print("X ="+str(x1,10)+" Y="+str(y1,10));
+print("Ќажмите любую клавишу                                      ");
+W(-1);

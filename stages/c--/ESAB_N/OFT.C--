@@ -1,0 +1,3 @@
+extern char Korr;
+TOF(123);
+if (Korr=='Y') KEND();

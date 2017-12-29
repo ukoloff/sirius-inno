@@ -1,0 +1,103 @@
+ char OK,First,OK1;
+ extern float spanvx;   //    выход из способа резки ”√ќЋ
+ extern char ZadXod;  // Y -  ¬озврат в точку врезки, N - нет 
+ extern float W70,W111;
+ extern float W86,W87,Lange;
+ extern float pinok;
+ extern float DCutt;
+ extern long pin;
+ extern char Fik,UGOL1;
+ extern long ppnach,odinkon; // начало подпрограммы и приз. 1 контура
+ extern float xpert,ypert; // первая точка контура
+ long   kon,mnogo;
+ float W77;
+/*  W70 - тангенсальная составляющая на спане */
+ extern float W7,W2,W4;
+ kon:=0;
+ mnogo:=0;
+ ppnach=0;
+ OK :='Y';
+ OK1:='Y';
+ First:='Y';
+ while(kon==0)
+ {
+  mnogo++;
+  NAZ1();
+  if (Fik!='Y')
+  {
+   if (S_GETCH==27) return;
+   LINEM(W86,W87,W111);
+  }
+  print("-ѕервый спан(P- подпрог;ESC-выход;)Ћевая  .");
+  W(-3);
+  print("                                                                   ");
+  W7=HEAP[3];
+  W2=HEAP[4];
+  xpert=HEAP[16];  // первая точка контура ’
+  ypert=HEAP[15];  // первая точка контура ”
+  if(Fik!='Y')  N(-1);
+  ppnach=0;
+  if (S_GETCH==80) ppnach=1;
+  if (S_GETCH==80) OK1='P'; // клавиша P 
+  if (S_GETCH==27) // клавиша ESC 
+  {
+    if (mnogo>1)
+    {
+      OFT();
+      if (ZadXod=='Y') MOVE (W7,0,W4,1,spanvx+10);
+      ppkon();
+    }
+    else
+    {
+     if (Fik!='Y')
+     {
+     	N(-1);
+     	D(1);
+     }
+    }
+    kon:=1;
+    print("                                                                      ");
+    break;
+ }
+ W77=W7;
+ DYRKAL();
+ W7=W77;
+ if(Fik!='Y')  N(1);
+ if (Fik=='Y'&&First=='Y')
+  {
+    RAPID();
+    UGOL1:='N';
+    print("ѕод углом 90 градусов?(Y/[N])>");
+    read(UGOL1);
+    if (UGOL1=='Y')
+     MOVE (W7,Lange,W2,0,0);
+    else
+     MOVE (W7,0.0,W2,0,-Lange);
+    W86=XCURR;
+    W87=YCURR;
+  }
+  W70=HEAP[9];
+  if((OK1=='P')&&(First=='Y') && (ppnach==0) && (odinkon<2) && pin==0)
+  {
+   nprog();   // начало подпрограммы
+  }
+  ppnach=0;
+  if(First=='Y')
+  {
+    KL();
+    LEAD(0);
+  }
+  OK='Y';
+  print("-¬ыберите последний спан");
+  W(-2);
+  OK='N';
+  print("                                                                   ");
+  if (S_GETCH>20) OK=S_GETCH;
+  W7=HEAP[3];
+  W4=HEAP[4];
+  print("                                                         ");
+  PROF(W7,0.0,W2,0,0,W4,1,0);
+  MOVE (W7,0,W4,1,spanvx);
+  First:='N';
+}
+BLOK();

@@ -1,0 +1,29 @@
+extern float spanvx;  //    выход из способа резки ”√ќЋ
+extern float kasatel; //    ¬ыход по касательной из способа  ќЌ“”–
+extern float normalv;  //  ¬ыход по нормали
+extern float pramoid;  //  прямой путь перед врезкой по дуге
+extern long Sposob;
+extern float W7,W4;
+extern float tp;
+extern char  Fik;  // фиксированная резка
+float cons,xc,yc,xd,yd,rc,anor,atang,rc1;
+
+cons = ( tp-1./ tp)*0.25;
+xc = ( HEAP[13]+ HEAP[11])*0.5+( HEAP[10]- HEAP[12])*cons;
+yc = ( HEAP[12]+ HEAP[10])*0.5-( HEAP[11]- HEAP[13])*cons;
+xd =  HEAP[13]-xc;
+yd =  HEAP[12]-yc;
+rc = (xd*xd+yd*yd)**0.5;
+anor=normalv;
+atang=kasatel;
+rc1=(anor*anor+atang*atang)/(2.0*anor);
+if (rc*0.9<rc1)
+  MOVE(W7,normalv,W4,-1.0,0);
+else
+ {
+   if (Sposob>1)
+   { 	
+//    if (Fik=='Y') MOVE(W7,normalv,W4,W12,kasatel);
+     MOVE(W7,normalv,W4,-1.0,kasatel);
+   }
+ }

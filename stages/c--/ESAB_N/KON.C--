@@ -1,0 +1,13 @@
+extern float W60,W10,W11,W12;
+if (W60<0.5)
+{
+  W10=HEAP[13];
+  W11=HEAP[12];
+  W12=0;
+}
+else
+{
+  W10=HEAP[11];
+  W11=HEAP[10];
+  W12=1;
+}

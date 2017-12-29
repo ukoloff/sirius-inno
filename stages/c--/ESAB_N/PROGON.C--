@@ -1,0 +1,23 @@
+ char OK1;
+ float Kom;
+ K();
+ print("                        ");
+ Kom=HEAP[7];
+ print("                        ");
+ if(Kom==0)
+ {
+    N(1);
+    K();
+    print("                        ");
+    Kom=HEAP[7];
+    N(-1);
+ }
+ if(Kom>0)
+ {
+   R();
+   CUR();
+   DRA(0);
+   V(4);
+   N(Kom);
+   V(1);
+ }

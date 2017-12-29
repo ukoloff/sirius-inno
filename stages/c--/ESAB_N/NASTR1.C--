@@ -1,0 +1,38 @@
+ extern float Width;  //  толшина листа
+ extern float Lange;  // дистанция врезки
+ extern float spanvx;  //    выход из способа резки ”√ќЋ
+ extern float kasatel; //    ¬ыход по касательной из способа  ќЌ“”–
+ extern float normalv;  //  ¬ыход по нормали
+ extern float pramoid;  //  прямой путь перед врезкой по дуге
+ extern float vkasat; //    ¬ход по касательной по способу  ќЌ“”–
+ extern float vnormal;  //  ¬ход по нормали
+ extern char  Fik;  // фиксированная резка
+ extern char  Korr; // Y- есть коррекция,N - нет коррекции
+ extern char  CutYes; // Y- есть диаметр реза в —ириусе, N -  нет
+ extern long  Sposob;  // 0,1,2,3 - способы подхода и выхода
+ extern char  LineXod; // Y- лин.врезка перед дугой,N - нет коррекции
+ extern char  ZadXod; // Y- переход в точку врезки,N - нет коррекции
+ extern char  ListOb; // Y- есть обход листа,N - нет коррекции
+ extern char  FromT;  // Y -  “очка FROM  с правой стороны, N - нет 
+ long Fint;
+ char a1,a2,a3,a4,a5,a6,a7;
+ 
+ if (Lange<0.0 || Lange>1000.0 ) Lange=10.0;
+ Fint:=fopen("esab_n.cfg","rt");
+ if(Fint<=0)
+ {
+   fclose(Fint);
+   NEWFUN(338,Lange,0);
+   NEWFUN(342,Width,0);
+   SIMENU(5,"esab_n.cfg");
+   Lange=HEAP[123];
+   Width=HEAP[133];
+ }
+ else
+ {
+fscan(Fint,Korr,Sposob,a1,Fik,a2,CutYes,a3,LineXod,a4,ZadXod,a5,ListOb,a6,FromT,a7);
+fscan(Fint,spanvx,kasatel,normalv,vkasat,vnormal);
+ }
+ fclose(Fint);
+ print("                            ");
+ return;

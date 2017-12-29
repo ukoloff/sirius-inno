@@ -1,0 +1,33 @@
+extern long shag;
+extern long undos[500];
+extern long pin;
+extern float pinok;
+extern long W100;
+extern long npodpr;
+float Kom1;
+long koms;
+float komsf;
+K();
+shag--;
+if (shag<0) return;
+Kom1=HEAP[7];
+koms=0;
+if (trunc(Kom1)>=undos[shag+1])
+ {
+  koms=undos[shag+1]-undos[shag];
+ }
+if (koms<=0) return;
+komsf=koms;
+N(-komsf);
+D(komsf);
+if (pin==1)
+ {
+  if ((trunc(pinok)<=undos[shag+1]) && (trunc(pinok)>=undos[shag]))
+   {
+    W100:=W100-1;
+    npodpr=npodpr-1;
+   }
+ }
+R();
+DRA(0);
+N(9999);
