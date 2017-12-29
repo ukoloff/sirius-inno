@@ -1,0 +1,28 @@
+#path "\paket\bin\c--\esab_n\";
+ extern float W91;
+ extern float W6;
+ char OK;
+ print("Удалить(S/P/Z/D)");
+ read(OK);
+ switch(OK)
+ {
+  case 'Z':
+        N(-W6);
+        D(W6);
+        break;
+  case 'S':
+        N(-10);
+        D(10);
+        break;
+  case 'P':
+        N(-7);
+        D(7);
+        break;
+  case 'D':
+        print("Сколько К>");
+        read(W91);
+        N(-W91);
+        D(W91);
+        break;
+ default:;
+ }

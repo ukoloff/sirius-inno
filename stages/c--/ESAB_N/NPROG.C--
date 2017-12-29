@@ -1,0 +1,28 @@
+ extern float W7,W4,W87,W86,W110, W120, DX[100], DY[100];
+ extern float W10,W11,W12,W70,W101,W111,Lange,AngleGr,AngleRad;
+ extern float Ygol1[100],Ygol2[100];
+ extern float udl,x1,y1,x2,y2,tp,x3,y3,xt,yt;
+ extern float xpert,ypert; // первая точка контура
+ extern long W100;
+ extern float pinok;
+ extern long pin;
+ extern long npodpr;
+ long    Adres;
+
+NEWFUN(337,0,0);    // последний свободный номер для подпрограммы
+W100=floor(HEAP[118]);
+if(W100>=99)
+{
+ W100=0;
+ W100=W100+1;
+}
+ npodpr++;
+ W101=W100;
+ TMARK(1,W101);
+ K();
+ pinok=HEAP[7];
+ pin=1;
+//          » щ е м   у г о л   п о в о p о т а
+ NewFun(302,0,W7);
+ Ygol1[W100]:= Heap[69];
+ Ygol2[W100]:= Heap[70];

@@ -1,0 +1,70 @@
+float x1,y1,x2,y2,tp,x3,y3,W7,W4;
+float KolSpan,PosSpan,W12;
+float xn,yn,xb,yb,xt,yt;
+long Posiz;
+ print("-Укажите основной контуp длЯ перехода( ESC-выход");
+ W(-2);
+ x1=HEAP[13];     // перваЯ точка спана
+ y1=HEAP[12];     // перваЯ точка спана
+ x2=HEAP[11];    // втораЯ точка спана
+ y2=HEAP[10];    // втораЯ точка спана
+ tp=HEAP[9];      // фактор кривизны
+ x3=HEAP[22];     // ближайщаЯ точка к спану
+ y3=HEAP[21];     // ближайщаЯ точка к спану
+ W7=HEAP[3];
+ W4=HEAP[4];
+ KolSpan=HEAP[5];
+ PosSpan=HEAP[8];
+ W12=HEAP[8];     // ПозициЯ на спане 0..1
+ print("                                                                      ");
+ if (S_GETCH==27) return;
+
+// Получить адрес контура в Heap[25]
+NewFun(302,0,Heap[3]);
+
+// Получить номер главного контура в Heap[26]
+NewFun(303,0,Heap[25]);
+
+// Получить адрес записи 8 в Heap[27]
+NewFun(307,0,Heap[26]);
+// Получить  номера  первого  и последнего контура детали в
+// Heap[43], (первый)
+// Heap[44]  (последний)
+
+NEWFUN(312,HEAP[27],0);      // ГАБАРИТЫ ДЕТАЛИ 
+xn=HEAP[45];
+xb=HEAP[46];
+yn=HEAP[51];
+yb=HEAP[52];
+Posiz=2;
+print("                                                                 ");
+print("НизЛев=1,ВерхЛев=2,ВерхПрав=3,НизПрав=4 ([2])>");
+W(-1);
+if (S_GETCH<32) Posiz=2;
+else Posiz=S_GETCH-48;
+if (Posiz<1 || Posiz>4 ) return;
+if (posiz==1) 
+{
+ xt=xn-10;
+ yt=yn-10;
+}
+if (posiz==2) 
+{
+ xt=xn-10;
+ yt=yb;
+}
+if (posiz==3) 
+{
+ xt=xb;
+ yt=yb;
+}
+if (posiz==4) 
+{
+ xt=xb;
+ yt=yn-10;	
+}
+print("Точка перехода по Х("+str(xt)+")>"); 
+read(xt);
+print("Точка перехода по Y("+str(yt)+")>"); 
+read(yt);
+LINEM(xt,yt,1.0);

@@ -1,0 +1,59 @@
+char OLD1[80],OLP[80];
+char GEODET1[90];
+char KOREN[190];
+char OK,OL1;
+extern float xt,yt,xto,yto;
+float x1[100];
+float y1[100];
+float TVrezx,TVrexy;
+long kadr,i;
+long blokk;  //  число точек 
+
+OLD1=DBNAM;
+print("Введите имЯ файла(номер) делового отхода > ");
+read(OLP);
+L1:ERA(); CUR(); CEN(); DRA(0);
+// ***********************************
+ print("-Укажите точку внутри зоны отхода курсором, ESC-выход ");
+ W(-1);
+ print("                                                                      ");
+ if (S_GETCH==27)
+   {
+     print("                                                                      ");
+     break; /* нажата клавиша ESC */
+   }
+ xto=HEAP[22];     // точка курсора -врезка
+ yto=HEAP[21];     // точка курсора -врезка
+ NEWFUN(349,xto,yto);      //  автоматическаЯ сколка отхода 
+//сканирование  по Х  
+// *******************************************
+ACCESS("TEMPORAR");
+UNSAVE(-999,-999);
+SAVE();
+EMPTY(-9999);
+KOREN=PATHNAM+"\TBLS\\OTXOD";
+ACCESS(KOREN);
+// print(" "+KOREN);
+// W(-1);
+// ACCESS("C:\\SIRIUS\\TBLS\\OTXOD");
+LOAD();
+CUR(); DRA(0);
+GEODET1="C:\\GEODET\\"+OLP;
+ACCESS(GEODET1);
+UNSAVE(-999,-999);
+SAVE();
+print("                                                                 ");
+print("Правильно(Y/N)?>");
+W(-1);
+OL1=S_GETCH;
+ERA(); DRA(0);
+print("                                                                 ");
+print("Нажмите любую клавишу");
+W(-1);
+EMPTY(-9999);
+ACCESS("TEMPORAR");
+LOAD();
+if (OL1=='N') goto L1;
+CUR(); CEN(); ERA(); DRA(0);
+ACCESS(OLD1);
+return;

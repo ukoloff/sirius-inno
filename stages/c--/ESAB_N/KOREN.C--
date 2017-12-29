@@ -1,0 +1,2 @@
+float x,&Rez;
+Rez:=x**0.5;

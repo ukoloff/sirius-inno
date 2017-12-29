@@ -1,0 +1,106 @@
+ char OK,First,Ok2,OK1;
+ extern float spanvx;   //    выход из способа резки УГОЛ
+ extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет 
+ extern float W70,W111;
+ extern float W86,W87,Ygol1[100],Ygol2[100],Lange;
+ extern float DCutt;
+ extern long pin;
+ extern char Fik,UGOL1;
+ long  kon,mnogo;
+ /*  W70 - тангенсальнаЯ составлЯющаЯ на спане */
+ extern float W7,W2,W4;
+ 
+ kon:=0;
+ mnogo:=0;
+ OK :='Y';
+ OK1:='Y';
+ First:='Y';
+ NAZ2();
+ if (Fik!='Y')
+  {
+   if (S_GETCH==27)
+    return;
+   LINEM(W86,W87,W111);
+  }
+while(kon==0)
+{
+ mnogo++;
+ print("-Первый спан(P- подпрог;ESC-выход;Z -контур;U-удаление посл.)ПраваЯ К.");
+ W(-3);
+ print("                                                                   ");
+ if (S_GETCH==27) /*клавиша ESC */
+ {
+    if (mnogo>1)
+    {
+      OFT();
+      if (ZadXod=='Y') MOVE (W7,0,W4,0,-spanvx-10);
+      ppkon();
+      BLOK();
+    }
+    else
+    {
+     if (Fik!='Y')
+     {
+     	N(-1);
+     	D(1);
+     }
+    }
+    kon:=1;
+    print("                                                                      ");
+    break;
+ }
+ W7=HEAP[3];
+ if (S_GETCH==90 && mnogo==1 )
+ {
+   mnogo--;
+   continue;
+ }
+ if (S_GETCH!=90)
+ {
+   W2=HEAP[4];
+   if (S_GETCH==80) OK1='P'; /* клавиша P */
+   if (OK=='U' && mnogo>1)
+   {
+     N(-2);
+     D(2);
+     mnogo--;
+     continue;
+   }
+   if (Fik=='Y'&&First=='Y')
+   {
+     RAPID();
+     UGOL1:='N';
+     print("Под углом 90 градусов?(Y/[N])>");
+     read(UGOL1);
+     if (UGOL1=='Y')
+      MOVE (W7,Lange,W2,1,0);
+     else
+      MOVE (W7,0.0,W2,1,Lange);
+     W86=XCURR;
+     W87=YCURR;
+   }
+   W70=HEAP[9];
+   if(OK1=='P'&&First=='Y')
+      nsubr(); // маркировка начала подпрограммы
+   if(First=='Y')
+   {
+     KR();
+     LEAD(0);
+   }
+   OK='Y';
+   print("-Выберите последний спан");
+   W(-2);
+   OK='N';
+   print("                                                                   ");
+   if (S_GETCH>20) OK=S_GETCH;
+   W7=HEAP[3];
+   W4=HEAP[4];
+ }
+ print("                                                         ");
+ PROF(W7,0.0,W2,1,0,W4,0,0);
+ MOVE (W7,0,W4,0,-spanvx);
+ First:='N';
+}
+return;
+
+ 

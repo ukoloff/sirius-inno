@@ -1,0 +1,6 @@
+float x1min, y1min,x2max,y2max;
+float vremx,vremy,dliny,shagy;
+float y1,y2;
+R();
+MAG(0.7);
+N(9999);

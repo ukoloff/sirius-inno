@@ -1,0 +1,14 @@
+extern float Width,Lange,DCutt;
+extern float W130,W111,VV;
+extern char  Korr;
+extern long   W100;
+extern char P111[10];
+ W100=0;
+ FHR(6000);
+ FHC(VV);
+ /*INSERT(P111); */
+ if (Korr=='Y')
+ CUTTER(0);
+ else
+ CUTTER(DCutt);
+return;

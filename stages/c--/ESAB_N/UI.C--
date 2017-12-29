@@ -1,0 +1,11 @@
+extern float W86,W87,W27,W26,W10;
+extern float W11, Lange,DCutt;
+float an,W17;
+char ch;
+an=3.141596/4;
+W10=HEAP[22];
+W11=HEAP[21];
+SIGN();
+W17=Lange+DCutt*0.5;
+W86=W10+W26*COS(an)*W17;
+W87=W11+W27*SIN(an)*W17;

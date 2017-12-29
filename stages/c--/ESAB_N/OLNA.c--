@@ -1,0 +1,119 @@
+ char OK,First,Ok2,OK1;
+ extern float spanvx;   //    выход из способа резки ”√ќЋ
+ extern char ZadXod;  // Y -  ¬озврат в точку врезки, N - нет
+ extern float W70,W111;
+ extern float W86,W87,Lange,W86N,W87N;
+ extern float DCutt,VrCutt,DCuttR;
+ extern float span1M[100],span2M[100];
+ extern long pin;
+ extern char Fik,UGOL1,Psubr;
+ long  kon,mnogo;
+ /*  W70 - тангенсальная составляющая на спане */
+ extern float W7,W2,W4,kb,xb,yb,sb,xc,yc;
+ extern float W7N,W2N;
+ float  PosSpan,KolSpan,W12;
+/*  W70 - тангенсальная составляющая на спане */
+
+ kon:=0;
+ W111=1;
+ mnogo=0;
+  NAZ1();
+   if (Fik!='Y')
+   {
+      if (S_GETCH==27)
+       {
+          print("                                                                  ");
+          if (mnogo>0)
+          {
+           ppkon();
+           BLOK();
+          }
+          return;
+        }
+   }
+   print("-¬ыберите угол (P- начало подпрограммы;ESC-конец) ");
+   W(-2);
+   print("                                                                   ");
+   W7=HEAP[3];
+   W2=HEAP[4];
+   OK=S_GETCH;
+   if (OK==27 ) /*клавиша ESC */
+   {
+     print("                                                         ");
+     kon:=1;
+     if (mnogo>0)
+     {
+      ppkon();
+       BLOK();
+     }
+     print("                                                          ");
+     return;
+   }
+   
+   NEWFUN(328,0,W7);      // ѕроверка вырезан ли контур
+   if (HEAP[117]==1)  // контур уже вырезан
+   {
+      print("  онтур вырезан- Ќажмите любую клавишу");
+      W(-1);
+      print("                              ");
+       return;
+    }
+   if (mnogo>0) BLOK();
+   PosSpan=HEAP[8];  // позиция спана напротив крестообразного курсора
+   W12=HEAP[8];         // позиция на спане напротив крестообразного курсора
+   NewFun(302,0,W7);
+   NewFun(302,0,HEAP[67]); //  найти количство точек по оригинальному контуру
+   KolSpan=HEAP[75];   //  количество точек на контуре
+ //  print(" оличество спанов("+str(KolSpan)+")>");
+ //  W(-1);
+   if (PosSpan>0.5)
+    {
+      W12=1.0;
+      W4=W2;
+      W2=W2+1;
+      if (W2>=KolSpan) W2=1;
+    }
+   else
+    {
+      W12=0.0;
+      W4=W2-1;
+      if (W4<1) W4=KolSpan-1;
+    }
+//   OK1:='N';
+   Psubr:='N';
+   if (S_GETCH==80) Psubr='P'; /* клавиша P */
+   mnogo=1;
+   if (Fik=='Y')
+   {
+//    RAPID();
+//     MOVE (W7,Lange,W2,0,0);
+     W86=HEAP[22];
+     W87=HEAP[21];
+     W86N:=W86;
+     W87N:=W87;
+   }
+  else
+   {
+//    LINEM(W86,W87,W111);
+ //    W86=XCURR;
+  //   W87=YCURR;
+      W86N:=W86;
+      W87N:=W87;
+     }
+  W70=HEAP[9];
+ // if(OK1=='P') nsubr(); // маркировка начала подпрограммы
+  	// ***************************
+  	//  блок формирования  деталей для змейки
+  	// ***************************
+  	span1M[0]:=W2;
+//   KL();
+   LEAD(0);
+   W2N=W2;
+   W7N=W7;
+   	ZmeiL();
+   OK='Y';
+  //W86N=XCURR;
+ // W87N=YCURR;
+ // OFT();
+  ppkon();
+  BLOK();

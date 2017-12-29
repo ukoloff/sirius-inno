@@ -1,0 +1,38 @@
+extern float SizeLx,SizeLy,Det1Dx,Det2Dy,Gabx,Gaby;
+extern float XFrom,YFrom;
+extern float NextPx,NextPy;
+extern float Det1Dxf,Det2Dyf;
+extern float SizeLx1,SizeLy1;
+float Gminx,Gmaxx,Gminy,Gmaxy;
+float i,     // ƒля циклов
+ Addr,
+ MinX,MinY,MaxX,MaxY,
+ Count,         // —четчики деталей
+ X,Y;
+
+ print("                             ");
+ print("”кажите основной контур ");
+ W(-2);
+ MinX=Heap[16];
+ MinY=Heap[15];
+ print("                                           ");
+ print("”кажите второй контур для перехода курсором");
+ W(-2);
+ MaxX=Heap[16];
+ MaxY=Heap[15];
+ Det1Dx=MaxX-MinX;
+ Det2Dy=MaxY-MinY;
+ print("                                           ");
+ print("—мещение по ’=("+str(Det1Dx,10)+")>");
+ read(Det1Dx);
+ print("                                           ");
+ print("—мещение по Y=("+str(Det2Dy,10)+")>");
+ read(Det2Dy);
+ NEWFUN(339,0,0);
+ XFrom=HEAP[124];
+ YFrom=HEAP[125];
+ NextPx=XFrom+Det1Dx;
+ NextPy=YFrom+Det2Dy;
+ LINEM(NextPx,NextPy,1);
+ UNDON();
+ return;

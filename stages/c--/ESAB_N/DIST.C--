@@ -1,0 +1,7 @@
+param  float X1,Y1,X2,Y2,&REZ;
+float temp;
+  temp:=(X1-X2)*(X1-X2)+(Y1-Y2)*(Y1-Y2);
+  print("-temp",temp);
+  REZ :=temp**0.5;
+
+

@@ -1,0 +1,42 @@
+Procedure GabarPolyLines;
+/***************************************************/
+/*ќписание: ѕостроение вокруг полилиний габа-
+           ритного прямоугольника с координатами
+           Xmin,Ymin,XMax,YMax                     */
+/***************************************************/
+
+  procedure GabarPolyLine(PolyLine:PPCollection); far;
+/*ќпределение габаритов одной полилинии из коллекции полилиний*/
+  var
+    VerTex:PVerTex;
+    X1,Y1,X2,Y2,Tg:real;
+
+  procedure GabarSpan(Ver:PverTex); far;
+  param float X,Y,T;
+  begin
+       X2=X;
+       Y2=Y;
+       XYMax(X1,Y1,X2,Y2,Tg);
+       X1=X2;
+       Y1=Y2;
+       Tg=T;
+    end;
+
+  begin
+
+    VerTex=PVerTex(PolyLine^.At(0));
+    Min(XMin,VerTex^.X,Xmin);
+    Min(YMin,VerTex^.Y,YMin);
+    Max(XMax,VerTex^.X,XMax);
+    Max(YMax,VerTex^.Y,YMax);
+    Tg=VerTex^.T;
+    X1=VerTex^.X;
+    Y1:=VerTex^.Y;
+    PolyLine^.ForEach(@GabarSpan);
+  end;
+
+begin
+  Xmax:=-100000.0;  Xmin:=100000.0;
+  Ymax:=-100000.0;  Ymin:=100000.0;
+  Contex^.ForEach(@GabarPolyLine);
+end;  {GabarPolyLines}

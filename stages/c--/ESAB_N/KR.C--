@@ -1,0 +1,4 @@
+extern char  Korr;
+UPCUT();
+if(Korr=='Y') RKOMP();
+TON(2);

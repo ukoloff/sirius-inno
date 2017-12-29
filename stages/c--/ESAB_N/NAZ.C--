@@ -1,0 +1,9 @@
+ extern float W86,W87;
+ char OK;
+ W6=0;
+ print("-”кажите точку вpезки(левая компенсация) Esc- выход ");
+ OK='Y';
+ W(-1);
+ W86=HEAP[22];
+ W87=HEAP[21];
+ LINEM(W86,W87,1);

@@ -1,0 +1,171 @@
+char OK,First,Ok2,OK1;
+extern float spanvx;   //    выход из способа резки ”√ќЋ
+extern char ZadXod;  // Y -  ¬озврат в точку врезки, N - нет
+extern float W70,W111;
+extern float W86,W87,Lange;
+extern float DCutt;
+extern long pin;
+extern char Fik,UGOL1;
+long  kon,mnogo;
+ /*  W70 - тангенсальная составляющая на спане */
+extern float W7,W2,W4;
+float  PosSpan,KolSpan;
+/*  W70 - тангенсальная составляющая на спане */
+extern float W12,W101;
+extern float x1,y1,x2,y2,tp,x3,y3,xt,yt;
+extern long ppnach,odinkon; // начало подпрограммы и приз. 1 контура
+extern long W100;
+extern float xpert,ypert; // первая точка контура
+extern long npodpr;
+float W77;
+long  ppod;
+long kadr,Topik;
+
+kadr=0;
+ppnach=0;
+ppod=0;
+Topik=0;
+npodpr=0;
+mnogo=0;
+OK1='Y';
+while(kadr!=1)
+ {
+  if(Fik!='Y')
+   {
+   print("-”кажите точку вpезки(правая компенсация) P-начало подпрог, ESC- выход ");
+   W(-1);
+   print("                                                                      ");
+   if (S_GETCH==27)
+    {
+     ppkon();
+     print("                                                                      ");
+     break; /* нажата клавиша ESC */
+    }
+   ppod=0;
+   if (S_GETCH==80) ppod=1;    // нажата клавиша P-подпрограмма
+   xt=HEAP[22];     // точка курсора -врезка
+   yt=HEAP[21];     // точка курсора -врезка
+  }
+ if(Fik!='Y')
+   print("-”кажите угол контуpа(CR-резка,(P)-пп.,ESC-выход");
+ else
+   print("-”кажите угол контуpа(CR-резка,(P)-пп.,ESC-выход");
+ W(-2);
+ x1=HEAP[13];     // первая точка спана
+ y1=HEAP[12];     // первая точка спана
+ x2=HEAP[11];    // вторая точка спана
+ y2=HEAP[10];    // вторая точка спана
+ tp=HEAP[9];      // фактор кривизны
+ x3=HEAP[22];     // ближайщая точка к спану
+ y3=HEAP[21];     // ближайщая точка к спану
+ W7=HEAP[3];
+ W4=HEAP[4];
+ if (S_GETCH==27)
+  {
+   ppkon();
+   print("                                                                      ");
+   break; /* нажата клавиша ESC */
+  }
+ NEWFUN(328,0,W7);      // ѕроверка вырезан ли контур
+ if (HEAP[117]==1)  // контур уже вырезан
+   {
+      print("  онтур вырезан- Ќажмите любую клавишу");
+      W(-1);
+      print("                              ");
+      continue;
+    }
+ if (mnogo>0) BLOK();     
+ if(Fik!='Y')
+ {
+  LINEM(xt,yt,W111);
+ }
+ mnogo=1;
+ W2=W4;
+ xpert=HEAP[16];  // первая точка контура ’
+ ypert=HEAP[15];  // первая точка контура ”
+ KolSpan=HEAP[5];
+ PosSpan=HEAP[8];
+ W12=HEAP[8];     // ѕозиция на спане 0..1
+ NewFun(302,0,W7);
+ NewFun(302,0,HEAP[67]); //  найти количство точек по оригинальному контуру
+ KolSpan=HEAP[75];   //  количество точек на контуре
+ NewFun(302,0,W7);
+ print("                                                                      ");
+ Topik=0;
+ if(Fik!='Y')  N(-1);
+ ppnach=0;
+ if (((S_GETCH==80) && (Fik=='Y')) || (ppod==1)) ppnach=1;
+ W77=W7;
+ DYRKAL();
+ W7=W77;
+ if(Fik!='Y')  N(1);
+ if ((S_GETCH==80) && (Fik=='Y')&&(ppnach==1) && odinkon<2) /* нажата клавиша P */
+  {
+      Topik=89;
+      print("Y- начало N -конец подпрограммы");
+      print("                                                  ");
+      print(" Ќачало подпрограммы([Y]/N)>");
+      W(-1);
+      print("                              ");
+      if (S_GETCH>31) Topik=S_GETCH;
+      if (S_GETCH=='N')
+       {
+        pin=0;
+        W101=W100;
+        TMARK(2,W101);
+        break;
+       }
+  }
+  if (PosSpan>0.5)
+    {
+      W12=1.0;
+      W4=W2+1;
+      if (W4>=KolSpan) W4=1;
+    }
+   else
+    {
+      W12=0.0;
+      W4=W2;
+      W2=W2-1;
+      if (W2<1) W2=KolSpan-1;
+    }
+ if (Fik=='Y')
+  {
+    RAPID();
+    UGOL1:='N';
+    print("ѕод углом 90 градусов?(Y/[N])>");
+    read(UGOL1);
+    if (UGOL1=='Y')
+      MOVE (W7,Lange,W2,1,0);
+    else
+      MOVE (W7,0.0,W2,1,Lange);
+    W86=XCURR;
+    W87=YCURR;
+  }
+
+ W86=XCURR;
+ W87=YCURR;
+ OK1='Y';
+ if (((Topik==89) || (ppod==1)) && (pin==0)) /* нажата буква P */
+ {
+   ppod=0;
+   OK1='P';
+   nprog();   // начало подпрограммы
+ }
+ ppnach=0;
+ KR();
+ LL();
+ PROF(W7,0.0,W2,1,0,W4,0,0);
+ MOVE(W7,0,W4,0,-spanvx);
+ OFT();
+ if (ZadXod=='Y') MOVE (W7,0,W4,1,-spanvx-10);
+ if ((S_GETCH=='P')&& (Fik!='Y')) /* если конец подпрограммы */
+  {
+   pin=0;
+   W101=W100;
+   TMARK(2,W101);
+   break;
+  }
+ }
+ BLOK();
+ return;

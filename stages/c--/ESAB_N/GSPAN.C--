@@ -1,0 +1,10 @@
+  procedure GabarSpan(Ver:PverTex); far;
+  param float X,Y,T;
+  begin
+       X2=X;
+       Y2=Y;
+       XYMax(X1,Y1,X2,Y2,Tg);
+       X1=X2;
+       Y1=Y2;
+       Tg=T;
+    end;

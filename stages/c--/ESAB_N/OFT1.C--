@@ -1,0 +1,3 @@
+extern char Korr;
+M(48);
+if (Korr=='Y') KEND();

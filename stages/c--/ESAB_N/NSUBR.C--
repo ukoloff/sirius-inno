@@ -1,0 +1,27 @@
+extern long pin;
+extern long npodpr;
+extern float W10,W11;
+extern float W110, W120,W101;
+extern long W100;
+extern float W7,W87,W86;
+extern float pinok;
+extern float Ygol1[100],Ygol2[100];
+extern float udl;
+
+NEWFUN(337,0,0);    // последний свободный номер для подпрограммы 
+W100=floor(HEAP[118]);
+if(W100>=99)
+{
+ W100=0;
+ W100=W100+1;
+}
+npodpr++;
+W101=W100;
+TMARK(1,W101);
+K();
+pinok=HEAP[7];
+pin=1;
+//          » щ е м   у г о л   п о в о p о т а
+NewFun(302,0,W7);
+Ygol1[W100]:= Heap[69];
+Ygol2[W100]:= Heap[70];

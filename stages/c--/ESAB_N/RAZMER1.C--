@@ -1,0 +1,52 @@
+extern float SizeLx,SizeLy,Det1Dx,Det2Dy,Gabx,Gaby,NulToch;
+extern float SizeLx1,SizeLy1;
+float Gminx,Gmaxx,Gminy,Gmaxy;
+float i,     // ƒля циклов
+      Addr,
+      MinX,MinY,MaxX,MaxY,
+      Count,         // —четчики деталей
+      X,Y;
+      print("                              ");
+      print("”кажите контур листа курсором");
+      W(-2);
+      NEWFUN(302,0,Heap[3]);
+      Addr=Heap[25];
+      NEWFUN(305,0,Heap[25]);
+      i=0;
+      MinX=999999.0;
+      MinY=999999.0;
+      MaxX=-999999.0;
+      MaxY=-999999.0;
+      while (++i <= Heap[47])
+      {
+        NEWFUN(306,i,Addr);
+        X=Heap[35]; Y=Heap[36];
+
+        if (MinX > X)
+        MinX=X;
+
+        if (MinY > Y)
+        MinY=Y;
+
+        if (MaxX < X)
+        MaxX=X;
+
+        if (MaxY < Y)
+        MaxY=Y;
+      }
+      SizeLx=MaxX-MinX;
+      NulToch=(MaxX+MinX)/2.0;
+      SizeLy=MaxY-MinY;
+      SizeLx1=MaxX-MinX;
+      SizeLy1=MaxY-MinY;
+      print("                              ");
+      print("Ўирина листа="+str(SizeLy,10)+">");
+      read(SizeLy);
+      print("                              ");
+      print("ƒлина листа="+str(SizeLx,10)+">");
+      read(SizeLx);
+      SizeLy=SizeLy-125.0;
+      SizeLy1=SizeLy1-125.0;
+      if (SizeLx>2300) SizeLx1:=2300;
+      if (SizeLy>1580) SizeLy1:=1580;
+

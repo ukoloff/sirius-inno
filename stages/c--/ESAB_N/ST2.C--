@@ -1,0 +1,99 @@
+extern float Width,Lange,DCutt;
+extern float W130, W111, VV;
+extern long   W100;
+  Width=3;Lange=10;
+  DCutt =0;VV =6000;
+  W111  =1; W130 =1;
+  print("Толщина листа мм [3]> ");
+  read(Width);
+  if(Width<=4)
+  {
+    VV   = 6000;
+    DCutt= 0.0;
+    Lange= 5;
+  }
+  if(Width>4&&Width<=5)
+  {
+    VV   = 1800;
+    DCutt= 0.0;
+    Lange= 10;
+  }
+  if(Width>5&&Width<=10)
+  {
+    VV   = 1800;
+    DCutt= 0.0;
+    Lange= 20;
+  }
+  if(Width>10&&Width<=12)
+  {
+    VV   = 1700;
+    DCutt= 0.0;
+    Lange= 10;
+  }
+  if(Width>12&&Width<=16)
+  {
+    VV   = 1600;
+    DCutt= 0.0;
+    Lange= 30;
+  }
+  if(Width>16&&Width<=20)
+  {
+    VV   = 1550;
+    DCutt= 0.0;
+    Lange= 40;
+  }
+  if(Width>20&&Width<=25)
+  {
+    VV   = 1500;
+    DCutt= 0.0;
+    Lange= 40;
+  }
+  if(Width>25&&Width<=30)
+  {
+    VV   = 1450;
+    DCutt= 0.0;
+    Lange= 50;
+  }
+  if(Width>30&&Width<=32)
+  {
+    VV   = 1400;
+    DCutt= 0.0;
+    Lange= 60;
+  }
+  if(Width>32&&Width<=36)
+  {
+    VV   = 1350;
+    DCutt= 0.0;
+    Lange= 65;
+  }
+  if(Width>36&&Width<=40)
+  {
+    VV   = 1300;
+    DCutt= 0.0;
+    Lange= 70;
+  }
+  if(Width>40&&Width<=45)
+  {
+    VV   = 1200;
+    DCutt= 0.0;
+    Lange= 80;
+  }
+  if(Width>45&&Width<=50)
+  {
+    VV   = 1000;
+    DCutt= 0.0;
+    Lange= 90;
+  }
+  if(Width>50&&Width<=55)
+  {
+    VV   = 800;
+    DCutt= 0.0;
+    Lange= 100;
+  }
+  if(Width>55&&Width<=100)
+  {
+    VV   = 700;
+    DCutt= 0.0;
+    Lange= 100;
+  }
+

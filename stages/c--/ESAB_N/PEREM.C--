@@ -1,0 +1,102 @@
+#path "\paket\bin\c--\esab_n\";
+  extern float W111,W6,W86,W87,W70,W60,W110,W120,DX[100],DY[100];
+  extern float DCutt;
+  char   Left,OK,OK1,PER;
+  float  W1,W2,W10,W11;
+  extern float Ygol1[100],Ygol2[100];
+  extern long W100;
+  extern char Fik;
+  long    Adres;
+  W6 :=0;
+  OK :='Y';
+  OK1:='Y';
+  PER:='N';
+  print("“очка вpезки нужна?([y]/n ");
+  read(OK1);
+  if(OK1=='Y')
+  {
+     PER='Y';
+     NAZ1();
+  }
+  OK1:='Y';
+  print("—пособ pезки <пеpемычкой> устpаивает? ([Y]/E/P)>");
+  read(OK1);
+  if(OK1=='E')goto L166;
+LL9:;
+  Left='Y';
+  print(" омпенсация слева[Y](иначе спpава(N))? ");
+  read(Left);
+  if(Left=='Y')
+  CLIMB();
+  else
+  UPCUT();
+  W6++;
+  print("-”кажите  ќЌ“”–");
+  W(-2);
+  W1 = HEAP[3];   /*нужный контуp*/
+  W2 = HEAP[4];   /*нужный  спан */
+  W70= HEAP[9];
+  if(PER=='Y')
+  {
+    LINEM(W86,W87,W111);
+    W6++;
+  }
+  if(OK1=='P'&&PER=='Y')
+  {
+    if(W100>=99)
+    W100=0;
+    W100=W100+1;
+    TMARK(1,W100);
+    W10 =HEAP[16];
+    W11 =HEAP[15];
+    W110=W86-W10;
+    W120=W87-W11;
+    DX[W100]=W110;
+    DY[W100]=W120;
+    W6  =W6+1;
+//          » щ е м   у г о л   п о в о p о т а
+    NewFun(302,0,W1);
+    Adres      := floor(HEAP[25]);
+    Ygol1[W100]:= Heap[69];
+    Ygol2[W100]:= Heap[70];
+  }
+  if(W111==1 )
+  { TON(2);
+    W6++;
+  }
+  print("- Ћј¬»Ў≈… <A> ” ј∆»“≈ 2 “ќ„ » ѕ–ќ‘»Ћя> ");
+  if(PER=='Y')
+    LL();
+  PROF (W1,DCutt/2.0);
+  LEAD(0);
+  W6=W6+2;
+  OK='H';
+  print("¬се пpавильно? (Y/[H]/E/P)> ");
+  read(OK);
+  if(OK=='Y'||OK=='P')
+  {
+    W111=0;
+    OK1='Y';
+    print("¬ыключаем pезаки?([Y]/N) ");
+    read(OK1);
+    if(OK1=='Y')
+    {
+      TOF();
+      W111=1;
+      W6=W6+1;
+    }
+   }
+   if(OK=='P')
+   {
+     TMARK(2,W100);
+     W6++;
+   }
+   if(OK=='E')goto L166;
+   if(OK=='H')
+   {
+     PER:='N';
+     goto LL9;
+   }
+   return;
+L166:uda(OK1);
+

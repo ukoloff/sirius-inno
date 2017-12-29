@@ -1,0 +1,209 @@
+extern float W7,W4,W12;
+extern char Fik;
+extern float x1,y1,x2,y2,tp,x3,y3;
+float KolSpan,PosSpan;
+float W71,kolsp,kolsp1,kolsp2;
+extern float udl;
+float Xt1,Yt1,Tt1;
+float Xt2,Yt2,Tt2;
+float Xt3,Yt3,Tt3;
+float cons,xc,yc,xd,yd,rc;
+float A1,B1,C1,A2,B2,C2,P1,P2,d1,d2,d3;
+float AP,BP,CP;
+float A3,B3,C3;
+float AM1,Xto,Yto;
+extern long Sposob;
+float NextSpan;
+long perv1;
+// — правой стороны от прямой знак +
+// — левой стороны от прямой знак -
+// x1=HEAP[13];       // x первая точка спана
+// y1=HEAP[12];       // y первая точка спана
+// x2=HEAP[11];       // x вторая точка спана
+// y2=HEAP[10];       // y вторая точка спана
+// tp=HEAP[9];        // t фактор кривизны
+// x3=HEAP[22];       // x ближайщая точка к спану
+// y3=HEAP[21];       // y ближайщая точка к спану
+// W7=HEAP[3];        // номер контура
+// W4=HEAP[4];        // номер спана
+KolSpan=HEAP[5];   // количество спанов в контуре
+PosSpan=HEAP[8];   // позиция на спане
+NEWFUN(302,0,W7);  // искать адрес текущего контура
+W71=HEAP[25];
+NEWFUN(305,0,W71);         // получить число спанов в контуре
+KolSpan=HEAP[47];
+if (KolSpan<2) return;
+kolsp=W4;
+NEWFUN(306,kolsp,W71);         /* получить спан в контуре */
+kolsp1=kolsp+1;
+if (kolsp1>=KolSpan) kolsp1=1;
+Xt1=HEAP[35];
+Yt1=HEAP[36];
+Tt1=HEAP[37];
+perv1=0;
+//print("KolSpan="+str(KolSpan,10)+"W4="+str(W4,10));
+//W(-1);
+while(kolsp1!=w4)
+ {
+   kolsp1=kolsp+1;
+   if (kolsp1>=KolSpan) kolsp1=1;
+   kolsp2=kolsp+2;
+   if (kolsp2>=KolSpan) kolsp2=1;
+   if ((kolsp+1)>=KolSpan) kolsp2=2;
+   NEWFUN(306,kolsp1,W71);         /* получить спан в контуре */
+   Xt2=HEAP[35];
+   Yt2=HEAP[36];
+   Tt2=HEAP[37];
+   NEWFUN(306,kolsp2,W71);         /* получить спан в контуре */
+   Xt3=HEAP[35];
+   Yt3=HEAP[36];
+   Tt3=HEAP[37];
+//   print("Kolsp="+str(Kolsp,10)+"kolsp1="+str(kolsp1,10)+"kolsp2="+str(kolsp2,10));
+//   W(-1);
+   // ************************************************
+   // ищем острый угол
+   if (Tt2!=0.0)
+    {
+      cons = ( Tt2-1./ Tt2)*0.25;
+      xc = ( Xt2+ Xt3)*0.5+( Yt3- Yt2)*cons;
+      yc = ( Yt2+ Yt3)*0.5-( Xt3- Xt2)*cons;
+      xd =  Xt2-xc;
+      yd =  Yt2-yc;
+      rc = (xd*xd+yd*yd)**0.5;
+      AP=Yt2-yc;
+      BP=xc-Xt2;
+      CP=yc*Xt2-xc*Yt2;
+      if (Tt2<0.0)
+       {
+         A1=BP;
+         B1=-AP;
+       }
+      else
+       {
+         A1=-BP;
+         B1=AP;
+       }
+      C1=-Xt2*A1-Yt2*B1;
+    }
+   else
+    {
+      A1=Yt3-Yt2;
+      B1=Xt2-Xt3;
+      C1=Yt2*Xt3-Xt2*Yt3;
+    }
+   if (Tt1!=0.0)
+    {
+      cons = ( Tt1-1./ Tt1)*0.25;
+      xc = ( Xt1+ Xt2)*0.5+( Yt2- Yt1)*cons;
+      yc = ( Yt1+ Yt2)*0.5-( Xt2- Xt1)*cons;
+      xd =  Xt1-xc;
+      yd =  Yt1-yc;
+      rc = (xd*xd+yd*yd)**0.5;
+      AP=Yt2-yc;
+      BP=xc-Xt2;
+      CP=yc*Xt2-xc*Yt2;
+      if (Tt1<0.0)
+       {
+        A3=BP;
+        B3=AP;
+       }
+      else
+       {
+        A3=-BP;
+        B3=-AP;
+       }
+      AM1=30.0/rc;
+      Xto=Xt2-B3*AM1;
+      Yto=Yt2-A3*AM1;
+//      print("Xto="+str(Xto,10,2)+"Yto="+str(Yto,10,2));
+    }
+   else
+    {
+      A2=B1;
+      B2=-A1;
+      C2=-Xt2*B1+Yt2*A1;
+    }
+   if (Tt1!=0.0)
+    {
+      A2=B1;
+      B2=-A1;
+      C2=-Xt2*A2-Yt2*B2;
+      P1=A1*Xto+B1*Yto+C1;
+      P2=A2*Xto+B2*Yto+C2;
+    }
+   else
+    {
+      P1=A1*Xt1+B1*Yt1+C1;
+      P2=A2*Xt1+B2*Yt1+C2;
+    }
+//   print("p1="+str(P1,10)+"p2="+str(P2,10,4));
+   d1=(A1*A1+B1*B1)**0.5;
+   d2=(A2*A2+B2*B2)**0.5;
+   d3=p2/d2;
+//   W(-1);
+   if ((P1>0) && (P2<=0))
+     {
+      if (perv1==0)
+       {
+         if ((Sposob==0) ||(Sposob==3)) LEAD(0);
+         else LEAD(1);
+         PROF(W7,0,W4,PosSpan,0,kolsp,1,0);
+         MOVE(W7,0,kolsp,1,4);
+         udl+=3;
+         perv1=1;
+         if (kolsp1>=KolSpan) NextSpan=1;
+         else NextSpan=kolsp1;
+       }
+      else
+       {
+         if (kolsp==W4)
+          {
+            if (NextSpan>=KolSpan) NextSpan=1;
+//            LEAD(1);
+            MOVE(W7,0,NextSpan,0,-4);
+            LEAD(Sposob);
+            PROF(W7,0,NextSpan,0,0,W4,PosSpan,0);
+            udl+=3;
+            break;
+          }
+         else
+          {
+            if (NextSpan>=KolSpan) NextSpan=1;
+            LEAD(0);
+            MOVE(W7,0,NextSpan,0,-4);
+            PROF(W7,0,NextSpan,0,0,kolsp,1,0);
+            MOVE(W7,0,kolsp,1,4);
+            udl+=4;
+            if (kolsp1>=KolSpan) NextSpan=1;
+            else NextSpan=kolsp1;
+          }
+       }
+     }
+   // ************************************************
+   kolsp++;
+   if (kolsp>=KolSpan) kolsp=1;
+   Xt1=Xt2;
+   Yt1=Yt2;
+   Tt1=Tt2;
+}
+if (perv1==0)
+ {
+   if(Fik=='Y')
+    {
+      PROF(W7,0,W4,W12,0,W4,W12,-0.01);
+    }
+   else
+    {
+      PROF(W7,0,x3,y3,x3,y3);
+    }
+    udl++;
+ }
+ else
+ {
+   MOVE(W7,0,NextSpan,0,-4);
+   if (Sposob<2) LEAD(0);
+   else LEAD(3);
+   PROF(W7,0,NextSpan,0,0,W4,PosSpan,0);
+   udl+=3;
+
+ }

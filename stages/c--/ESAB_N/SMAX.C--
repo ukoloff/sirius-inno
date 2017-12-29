@@ -1,0 +1,8 @@
+param float R1,&R2;
+float Ma;
+char  ch;
+  if (R1>R2)
+    Ma:=R1;
+  else
+    Ma:=R2;
+  R2:=Ma;

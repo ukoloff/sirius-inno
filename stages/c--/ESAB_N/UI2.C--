@@ -1,0 +1,10 @@
+extern float W26,DCutt,Lange,W27,W86,W87,W10,W11,W60;
+extern float Angle;
+float an,W17;
+char ch;
+an=3.1415926/180*Angle;
+KON();
+SIGN();
+W17=Lange+DCutt*0.5;
+W86=W10+W26*COS(an)*W17;
+W87=W11+W27*SIN(an)*W17;

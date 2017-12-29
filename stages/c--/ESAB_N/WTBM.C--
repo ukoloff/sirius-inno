@@ -1,0 +1,20 @@
+/*
+    ¬озвращает положение точки по отношению к прямой
+    = 0 - знак плюс, точка справа от прямой
+    = 1 - знак минус, точка слева от прямой
+
+    Xstart,YStart,Xend,Yend - координаты начала и конца линии.
+    Xt,Yt - координаты точки
+*/
+  param float Xstart,Ystart,Xend,Yend,Xt,Yt;
+  param long &Wm;
+  float a1,b1,c1,p1;
+  a1=Yend-Ystart;
+  b1=Xstart-Xend;
+  c1=Ystart*Xend-Xstart*Yend;
+  p1=a1*xt+b1*yt+c1;
+  if(p1>0)
+   Wm=1;
+  else
+   Wm=0;
+/*************************************************************************/

@@ -1,0 +1,64 @@
+extern float W110,W120,W111,W86,W87;
+extern float W10,W11,W101,W7;
+extern long W100;
+extern float Ygol1[100],Ygol2[100];
+char OK1;
+long nom,kk1;
+char OK,ch;
+kk1=0;
+nom:=W100;
+while(1)
+ {
+  kk1++;
+  print("- Укажите выpезаемый контуp- (ESC -выход) ");
+  W(-2);
+  print("                                                      ");
+  if (S_GETCH==27)
+   {
+     break; /* нажата клавиша ESC */
+   }
+  W7=HEAP[3];
+  if (kk1==1)
+   {
+    print("Введите номеp подпpогpаммы("+str(W100)+")");
+    read(nom);
+    if (nom>W100)
+    {
+     print("Номер подпрограммы неверный!!! Нажмите Any Key");
+     read(ch);
+     return;
+    }
+   }
+  if(nom<=W100)
+  {
+   W101:=nom;
+   W10=HEAP[16];
+   W11=HEAP[15];
+   NEWFUN(335,W101,0);   // смещение точки врезки от первой точки контура
+   W110=HEAP[119];
+   W120=HEAP[120];
+   W86=W10+W110;
+   W87=W11+W120;
+   NewFun(302,0,W7);
+   ch:='N';
+   if (abs(Ygol1[nom]-Heap[69])<0.001 && abs(Ygol2[nom]-Heap[70])<0.001)
+   {
+      LINEM(W86,W87,W111);
+      TMARK(3,W101);
+      OK1='Y';
+   }
+   else
+   {  
+      ch:='Y';
+      print("(Ошибка)РазнаЯ орентациЯ!!! .Пpодолжить?<[y]/n>");
+      read(ch);
+      if(ch=='Y')
+      {
+         LINEM(W86,W87,W111);
+         TMARK(3,W101);
+         OK1='Y';
+      }
+   }
+ }
+ }
+BLOK();

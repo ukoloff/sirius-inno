@@ -1,0 +1,31 @@
+extern float Width,Lange,DCutt;
+extern float VV,Tolsin;
+extern char Astrk0[120];
+char stroka[120];
+char putin[100];
+long Filt;
+// *****************
+Width=5;Lange=10;
+DCutt =2;VV =600;
+print("Толщина листа мм [5]> ");
+read(Width);
+// *********************
+putin=PATHNAM+"\\TBLS\\ESAB_N.txt";
+Filt:=fopen(putin,"rt");  //врезка
+fscan(Filt,stroka);
+Astrk0=stroka;
+while(! feof(Filt) )
+ {
+     fscan(Filt,stroka);
+     Tolsin:=Val(substr(stroka,0,6));  /* Толщина */
+     DCutt:= Val(substr(stroka,8,7)); /* Ширина реза */
+     VV:=Val(substr(stroka,14,8));     /* Скорость резки */
+     Lange:=  Val(substr(stroka,23,7));/* ДистанциЯ врезки */
+     if (Tolsin>=Width) break;
+// print("Tol="+str(Tolsin)+"Cut="+str(DCutt)+"VV="+str(VV)+"Lange="+str(Lange));
+//    W(-1);
+ }
+//    print("Tol="+str(Tolsin)+"Cut="+str(DCutt)+"VV="+str(VV)+"Lange="+str(Lange));
+//    W(-1);
+ Astrk0=stroka;
+ fclose(Filt);

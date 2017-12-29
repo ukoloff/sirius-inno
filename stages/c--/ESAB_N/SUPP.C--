@@ -1,0 +1,68 @@
+ char OLD[5],K40[6],K41[6],K42[6],K43[6],K44[80],OK;
+ extern float  Lsub4;   //  ƒистанция от четвертого до конца
+ extern float  Lsub3;   //  ƒистанция от третьего до четвертого
+ extern float  Lsub2;   //  ƒистанция от второго до третьего
+ extern float  Lsub1;   //  ƒистанция от первого до второго
+ extern float  Dmasin;   //  ƒистанция от нулевой точки до конца по Y
+ extern float  Sobsh;   //  ƒистанция от первого суппорта до конца по Y
+ extern float  Rasnoct;   //  ƒистанция от текущей позиции до разводки резака
+                         //  до первого резака после разводки
+ float Y1;
+  print("ƒистанция от нулевой точки до конца("+str(Dmasin)+")>");
+  read(Dmasin);
+  Lsub4=200.0;
+  Lsub3=200.0;
+  Lsub2=200.0;
+  Lsub1=200.0;
+LBO1:;
+  STOP();
+  OLD="0000";
+  K44="G30R1";
+  print(" оличество pезаков(XXXX)> ");
+  read(OLD);
+  PPK(OLD);
+  if(strcomp(OLD,"0000")==0)
+  goto L20;
+  if(strcomp(OLD,"1000")==0)
+  goto L20;
+  print("¬ведите дистанцию до пеpвого суппоpта XXXX>  ");
+  read(K40);
+  print("¬ведите дистанцию до втоpого суппоpта XXXX>  ");
+  read(K41);
+  Lsub2=val(K41)/10.0;
+  Lsub1=val(K40)/10.0;
+  K44=strcat(K44,K40);
+  K44=strcat(K44,"R2");
+  K44=strcat(K44,K41);
+  if(strcomp(OLD,"1100")==0)
+    goto KONEC;
+  print("¬ведите дистанцию до тpетьего суппоpта XXXX> ");
+  read(K42);
+  Lsub3=val(K42)/10.0;
+  K44=strcat(K44,"R3");
+  K44=strcat(K44,K42);
+  if(strcomp(OLD,"1110")==0)
+   goto KONEC;
+  print("¬ведите дистанцию до четвеpтого суппоpта XXXX> ");
+  read(K43);
+  Lsub4=val(K43)/10.0;
+  K44=strcat(K44,"R4");
+  K44=strcat(K44,K43);
+  KONEC:;
+  INSERT(K44);
+  OK='Y';
+  print("¬се пpавильно? ([Y]/N)>");
+  read(OK);
+  if(OK=='N')
+  {
+   N(-3);
+   D(3);
+   goto LBO1;
+  }
+ Sobsh=Lsub4+Lsub3+Lsub2+Lsub1;   //  ƒистанция от первого суппорта до конца по Y
+ Y1=Dmasin-Sobsh;
+ Rasnoct=YCURR-Y1;
+ PPTRAN(0.0,Rasnoct);
+ BLOK();
+return;
+L20:;

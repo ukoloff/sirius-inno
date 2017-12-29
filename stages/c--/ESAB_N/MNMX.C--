@@ -1,0 +1,144 @@
+/****òû÷øñûõýøõ óðñððøòð ñßðýð****************************/
+extern float x0,y0,x1,y1,t0;
+extern float xmin,yxmin,xmax,yxmax,xymin,ymin,xymax,ymax;
+float tol,cons,xc,yc,xd,yd,rc;
+long idir;
+float x3,y3,a1,b1,c1,p1;
+cons=0.0;
+xc=0.0;
+yc=0.0;
+xd=0.0;
+yd=0.0;
+rc=0.0;
+tol = 0.0001;
+cons=0.0;
+xc=0.0;
+yc=0.0;
+xd=0.0;
+yd=0.0;
+rc=0.0;
+idir=0;
+x3=0.0;
+y3=0.0;
+a1=0.0;
+b1=0.0;
+c1=0.0;
+p1=0.0;
+x3=0.0;
+y3=0.0;
+a1=0.0;
+b1=0.0;
+c1=0.0;
+p1=0.0;
+//  üþôóûü ýðõþôøò xmax,xmin ø ymax,ymin ôðýýþóþ ñßðýð
+xmin=x0;
+yxmin=y0;
+xmax=x0;
+yxmax=y0;
+xymin=x0;
+ymin=y0;
+xymax=x0;
+ymax=y0;
+if (abs(t0)>tol)
+ {
+   cons=(t0-1.0/t0)*0.25;
+   xc=(x0+x1)*0.5+(y1-y0)*cons;
+   yc=(y0+y1)*0.5-(x1-x0)*cons;
+   xd=x0-xc;
+   yd=y0-yc;
+   rc=(xd*xd+yd*yd)**0.5;
+   idir = 1;
+   /*   ------------------------------ */
+   if(t0<0)  idir=-1;
+   if(t0!=0)
+    {
+      x3=xc+rc;
+      y3=yc;
+      a1=y1-y0;
+      b1=x0-x1;
+      c1=y0*x1-x0*y1;
+      p1=a1*x3+b1*y3+c1;
+      if(((p1>=0) && (idir>0))||((p1<=0) && (idir<0)))
+       {
+         if(xmin>x3)
+          {
+            xmin = x3;
+            yxmin = yc;
+          }
+         if(  xmax<x3)
+          {
+            xmax = x3;
+            yxmax = yc;
+          }
+       }
+      x3=xc-rc;
+      y3=yc;
+      p1=a1*x3+b1*y3+c1;
+      if(((p1>=0) && (idir>0))||((p1<=0) && (idir<0)))
+       {
+         if(xmin>x3)
+          {
+            xmin=x3;
+            yxmin=yc;
+          }
+         if(xmax<x3)
+          {
+            xmax=x3;
+            yxmax=yc;
+          }
+       }
+      x3 = xc;
+      y3 = yc+rc;
+      p1 = a1*x3+b1*y3+c1;
+      if(((p1>=0) && (idir>0))||((p1<=0) && (idir<0)))
+       {
+         if(ymin>y3)
+          {
+            ymin = y3;
+            xymin = xc;
+          }
+         if(ymax<y3)
+          {
+            ymax = y3;
+            xymax = xc;
+          }
+       }
+      x3=xc;
+      y3=yc-rc;
+      p1=a1*x3+b1*y3+c1;
+      if(((p1>=0) && (idir>0))||((p1<=0) && (idir<0)))
+       {
+         if(ymin>y3)
+          {
+            ymin = y3;
+            xymin = xc;
+          }
+         if(ymax<y3)
+          {
+            ymax = y3;
+            xymax = xc;
+          }
+       }
+      /* ----------------- */
+    }
+ }
+  if(xmin>x1)
+    {
+      xmin=x1;
+      yxmin=y1;
+    }
+   if(xmax< x1)
+    {
+      xmax=x1;
+      yxmax=y1;
+    }
+   if(ymin>y1)
+    {
+      ymin=y1;
+      xymin=x1;
+    }
+   if(ymax<y1)
+    {
+      ymax=y1;
+      xymax=x1;
+    }

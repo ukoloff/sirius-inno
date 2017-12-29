@@ -1,0 +1,16 @@
+char OK;
+extern float ShirPer;  // ширина перемычки
+ShirPer=20.0;
+print("Ширина перемычки("+str(ShirPer,10,2)+")>"); // ввод ширины перемычки 
+read(ShirPer);
+OK='Y';
+print("Начать с левой стороны? ([Y]/N/ESC)>");
+W(-1);
+if(S_GETCH>22) OK=S_GETCH;
+if(OK==27)
+{
+ print("                                                            "); 
+ return;
+}     
+if (OK=='Y') krasll();
+else kraslr();

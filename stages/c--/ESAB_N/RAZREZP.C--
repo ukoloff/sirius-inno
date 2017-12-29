@@ -1,0 +1,103 @@
+char OK1,Fiks,Krai;
+extern float Width;
+extern float kontp;
+extern float yniz,yverx;
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+extern float kasatel;  //    Выход по касательной из способа КОНТУР
+extern float normalv;  //  Выход по нормали
+extern float pramoid;  //  прЯмой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированнаЯ резка
+extern char  Korr; // Y- есть коррекциЯ,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в Сириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  Обход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float W7,W4,W87,W86; // номер контура, номер спана, точка врезки
+extern float W12,W111,xv,yv;
+extern float x1,y1,x2,y2,tp,x3,y3,xt,yt;
+extern long pin; // признак 1- открытаЯ подпр-ма 0- нет подпрограммы
+extern float Prepirs;   //  ПредварительнаЯ пробивка
+extern long npodpr;
+extern float centrx,centry,vilo;  // центр малого контура
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+float  KolSpan,PosSpan;
+float TVrezx,TVrexy;
+float  xc,x33,yc,y33,Kont;
+float dxy,am1;
+float massiv[10];
+char putin[100];
+char stroka[120];
+float vkasat1;
+long   ppod;  // признак начала подпрограммы
+long kadr,Topik;
+long blokk;  //  число вырезанных блоков 
+long Fint;
+long kolvo; // количество записей
+long masint;
+ 
+ kadr=0;
+ npodpr=0;
+ OK1='Y';
+ ppod=0;
+ blokk=0;
+ Fiks=Fik; 	
+ NEWFUN(348,yverx,yniz);  //  определение листа 
+ putin=PATHNAM+"\\TBLS\\RezVrOtx.rrr"; 
+ // ********************
+ Fint:=fopen(putin,"rt");
+ kolvo=0;
+ while(! feof(Fint) )
+ {
+  fscan(Fint,stroka);
+  if ( feof(Fint) ) continue;
+  kolvo++;
+ }
+ fclose(Fint);
+ // ********************
+ Fint:=fopen(putin,"rt");
+ blokk=0;
+ masint=-1;
+ while(! feof(Fint) )
+ {
+  blokk++;
+  fscan(Fint,stroka);
+  if ( feof(Fint) ) break;
+   Kont:=Val(substr(stroka,0,6));   // Номер контура 
+   x3:= Val(substr(stroka,7,13));   // Х координана 
+   y3:=Val(substr(stroka,18,13));   // У координата
+   if (Kont==kontp)
+   {
+     masint++;
+     massiv[masint]=y3;
+   } 
+   Topik=0;
+   x33=x3;
+   y33=y3;
+   fscan(Fint,stroka);
+   if ( feof(Fint) ) break;
+   Kont:=Val(substr(stroka,0,6));  // Номер контура 
+   x3:= Val(substr(stroka,7,13));  // Х координана 
+   y3:=Val(substr(stroka,18,13));  // У координата 
+   if (Kont==kontp)
+   {
+      masint++;
+      massiv[masint]=y3;
+   } 
+  }
+  fclose(Fint);
+ if (massiv[0]>massiv[1])
+ {
+   yniz=massiv[1];	
+   yverx=massiv[0];
+ }
+ else
+ {
+   yniz=massiv[0];	
+   yverx=massiv[1];
+ }
+ return;

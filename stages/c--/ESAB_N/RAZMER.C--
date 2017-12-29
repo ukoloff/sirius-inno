@@ -1,0 +1,69 @@
+extern float SizeLx,SizeLy,Det1Dx,Det2Dy,Gabx,Gaby;
+float Gminx,Gmaxx,Gminy,Gmaxy;
+float i,     // ДлЯ циклов
+      Addr,
+      MinX,MinY,MaxX,MaxY,
+      Count,         // Счетчики деталей
+      X,Y;
+
+      print("                              ");
+      print("Укажите контур листа курсором");
+      W(-2);
+      NEWFUN(302,0,Heap[3]);
+      Addr=Heap[25];
+      NEWFUN(305,0,Heap[25]);
+      i=0;
+      MinX=999999.0;
+      MinY=999999.0;
+      MaxX=-999999.0;
+      MaxY=-999999.0;
+      while (++i <= Heap[47])
+      {
+        NEWFUN(306,i,Addr);
+        X=Heap[35]; Y=Heap[36];
+
+        if (MinX > X)
+        MinX=X;
+
+        if (MinY > Y)
+        MinY=Y;
+
+        if (MaxX < X)
+        MaxX=X;
+
+        if (MaxY < Y)
+        MaxY=Y;
+      }
+      SizeLx=MaxX-MinX;
+      SizeLy=MaxY-MinY;
+
+      print("                             ");
+      print("Укажите основной контур ");
+      W(-2);
+      MinX=Heap[16];
+      MinY=Heap[15];
+      NEWFUN(302,0,HEAP[3]);      /* искать адрес текущего контура */
+      NEWFUN(303,0,HEAP[25]);    /* искать номер главного (записи типа 8) */
+      NEWFUN(307,0,HEAP[26]);         /* получить адрес записи 8*/
+      NEWFUN(308,HEAP[3],HEAP[27]);    /* получить число контуров в детали */
+      NEWFUN(312,HEAP[43],HEAP[44]);         /* ГАБАРИТЫ ДЕТАЛИ  */
+      Gminx:=HEAP[45];
+	     Gmaxx:=HEAP[46];
+	     Gminy:=HEAP[51];
+      Gmaxy:=HEAP[52];
+      Gabx=Gmaxx-Minx;
+      Gaby=Gmaxy-Miny;
+      print("                               ");
+      print("Укажите контур справа курсором");
+      W(-2);
+      MaxX=Heap[16];
+
+      print("                               ");
+      print("Укажите контур сверху курсором");
+      W(-2);
+      MaxY=Heap[15];
+
+      Det1Dx=MaxX-MinX;
+      Det2Dy=MaxY-MinY;
+
+      Count=0;

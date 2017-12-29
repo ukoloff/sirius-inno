@@ -1,0 +1,128 @@
+extern float W7,W8,W86,W87,W4,W101,W110,W120,DX[100],DY[100];
+extern float DCutt,Lange;
+char   Left,OK,OK1,PER;
+extern float W10,W11,W12;
+float W1,W2;
+extern long pin;
+extern float Perx[100];
+extern float Pery[100];
+extern float Peryv[100];
+extern float Peryn[100];
+extern float kontp;
+extern float yniz,yverx;
+extern long W100;
+extern long npodpr;
+extern float pinok;
+extern char Korr;
+float A1,A2,AB,B1,B2;
+float spanLev,x1Lev,y1Lev,x2Lev,y2Lev;
+float spanPrav,x1Prav,y1Prav,x2Prav,y2Prav;
+float x3,y3,vixod,Tang;
+float W71,W144,spann,posspn;
+float spann2,posspn2;
+float xm,ym,xb,yb,xp1,yp1,xp10,yp10,xp2,yp2;
+extern long Adres,Topik,ppod;
+long pont,torez,verx,vniz,points;
+long i1,i2,i3;
+
+print("”кажите деталь для резки с перемычкой,P-пп/ESC-выход)>");
+W(-2);
+if(OK==27)
+{
+ print("                                                            "); 
+ return;
+}          
+x3=HEAP[22];     // ближайщая точка к спану
+y3=HEAP[21];     // ближайщая точка к спану
+W7=HEAP[3];      // номер контура
+kontp=W7;
+W4=HEAP[4];      // номер спана
+W12=HEAP[8];     // ѕозиция на спане 0..1
+OK1:='Y';
+OK :='Y';
+if (S_GETCH==80)     // нажата клавиша P-подпрограмма
+{
+ ppod=1;
+ Topik=80;
+}
+pont=0;
+points=0;
+while(pont==0)
+{
+  print("”кажите место перемычки( " +str(points+1)+") /ESC-конец выбора )>");
+  W(-2);
+  if (S_GETCH==27) break; 
+  points++;
+  x3=HEAP[22];     // ближайщая точка к спану
+  y3=HEAP[21];     // ближайщая точка к спану
+  Perx[points-1]=x3;
+  Pery[points-1]=y3;
+}
+if (points<1) return;
+// * указать правый торцевой спан
+// *************** сортировка по х по убыванию**************************
+if ((Topik==80) && (ppod==1)) /* нажата клавиша P */
+{
+ Topik=89;
+}
+// ***********************************************************
+NEWFUN(302,0,W7);          // искать адрес текущего контура
+//  ѕри этом адрес контура  заносится в элемент массива HEAP[25];
+W71=HEAP[25];              /* адрес текущего контура */
+NEWFUN(303,0,W71);         /* искать номер главного (записи типа 8) */
+if (NISTAT==1) 
+{
+ print("ќшибка! Ќет детали -только контур, нажмите Ћ.  .");
+ W(-1);
+ return;
+}
+// ѕри этом номер главного  заносится в элемент массива HEAP[26];
+W144=HEAP[26];          // номер главного (записи типа 8)
+NEWFUN(307,0,W144);     // получить адрес записи 8
+// ѕри этом адрес главного заносится в элемент массива   HEAP[27].
+NewFun(308,HEAP[27],0);
+W8=HEAP[43];             // адрес контура 1 в записи типа 8
+W86=HEAP[44];           // адрес контура N в записи типа 8
+NEWFUN(312,HEAP[27],W86);     // √јЅј–»“џ ƒ≈“јЋ»
+xm=HEAP[45];     // малый ’
+xb=HEAP[46];     // большой ’
+ym=HEAP[51];   // малый ”
+yb=HEAP[52];    // большой ”
+W86=HEAP[22];
+W87=HEAP[21];
+
+// ************************ снизу  детали**************************
+//   - начать вырезку перемычек на длинном спане снизу
+// *****************************************************************
+if (points>1)
+{
+ i1=0;
+ while(i1<points-1)
+ {
+  i1++;
+  xp1=Perx[i1-1];
+  yp1=Pery[i1-1];
+  NEWFUN(319,508,xp1);
+  NEWFUN(319,509,yp1);
+  NEWFUN(327,0,W7);
+  spann=HEAP[115];
+  posspn=HEAP[116];
+  xp2=Perx[i1];
+  yp2=Pery[i1];
+  NEWFUN(319,508,xp2);
+  NEWFUN(319,509,yp2);
+  NEWFUN(327,0,W7);
+  spann2=HEAP[115];
+  posspn2=HEAP[116];
+  RAPID();
+  MOVE(W7,Lange,spann,posspn,20);
+  KL();
+  LEAD(0);
+  PROF(W7,0,spann,posspn,20,spann2,posspn2,0);
+  if (Korr=='Y') KEND();
+  MOVE(W7,Lange,spann,posspn,0);
+  TOF(123);
+ }
+}
+ppkon(); 
+BLOK();

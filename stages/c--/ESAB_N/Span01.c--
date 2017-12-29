@@ -1,0 +1,27 @@
+extern long SpProf;
+extern float POS1,XN1,YN1,X1n,Y1n,X2n,Y2n;
+//  POS1==0 точка врезки между началом и концом, 1- в начале спана, 2- в конце спана
+//  (XN1,YN1) - точка на контуре - напротив точки врезки
+//  (X1n,Y1n), (X2n,Y2n) - начало спана и конец спана
+float dis;
+      SpProf=0;
+      if (POS1<0.5)
+       {
+         dis=(XN1-X1n)*(XN1-X1n)+(YN1-Y1n)*(YN1-Y1n);
+         dis=dis**0.5;
+         if (dis<1.0)
+          {
+            SpProf=1;
+            POS1=0.0;
+           }
+        }
+       else
+        {
+          dis=(XN1-X2n)*(XN1-X2n)+(YN1-Y2n)*(YN1-Y2n);
+          dis=dis**0.5;
+          if (dis<1.0)
+           {
+            SpProf=2;
+            POS1=1.0;
+           }
+        }

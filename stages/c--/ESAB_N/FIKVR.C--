@@ -1,0 +1,4 @@
+extern char  Fik;
+Fik:='Y';
+print("‘иксиpованная вpезка нужна?[Y]/N ");
+read(Fik);

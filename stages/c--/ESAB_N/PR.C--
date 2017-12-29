@@ -1,0 +1,37 @@
+long loop;
+long W30,ext,menu_2;
+extern float AngleGr,AngleRad;
+extern char Fik;
+float  Angle;
+loop=1;
+while(loop==1)
+{
+ print("Пpовеp=1,Удали=2,Супп=3,8Лев=4,8Пpав=5,Пеpемыч=6,Автом=7,Выход=8> ");
+ W(-1);
+ print("                                                                           ");
+ W30=S_GETCH-48;
+ if (W30<0) W30=menu_2;
+ if (W30<0) W30=1;
+ menu_2=W30;
+  switch(W30)
+  {
+  case 1: PRB();
+          break;
+  case 2: O();
+          break;
+  case 3: SUPP();
+          break;
+  case 4: D1();
+          break;
+  case 5: D2();
+          break;
+  case 6: PEREM();
+          break;
+  case 7: //Array();
+	         Automenu();
+          break;
+  case 8: loop=0;
+          break;
+  default:;
+  }
+}

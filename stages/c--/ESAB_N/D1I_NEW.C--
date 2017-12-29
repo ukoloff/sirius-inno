@@ -1,0 +1,59 @@
+ extern float W86,W87;
+ extern float W70,DCutt,Lange;
+ extern char Fik;
+ float  W1,W2,W4;
+ 
+ NAZ1();
+ if (Fik!='Y') LINEM(W86,W87,1.0);
+ print("Ћ¬-”кажите 1-й спан 1-го контуpа/<ENTER>-продолжить,<ESC> -выход,<P>-ѕѕ");
+ W(-3);
+ if(S_GETCH==27)   // нажата клавиша ESC
+  {
+   if (Fik!='Y')
+    {
+     N(-1);
+     D(1);
+    }
+    return;
+  }
+ W1 = HEAP[3];
+ W2 = HEAP[4];
+ W70= HEAP[9];
+ if (Fik=='Y')
+ {
+   RAPID();
+   MOVE (W1,Lange,W2,0,0);
+   W86=XCURR;
+   W87=YCURR;
+ }
+ if(S_GETCH=='P') nsubr(); // маркировка начала подпрограммы  	
+ KL();
+ print("-”кажите N-й спан 1-го контуpа");
+ W(-2);
+ W4=HEAP[4];
+ LL();
+ if(Fik=='Y')
+ {
+   MOVE (W1,0,W2,0,0);
+ }
+  PROF(W1,0,W2,0,0,W4,1,0);
+  MOVE(W1,0,W4,1,DCutt/2);
+  UPCUT();
+  print("-”кажите 1-й спан 2-го контуpа");
+  W(-2);
+  W1= HEAP[3];
+  W2= HEAP[4];
+  ERA(); CEN(5); DRA(0);
+  print("-¬ыберите две точки для увеличения, чтобы выбрать N-й спан 2-го контуpа");
+  MAG();
+  print("-”кажите N-й спан 2-го контуpа");
+  W(-2);
+  W4=HEAP[4];
+  LEAD(0);
+  PROF (W1,0,W2,1,0,W4,0,0);
+  MOVE(W1,0,W4,0,-DCutt/2);
+  OFT();
+  ppkon();
+  BLOK();
+  return;
+

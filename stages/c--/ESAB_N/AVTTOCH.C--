@@ -1,0 +1,214 @@
+char OK;
+char stroka[120];
+char putin[120];
+float KONT,XPN,YPN,XPB,YPB;
+float NOM8I;
+float  DIRECTS;
+extern float Lange;    // дистанция врезки
+extern float spanvx;   //    выход из способа резки ”√ќЋ
+extern float kasatel;  //    ¬ыход по касательной из способа  ќЌ“”–
+extern float normalv;  //  ¬ыход по нормали
+extern float pramoid;  //  прямой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированная резка
+extern char  Korr; // Y- есть коррекция,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в —ириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  ¬озврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  ќбход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float DCutt;
+extern float W7,W71,W144;
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern float centrx,centry,vilo; // центр и длина большого контура
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+
+float xa,ya;
+float x3,y3;
+float TVrezx,TVrexy;
+float vkasat1;
+long SpProf;
+float dis,SPAN11,POS11;
+float SPAN1,POS1,SPAN2,POS2,XN1,YN1,XN2,YN2;
+float X1n,Y1n,T1n, X2n, Y2n, T2n, X1b, Y1b, T1b,X2b, Y2b, T2b;
+float KolCpan;
+long Filt;
+long spoc;
+float spano;
+
+putin=PATHNAM+"REZABTOM.RRR";
+NEWFUN(323,0,0);  //  глобальная сортировка
+Filt:=fopen(putin,"rt");
+if (Filt<=0)
+{
+ print("‘айл невозможно открыть=="+putin);
+ W(-1);
+ return;
+}
+while(! feof(Filt) )
+ {
+  fscan(Filt,stroka);
+//  print(stroka);
+//  W(-1);
+ KONT:=Val(substr(stroka,1,7));     /*  Ќомер контура */
+ NOM8I:=Val(substr(stroka,53,6));     /*   »ндекс массива записи типа 8 в буфере */
+ DIRECTS:=Val(substr(stroka,61,6));     /*  Ќаправление реза 1- слева, 2- справа */
+ if (DIRECTS==2.0)  //  сортировка справа
+ {
+  XPB:= Val(substr(stroka,7,12));    /* Ћевая нижняя точка */
+  YPB:= Val(substr(stroka,19,12));  /* Ћевая нижняя точка */
+  XPN:= Val(substr(stroka,28,12));  /* Ћевая верхняя точка */
+  YPN:= Val(substr(stroka,39,12));  /* Ћевая верхняя точка */
+ }
+ else   // сортировка слева
+ {
+  XPN:= Val(substr(stroka,7,12));    /* ѕравая нижняя точка */
+  YPN:= Val(substr(stroka,19,12));  /* ѕравая нижняя точка */
+  XPB:= Val(substr(stroka,28,12));  /* ѕравая верхняя точка */
+  YPB:= Val(substr(stroka,39,12));  /* ѕравая верхняя точка */
+  }
+  if (KONT<=1) continue;
+  stroka="         ";
+  kontl=1;
+  kontmal=1;
+  W7=KONT;
+  malkon();
+  if (kontl==0)
+    {
+     LINEM(centrx,centry,1);
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+     x3=centrx-1.0;
+     y3=centry-1.0;
+
+     KL();
+     LL();
+     xa=XCURR;
+     ya=YCURR;
+     PROF(KONT,0,x3,y3,x3,y3);
+     if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+   else
+    {
+      NEWFUN(319,502,10);
+      NEWFUN(319,504,XPN);
+      NEWFUN(319,505,YPN);
+      NEWFUN(319,506,XPB);
+      NEWFUN(319,507,XPB);
+// ***********************************
+      NEWFUN(321,0,KONT);
+      SPAN1=HEAP[80];
+      POS1=HEAP[81];
+      SPAN2=HEAP[82];  //  спан
+      POS2=HEAP[83];  // позиция на спане
+      XN1=HEAP[76];  // нижняя точка по х
+      YN1=HEAP[77]; //  Ќижняя точка по ”
+      XN2=HEAP[78];  // ¬ерхняя точка по ’
+      YN2=HEAP[79]; // ¬ерхняя точка по ”
+// ѕервая точка исходного спана для нижней точки
+      X1n=HEAP[86];
+      Y1n=HEAP[87];
+      T1n=HEAP[88];
+// ¬торая точка исходного спана для нижней точки
+      X2n=HEAP[89];
+      Y2n=HEAP[90];
+      T2n=HEAP[91];
+      SpProf=0;
+      if (POS1<0.5)
+       {
+         dis=(XN1-X1n)*(XN1-X1n)+(YN1-Y1n)*(YN1-Y1n);
+         dis=dis**0.5;
+         if (dis<1.0)
+          {
+            SpProf=1;
+            POS1=0.0;
+           }
+        }
+   else
+        {
+          dis=(XN1-X2n)*(XN1-X2n)+(YN1-Y2n)*(YN1-Y2n);
+          dis=dis**0.5;
+          if (dis<1.0)
+           {
+            SpProf=1;
+            POS1=1.0;
+           }
+        }
+// ѕервая точка исходного спана для верхней точки
+      X1b=HEAP[92];
+      Y1b=HEAP[93];
+      Y1b=HEAP[94];
+// ¬торая точка исходного спана для верхней точки
+      X2b=HEAP[95];
+      Y2b=HEAP[96];
+      T2b=HEAP[97];
+      KolCpan=HEAP[98];
+      RAPID();
+      if (SpProf==1)
+      {
+        if (Pos1<0.5)
+          MOVE(KONT,Lange/1.4142,SPAN1,POS1,-Lange/1.4142);
+        else
+          MOVE(KONT,Lange/1.4142,SPAN1,POS1,Lange/1.4142);
+       }
+      else
+      {
+       vkasat1=0.0;
+      	if (((Sposob==1) || (Sposob==2)|| (Sposob==5)) && LineXod=='Y')
+         {
+          vkasat1=vkasat;
+         }
+         MOVE (KONT,Lange,SPAN1,POS1,-vkasat1);
+         TVrezx=XCURR;
+         TVrexy=YCURR;
+      }
+      KL();
+      LL();
+      if (((Sposob==1)||(Sposob==2)||(Sposob==5))&&LineXod=='Y'&&SpProf!=1)
+      {       
+       if (Lange>vnormal) MOVE(KONT,vnormal,SPAN1,POS1,-vkasat1);
+      }
+      spoc=Sposob;
+      if (spoc>3) spoc=spoc-4;
+      LEAD(Spoc);
+      spano=SPAN1;
+      if (SpProf==1)
+         {
+          if (POS1<0.5)
+           {
+             if (SPAN1-1<1) SPAN11=KolCpan;
+             else SPAN11=SPAN1-1;
+             POS11=1;
+             PROF(KONT,0,SPAN1,0,0,SPAN11,1,0);
+             MOVE(KONT,0,SPAN11,1,spanvx);
+             spano=SPAN11;
+           }
+          else
+           {
+             if (SPAN1+1>KolCpan) SPAN11=1;
+             else SPAN11=SPAN1+1;
+             PROF(KONT,0,SPAN11,0,0,SPAN1,1,0);
+             MOVE(KONT,0,SPAN1,1,spanvx);
+             spano=SPAN1;
+           }
+          }
+      else
+      {
+        PROF(KONT,0,SPAN1,POS1,0,SPAN1,POS1,-0.001);
+        if (Sposob>1)
+          MOVE(KONT,normalv,SPAN1,POS1,kasatel);
+      }
+    }
+    OFT();
+    if (SpProf==1) 
+    {
+      if (ZadXod=='Y') MOVE (KONT,0,spano,1,spanvx+10);
+    }
+    else
+    {
+      if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+    BLOK();
+  }
+fclose(Filt);

@@ -1,0 +1,1222 @@
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2;
+extern float Xper1[200],Yper1[200],Xper2[200],Yper2[200],POZ1[100],POZ2[100];
+extern float Q1,P1,Q2,P2,RcP1,RcQ1,RcP2,RcQ2,XcP1,YcP1,XcQ1,YcQ1,XcP2,YcP2,XcQ2,YcQ2;
+extern long NMB,NMB1,NomSP1[100],NomSP2[100];
+float xc,yc,rc,xd,yd,cons,k,b,Ax1,Bx1,Cx1,Ax2,Bx2,Cx2,Ay1,By1,Cy1,Ay2,By2,Cy2,S,Er,Kr,Br,Dr,Dr1,PZ1,PZ2,U,L1,L2,L3;
+float X,Y,Xrez1,Yrez1,Xrez2,Yrez2;
+long n;
+
+RcP1=0;
+RcQ1=0;
+RcP2=0;
+RcQ2=0;
+XcP1=0;
+YcP1=0;
+XcQ1=0;
+YcQ1=0;
+XcP2=0;
+YcP2=0;
+XcQ2=0;
+YcQ2=0;
+ 
+SNYG();
+//print(Q1);
+//print(P1);
+//print(Q2);
+//print(P2);
+
+if((Q2<=35)||(P2<=35))
+  {
+  if((POZ2[NMB1]==0)||(POZ2[NMB1]==1))
+   {
+    if(Q2<=35)
+     {
+      n=NomSP2[NMB1];
+      if(Tk2[NomSP2[NMB1]]!=0)
+       {
+        if(Tk2[NomSP2[NMB1]]<0) U=4*arctg((-Tk2[NomSP2[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk2[NomSP2[NMB1]])*180/3.1416; 
+        Er=sqrt((Xper1[NMB1]-XcQ2)*(Xper1[NMB1]-XcQ2)+(Yper1[NMB1]-YcQ2)*(Yper1[NMB1]-YcQ2));
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Br=(RcQ2*RcQ2+Er*Er-Kr*Kr)/(2*RcQ2*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper2[NMB1]-XcQ2;
+        Y=Yper2[NMB1]-YcQ2;
+        if(POZ2[NMB1]==0)
+         {
+          if(Tk2[NomSP2[NMB1]]<0)
+           {
+            Xrez2=X*Cos(Br)+Y*Sin(Br);
+            Yrez2=-X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk2[NomSP2[NMB1]]>0)
+           {
+            Xrez2=X*Cos(Br)-Y*Sin(Br);
+            Yrez2=X*Sin(Br)+Y*Cos(Br);
+           }
+
+          Pz2=(3.1416*RcQ2*(Br*180/3.1416)/180)/(3.1416*RcQ2*U/180);
+
+         }
+        if(POZ2[NMB1]==1)
+         {
+          if(Tk2[NomSP2[NMB1]]<0)
+           {
+            Xrez2=X*Cos(Br)-Y*Sin(Br);
+            Yrez2=X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk2[NomSP2[NMB1]]>0)
+           {
+            Xrez2=X*Cos(Br)+Y*Sin(Br);
+            Yrez2=-X*Sin(Br)+Y*Cos(Br);
+           }
+          Pz2=(3.1416*RcQ2*(U-(Br*180/3.1416))/180)/(3.1416*RcQ2*U/180);
+
+         }
+        Xrez2=Xrez2+XcQ2;
+        Yrez2=Yrez2+YcQ2;
+       }
+       else
+        {
+         Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-Q2*3.1416/180)*Cos(3.1416/2-Q2*3.1416/180)));
+         if(POZ2[NMB1]==0) 
+          {         
+           Dr=sqrt((Xper2[NMB1]-Xk2[NomSP2[NMB1]+1])*(Xper2[NMB1]-Xk2[NomSP2[NMB1]+1])+(Yper2[NMB1]-yk2[NomSP2[NMB1]+1])*(Yper2[NMB1]-yk2[NomSP2[NMB1]+1]));       
+           Br=Er/Dr;                                  //позиция на спане//
+           X=Xk2[NomSP2[NMB1]+1]-Xper2[NMB1];
+           Y=Yk2[NomSP2[NMB1]+1]-Yper2[NMB1];
+           Xrez2=Br*X+Xper2[NMB1];
+           Yrez2=Br*Y+Yper2[NMB1];
+           Pz2=Br;
+          }
+         if(POZ2[NMB1]==1)
+          {
+           Dr=sqrt((Xper2[NMB1]-Xk2[NomSP2[NMB1]])*(Xper2[NMB1]-Xk2[NomSP2[NMB1]])+(Yper2[NMB1]-yk2[NomSP2[NMB1]])*(Yper2[NMB1]-yk2[NomSP2[NMB1]]));                  
+           Br=Er/Dr;
+           X=Xk2[NomSP2[NMB1]]-Xper2[NMB1];
+           Y=Yk2[NomSP2[NMB1]]-Yper2[NMB1];
+           Xrez2=Br*X+Xper2[NMB1];
+           Yrez2=Br*Y+Yper2[NMB1];
+           Pz2=(Dr-Er)/Dr;
+          }
+
+        } 
+    }
+   else
+   {
+   if(P2<=35)
+    {
+    if(POZ2[NMB1]==0)
+     {
+      n=(NomSP2[NMB1]-1);
+      if(n==0) n=ROUND(kolSpan2-1);
+      if(Tk2[n]!=0)
+       {
+        if(Tk2[n]<0) U=4*arctg((-Tk2[n]))*180/3.1416;
+          else U=4*arctg(Tk2[n])*180/3.1416; 
+        Er=sqrt((Xper1[NMB1]-XcP2)*(Xper1[NMB1]-XcP2)+(Yper1[NMB1]-YcP2)*(Yper1[NMB1]-YcP2));
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Br=(RcP2*RcP2+Er*Er-Kr*Kr)/(2*RcP2*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper2[NMB1]-XcP2;
+        Y=Yper2[NMB1]-YcP2;
+        if(Tk2[n]<0)
+         {
+          Xrez2=X*Cos(Br)-Y*Sin(Br);
+          Yrez2=X*Sin(Br)+Y*Cos(Br);
+         }
+        if(Tk2[n]>0)
+         {
+          Xrez2=X*Cos(Br)+Y*Sin(Br);
+          Yrez2=-X*Sin(Br)+Y*Cos(Br);
+         }
+        Pz2=(3.1416*RcP2*(U-(Br*180/3.1416))/180)/(3.1416*RcP2*U/180);
+        Xrez2=Xrez2+XcP2;
+        Yrez2=Yrez2+YcP2;
+       }
+       else
+        {
+         Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P2*3.1416/180)*Cos(3.1416/2-P2*3.1416/180)));
+         Dr=sqrt((Xper2[NMB1]-Xk2[n])*(Xper2[NMB1]-Xk2[n])+(Yper2[NMB1]-yk2[n])*(Yper2[NMB1]-yk2[n]));
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk2[n]-Xper2[NMB1];
+         Y=Yk2[n]-Yper2[NMB1];
+         Xrez2=Br*X+Xper2[NMB1];
+         Yrez2=Br*Y+Yper2[NMB1];
+         Pz2=(Dr-Er)/Dr;
+        }    
+     } 
+    if(POZ2[NMB1]==1)
+     {
+      n=NomSP2[NMB1]+1;
+      if(n==kolSpan2) n=1;
+      if(Tk2[n]!=0)
+      {
+       if(Tk2[n]<0) U=4*arctg((-Tk2[n]))*180/3.1416;
+         else U=4*arctg(Tk2[n])*180/3.1416; 
+       Er=sqrt((Xper1[NMB1]-XcP2)*(Xper1[NMB1]-XcP2)+(Yper1[NMB1]-YcP2)*(Yper1[NMB1]-YcP2));
+       Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+       Br=(RcP2*RcP2+Er*Er-Kr*Kr)/(2*RcP2*Er);
+       if(Br>1) Br=1;
+       if(Br<-1) Br=-1;
+       Br=arccos(Br);                     //угол поворота//
+       X=Xper2[NMB1]-XcP2;
+       Y=Yper2[NMB1]-YcP2;
+       if(Tk2[n]<0)
+        {
+         Xrez2=X*Cos(Br)+Y*Sin(Br);
+         Yrez2=-X*Sin(Br)+Y*Cos(Br);
+        }
+       if(Tk2[n]>0)
+        {
+         Xrez2=X*Cos(Br)-Y*Sin(Br);
+         Yrez2=X*Sin(Br)+Y*Cos(Br);
+        }
+ 
+        Pz2=(3.1416*RcP2*(Br*180/3.1416)/180)/(3.1416*RcP2*U/180);
+        Xrez2=Xrez2+XcP2;
+        Yrez2=Yrez2+YcP2;
+       }
+       else
+        {
+         Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P2*3.1416/180)*Cos(3.1416/2-P2*3.1416/180)));
+         Dr=sqrt((Xper2[NMB1]-Xk2[n+1])*(Xper2[NMB1]-Xk2[n+1])+(Yper2[NMB1]-yk2[n+1])*(Yper2[NMB1]-yk2[n+1]));         
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk2[n+1]-Xper2[NMB1];
+         Y=Yk2[n+1]-Yper2[NMB1];
+         Xrez2=Br*X+Xper2[NMB1];
+         Yrez2=Br*Y+Yper2[NMB1];  
+         Pz2=Br;
+        } 
+     }
+
+   }   
+
+ }
+}
+
+ if((POZ2[NMB1]!=0)&&(POZ2[NMB1]!=1))
+  {
+   if(P2<=35)
+   {
+    n=NomSP2[NMB1];
+    if(Tk2[NomSP2[NMB1]]!=0)
+     {
+      if(Tk2[NomSP2[NMB1]]<0) U=4*arctg((-Tk2[NomSP2[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk2[NomSP2[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper1[NMB1]-XcP2)*(Xper1[NMB1]-XcP2)+(Yper1[NMB1]-YcP2)*(Yper1[NMB1]-YcP2));
+      Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+      Br=(RcP2*RcP2+Er*Er-Kr*Kr)/(2*RcP2*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper2[NMB1]-XcP2;
+      Y=Yper2[NMB1]-YcP2;
+      L3=(3.1416*RcP2*(Br*180/3.1416))/180;
+      L2=(3.1416*RcP2*U)/180;
+      L1=POZ2[NMB1]*L2;
+      if(Tk2[NomSP2[NMB1]]<0)
+       {
+        Xrez2=X*Cos(Br)-Y*Sin(Br);
+        Yrez2=X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1-L3)/L2;
+
+       }
+      if(Tk2[NomSP2[NMB1]]>0)
+       {
+        Xrez2=X*Cos(Br)+Y*Sin(Br);
+        Yrez2=-X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1-L3)/L2;
+       }
+         
+      Xrez2=Xrez2+XcP2;
+      Yrez2=Yrez2+YcP2;
+     }
+      else
+       {
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-P2*3.1416/180)*Cos(3.1416/2-P2*3.1416/180)));
+        
+        Dr=sqrt((Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])*(Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])+(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1])*(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1]));       
+        Dr1=sqrt((Xk2[NomSP2[NMB1]]-Xper2[NMB1])*(Xk2[NomSP2[NMB1]]-Xper2[NMB1])+(yk2[NomSP2[NMB1]]-Yper2[NMB1])*(yk2[NomSP2[NMB1]]-Yper2[NMB1]));
+       
+        Br=(Dr1-Er)/Dr;                                  //позиция на спане//
+        X=Xk2[NomSP2[NMB1]+1]-Xk2[NomSP2[NMB1]];
+        Y=Yk2[NomSP2[NMB1]+1]-Yk2[NomSP2[NMB1]];
+        Xrez2=Br*X+Xk2[NomSP2[NMB1]];
+        Yrez2=Br*Y+Yk2[NomSP2[NMB1]];
+        Pz2=Br;
+       }   
+   }
+  if(Q2<=35)
+   {
+    n=NomSP2[NMB1];
+    if(Tk2[NomSP2[NMB1]]!=0)
+     {
+      if(Tk2[NomSP2[NMB1]]<0) U=4*arctg((-Tk2[NomSP2[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk2[NomSP2[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper1[NMB1]-XcQ2)*(Xper1[NMB1]-XcQ2)+(Yper1[NMB1]-YcQ2)*(Yper1[NMB1]-YcQ2));
+      Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+      Br=(RcQ2*RcQ2+Er*Er-Kr*Kr)/(2*RcQ2*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper2[NMB1]-XcQ2;
+      Y=Yper2[NMB1]-YcQ2;
+      L3=(3.1416*RcQ2*(Br*180/3.1416))/180;
+      L2=(3.1416*RcQ2*U)/180;
+      L1=POZ2[NMB1]*L2;
+      if(Tk2[NomSP2[NMB1]]<0)
+       {
+        Xrez2=X*Cos(Br)+Y*Sin(Br);
+        Yrez2=-X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1+L3)/L2;
+       }
+      if(Tk2[NomSP2[NMB1]]>0)
+       {
+        Xrez2=X*Cos(Br)-Y*Sin(Br);
+        Yrez2=X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1+L3)/L2;
+       }
+         
+      Xrez2=Xrez2+XcQ2;
+      Yrez2=Yrez2+YcQ2;
+     }
+      else
+       {
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-Q2*3.1416/180)*Cos(3.1416/2-Q2*3.1416/180)));
+        
+        Dr=sqrt((Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])*(Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])+(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1])*(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1]));       
+        Dr1=sqrt((Xk2[NomSP2[NMB1]]-Xper2[NMB1])*(Xk2[NomSP2[NMB1]]-Xper2[NMB1])+(yk2[NomSP2[NMB1]]-Yper2[NMB1])*(yk2[NomSP2[NMB1]]-Yper2[NMB1]));
+       
+        Br=(Dr1+Er)/Dr;                                  //позиция на спане//
+        X=Xk2[NomSP2[NMB1]+1]-Xk2[NomSP2[NMB1]];
+        Y=Yk2[NomSP2[NMB1]+1]-Yk2[NomSP2[NMB1]];
+        Xrez2=Br*X+Xk2[NomSP2[NMB1]];
+        Yrez2=Br*Y+Yk2[NomSP2[NMB1]];
+        Pz2=Br;
+       }   
+   }
+
+
+}
+Xper2[NMB1]=Xrez2;
+Yper2[NMB1]=Yrez2;
+POZ2[NMB1]=Pz2;
+NomSP2[NMB1]=n;
+}
+
+
+
+SNYG();
+//print(Q1);
+//print(P1);
+//print(Q2);
+//print(P2);
+
+if((Q1<=35)||(P1<=35))
+  {
+  if((POZ1[NMB1]==0)||(POZ1[NMB1]==1))
+   {
+    if(Q1<=35)
+     {
+      n=NomSP1[NMB1];
+      if(Tk1[NomSP1[NMB1]]!=0)
+       {
+        if(Tk1[NomSP1[NMB1]]<0) U=4*arctg((-Tk1[NomSP1[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk1[NomSP1[NMB1]])*180/3.1416; 
+        Er=sqrt((Xper2[NMB1]-XcQ1)*(Xper2[NMB1]-XcQ1)+(Yper2[NMB1]-YcQ1)*(Yper2[NMB1]-YcQ1));
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Br=(RcQ1*RcQ1+Er*Er-Kr*Kr)/(2*RcQ1*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper1[NMB1]-XcQ1;
+        Y=Yper1[NMB1]-YcQ1;
+        if(POZ1[NMB1]==0)
+         {
+          if(Tk1[NomSP1[NMB1]]<0)
+           {
+            Xrez1=X*Cos(Br)+Y*Sin(Br);
+            Yrez1=-X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk1[NomSP1[NMB1]]>0)
+           {
+            Xrez1=X*Cos(Br)-Y*Sin(Br);
+            Yrez1=X*Sin(Br)+Y*Cos(Br);
+           }
+
+          Pz1=(3.1416*RcQ1*(Br*180/3.1416)/180)/(3.1416*RcQ1*U/180);
+
+         }
+        if(POZ1[NMB1]==1)
+         {
+          if(Tk1[NomSP1[NMB1]]<0)
+           {
+            Xrez1=X*Cos(Br)-Y*Sin(Br);
+            Yrez1=X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk1[NomSP1[NMB1]]>0)
+           {
+            Xrez1=X*Cos(Br)+Y*Sin(Br);
+            Yrez1=-X*Sin(Br)+Y*Cos(Br);
+           }
+          Pz1=(3.1416*RcQ1*(U-(Br*180/3.1416))/180)/(3.1416*RcQ1*U/180);
+
+         }
+        Xrez1=Xrez1+XcQ1;
+        Yrez1=Yrez1+YcQ1;
+       }
+       else
+        {
+         Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-Q1*3.1416/180)*Cos(3.1416/2-Q1*3.1416/180)));
+         if(POZ1[NMB1]==0) 
+          {         
+           Dr=sqrt((Xper1[NMB1]-Xk1[NomSP1[NMB1]+1])*(Xper1[NMB1]-Xk1[NomSP1[NMB1]+1])+(Yper1[NMB1]-yk1[NomSP1[NMB1]+1])*(Yper1[NMB1]-yk1[NomSP1[NMB1]+1]));       
+           Br=Er/Dr;                                  //позиция на спане//
+           X=Xk1[NomSP1[NMB1]+1]-Xper1[NMB1];
+           Y=Yk1[NomSP1[NMB1]+1]-Yper1[NMB1];
+           Xrez1=Br*X+Xper1[NMB1];
+           Yrez1=Br*Y+Yper1[NMB1];
+           Pz1=Br;
+          }
+         if(POZ1[NMB1]==1)
+          {
+           Dr=sqrt((Xper1[NMB1]-Xk1[NomSP1[NMB1]])*(Xper1[NMB1]-Xk1[NomSP1[NMB1]])+(Yper1[NMB1]-yk1[NomSP1[NMB1]])*(Yper1[NMB1]-yk1[NomSP1[NMB1]]));                  
+           Br=Er/Dr;                                  //позиция на спане//
+           X=Xk1[NomSP1[NMB1]]-Xper1[NMB1];
+           Y=Yk1[NomSP1[NMB1]]-Yper1[NMB1];
+           Xrez1=Br*X+Xper1[NMB1];
+           Yrez1=Br*Y+Yper1[NMB1];
+           Pz1=(Dr-Er)/Dr;
+          }
+
+        } 
+    }
+   else
+   {
+   if(P1<=35)
+    {
+    if(POZ1[NMB1]==0)
+     {
+      n=(NomSP1[NMB1]-1);
+      if(n==0) n=ROUND(kolSpan1-1);
+      if(Tk1[n]!=0)
+       {
+        if(Tk1[n]<0) U=4*arctg((-Tk1[n]))*180/3.1416;
+          else U=4*arctg(Tk1[n])*180/3.1416; 
+        Er=sqrt((Xper2[NMB1]-XcP1)*(Xper2[NMB1]-XcP1)+(Yper2[NMB1]-YcP1)*(Yper2[NMB1]-YcP1));
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Br=(RcP1*RcP1+Er*Er-Kr*Kr)/(2*RcP1*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper1[NMB1]-XcP1;
+        Y=Yper1[NMB1]-YcP1;
+        if(Tk1[n]<0)
+         {
+          Xrez1=X*Cos(Br)-Y*Sin(Br);
+          Yrez1=X*Sin(Br)+Y*Cos(Br);
+         }
+        if(Tk1[n]>0)
+         {
+          Xrez1=X*Cos(Br)+Y*Sin(Br);
+          Yrez1=-X*Sin(Br)+Y*Cos(Br);
+         }
+        Pz1=(3.1416*RcP1*(U-(Br*180/3.1416))/180)/(3.1416*RcP1*U/180);
+        Xrez1=Xrez1+XcP1;
+        Yrez1=Yrez1+YcP1;
+       }
+       else
+        {
+         Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P1*3.1416/180)*Cos(3.1416/2-P1*3.1416/180)));
+         Dr=sqrt((Xper1[NMB1]-Xk1[n])*(Xper1[NMB1]-Xk1[n])+(Yper1[NMB1]-yk1[n])*(Yper1[NMB1]-yk1[n]));
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk1[n]-Xper1[NMB1];
+         Y=Yk1[n]-Yper1[NMB1];
+         Xrez1=Br*X+Xper1[NMB1];
+         Yrez1=Br*Y+Yper1[NMB1];
+         Pz1=(Dr-Er)/Dr;
+        }    
+     } 
+    if(POZ1[NMB1]==1)
+     {
+      n=NomSP1[NMB1]+1;
+      if(n==kolSpan1) n=1;
+      if(Tk1[n]!=0)
+      {
+       if(Tk1[n]<0) U=4*arctg((-Tk1[n]))*180/3.1416;
+         else U=4*arctg(Tk1[n])*180/3.1416; 
+       Er=sqrt((Xper2[NMB1]-XcP1)*(Xper2[NMB1]-XcP1)+(Yper2[NMB1]-YcP1)*(Yper2[NMB1]-YcP1));
+       Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+       Br=(RcP1*RcP1+Er*Er-Kr*Kr)/(2*RcP1*Er);
+       if(Br>1) Br=1;
+       if(Br<-1) Br=-1;
+       Br=arccos(Br);                     //угол поворота//
+       X=Xper1[NMB1]-XcP1;
+       Y=Yper1[NMB1]-YcP1;
+       if(Tk1[n]<0)
+        {
+         Xrez1=X*Cos(Br)+Y*Sin(Br);
+         Yrez1=-X*Sin(Br)+Y*Cos(Br);
+        }
+       if(Tk1[n]>0)
+        {
+         Xrez1=X*Cos(Br)-Y*Sin(Br);
+         Yrez1=X*Sin(Br)+Y*Cos(Br);
+        }
+ 
+        Pz1=(3.1416*RcP1*(Br*180/3.1416)/180)/(3.1416*RcP1*U/180);
+        Xrez1=Xrez1+XcP1;
+        Yrez1=Yrez1+YcP1;
+       }
+       else
+        {
+         Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P1*3.1416/180)*Cos(3.1416/2-P1*3.1416/180)));
+         Dr=sqrt((Xper1[NMB1]-Xk1[n+1])*(Xper1[NMB1]-Xk1[n+1])+(Yper1[NMB1]-yk1[n+1])*(Yper1[NMB1]-yk1[n+1]));         
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk1[n+1]-Xper1[NMB1];
+         Y=Yk1[n+1]-Yper1[NMB1];
+         Xrez1=Br*X+Xper1[NMB1];
+         Yrez1=Br*Y+Yper1[NMB1];  
+         Pz1=Br;
+        } 
+     }
+
+   }   
+
+ }
+
+}
+ if((POZ1[NMB1]!=0)&&(POZ1[NMB1]!=1))
+  {
+   if(P1<=35)
+   {
+    n=NomSP1[NMB1];
+    if(Tk1[NomSP1[NMB1]]!=0)
+     {
+      if(Tk1[NomSP1[NMB1]]<0) U=4*arctg((-Tk1[NomSP1[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk1[NomSP1[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper2[NMB1]-XcP1)*(Xper2[NMB1]-XcP1)+(Yper2[NMB1]-YcP1)*(Yper2[NMB1]-YcP1));
+      Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+      Br=(RcP1*RcP1+Er*Er-Kr*Kr)/(2*RcP1*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper1[NMB1]-XcP1;
+      Y=Yper1[NMB1]-YcP1;
+      L3=(3.1416*RcP1*(Br*180/3.1416))/180;
+      L2=(3.1416*RcP1*U)/180;
+      L1=POZ1[NMB1]*L2;
+      if(Tk1[NomSP1[NMB1]]<0)
+       {
+        Xrez1=X*Cos(Br)-Y*Sin(Br);
+        Yrez1=X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1-L3)/L2;
+
+       }
+      if(Tk1[NomSP1[NMB1]]>0)
+       {
+        Xrez1=X*Cos(Br)+Y*Sin(Br);
+        Yrez1=-X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1-L3)/L2;
+       }
+         
+      Xrez1=Xrez1+XcP1;
+      Yrez1=Yrez1+YcP1;
+     }
+      else
+       {
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-P1*3.1416/180)*Cos(3.1416/2-P1*3.1416/180)));
+        
+        Dr=sqrt((Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])*(Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])+(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1])*(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1]));       
+        Dr1=sqrt((Xk1[NomSP1[NMB1]]-Xper1[NMB1])*(Xk1[NomSP1[NMB1]]-Xper1[NMB1])+(yk1[NomSP1[NMB1]]-Yper1[NMB1])*(yk1[NomSP1[NMB1]]-Yper1[NMB1]));
+       
+        Br=(Dr1-Er)/Dr;                                  //позиция на спане//
+        X=Xk1[NomSP1[NMB1]+1]-Xk1[NomSP1[NMB1]];
+        Y=Yk1[NomSP1[NMB1]+1]-Yk1[NomSP1[NMB1]];
+        Xrez1=Br*X+Xk1[NomSP1[NMB1]];
+        Yrez1=Br*Y+Yk1[NomSP1[NMB1]];
+        Pz1=Br;
+       }   
+   }
+  if(Q1<=35)
+   {
+    n=NomSP1[NMB1];
+    if(Tk1[NomSP1[NMB1]]!=0)
+     {
+      if(Tk1[NomSP1[NMB1]]<0) U=4*arctg((-Tk1[NomSP1[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk1[NomSP1[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper2[NMB1]-XcQ1)*(Xper2[NMB1]-XcQ1)+(Yper2[NMB1]-YcQ1)*(Yper2[NMB1]-YcQ1));
+      Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+      Br=(RcQ1*RcQ1+Er*Er-Kr*Kr)/(2*RcQ1*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper1[NMB1]-XcQ1;
+      Y=Yper1[NMB1]-YcQ1;
+      L3=(3.1416*RcQ1*(Br*180/3.1416))/180;
+      L2=(3.1416*RcQ1*U)/180;
+      L1=POZ1[NMB1]*L2;
+      
+    
+
+
+      if(Tk1[NomSP1[NMB1]]<0)
+       {
+        Xrez1=X*Cos(Br)+Y*Sin(Br);
+        Yrez1=-X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1+L3)/L2;
+       }
+      if(Tk1[NomSP1[NMB1]]>0)
+       {
+        Xrez1=X*Cos(Br)-Y*Sin(Br);
+        Yrez1=X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1+L3)/L2;
+       }
+         
+      Xrez1=Xrez1+XcQ1;
+      Yrez1=Yrez1+YcQ1;
+     }
+      else
+       {
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-Q1*3.1416/180)*Cos(3.1416/2-Q1*3.1416/180)));
+        
+        Dr=sqrt((Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])*(Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])+(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1])*(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1]));       
+        Dr1=sqrt((Xk1[NomSP1[NMB1]]-Xper1[NMB1])*(Xk1[NomSP1[NMB1]]-Xper1[NMB1])+(yk1[NomSP1[NMB1]]-Yper1[NMB1])*(yk1[NomSP1[NMB1]]-Yper1[NMB1]));
+       
+        Br=(Dr1+Er)/Dr;                                  //позиция на спане//
+        X=Xk1[NomSP1[NMB1]+1]-Xk1[NomSP1[NMB1]];
+        Y=Yk1[NomSP1[NMB1]+1]-Yk1[NomSP1[NMB1]];
+        Xrez1=Br*X+Xk1[NomSP1[NMB1]];
+        Yrez1=Br*Y+Yk1[NomSP1[NMB1]];
+        Pz1=Br;
+       }   
+   }
+
+
+}
+Xper1[NMB1]=Xrez1;
+Yper1[NMB1]=Yrez1;
+POZ1[NMB1]=Pz1;
+NomSP1[NMB1]=n;
+}
+
+
+
+
+SNYG();
+//print(Q1);
+//print(P1);
+//print(Q2);
+//print(P2);
+
+
+if((Q2<=35)||(P2<=35))
+  {
+  if((POZ2[NMB1]==0)||(POZ2[NMB1]==1))
+   {
+    if(Q2<=35)
+     {
+      n=NomSP2[NMB1];
+      if(Tk2[NomSP2[NMB1]]!=0)
+       {
+        if(Tk2[NomSP2[NMB1]]<0) U=4*arctg((-Tk2[NomSP2[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk2[NomSP2[NMB1]])*180/3.1416; 
+        Er=sqrt((Xper1[NMB1]-XcQ2)*(Xper1[NMB1]-XcQ2)+(Yper1[NMB1]-YcQ2)*(Yper1[NMB1]-YcQ2));
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Br=(RcQ2*RcQ2+Er*Er-Kr*Kr)/(2*RcQ2*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper2[NMB1]-XcQ2;
+        Y=Yper2[NMB1]-YcQ2;
+        if(POZ2[NMB1]==0)
+         {
+          if(Tk2[NomSP2[NMB1]]<0)
+           {
+            Xrez2=X*Cos(Br)+Y*Sin(Br);
+            Yrez2=-X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk2[NomSP2[NMB1]]>0)
+           {
+            Xrez2=X*Cos(Br)-Y*Sin(Br);
+            Yrez2=X*Sin(Br)+Y*Cos(Br);
+           }
+
+          Pz2=(3.1416*RcQ2*(Br*180/3.1416)/180)/(3.1416*RcQ2*U/180);
+
+         }
+        if(POZ2[NMB1]==1)
+         {
+          if(Tk2[NomSP2[NMB1]]<0)
+           {
+            Xrez2=X*Cos(Br)-Y*Sin(Br);
+            Yrez2=X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk2[NomSP2[NMB1]]>0)
+           {
+            Xrez2=X*Cos(Br)+Y*Sin(Br);
+            Yrez2=-X*Sin(Br)+Y*Cos(Br);
+           }
+          Pz2=(3.1416*RcQ2*(U-(Br*180/3.1416))/180)/(3.1416*RcQ2*U/180);
+
+         }
+        Xrez2=Xrez2+XcQ2;
+        Yrez2=Yrez2+YcQ2;
+       }
+       else
+        {
+         Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-Q2*3.1416/180)*Cos(3.1416/2-Q2*3.1416/180)));
+         if(POZ2[NMB1]==0) 
+          {         
+           Dr=sqrt((Xper2[NMB1]-Xk2[NomSP2[NMB1]+1])*(Xper2[NMB1]-Xk2[NomSP2[NMB1]+1])+(Yper2[NMB1]-yk2[NomSP2[NMB1]+1])*(Yper2[NMB1]-yk2[NomSP2[NMB1]+1]));       
+           Br=Er/Dr;                                  //позиция на спане//
+           X=Xk2[NomSP2[NMB1]+1]-Xper2[NMB1];
+           Y=Yk2[NomSP2[NMB1]+1]-Yper2[NMB1];
+           Xrez2=Br*X+Xper2[NMB1];
+           Yrez2=Br*Y+Yper2[NMB1];
+           Pz2=Br;
+          }
+         if(POZ2[NMB1]==1)
+          {
+           Dr=sqrt((Xper2[NMB1]-Xk2[NomSP2[NMB1]])*(Xper2[NMB1]-Xk2[NomSP2[NMB1]])+(Yper2[NMB1]-yk2[NomSP2[NMB1]])*(Yper2[NMB1]-yk2[NomSP2[NMB1]]));                  
+           Br=Er/Dr;
+           X=Xk2[NomSP2[NMB1]]-Xper2[NMB1];
+           Y=Yk2[NomSP2[NMB1]]-Yper2[NMB1];
+           Xrez2=Br*X+Xper2[NMB1];
+           Yrez2=Br*Y+Yper2[NMB1];
+           Pz2=(Dr-Er)/Dr;
+          }
+
+        } 
+    }
+   else
+   {
+
+   if(P2<=35)
+    {
+    if(POZ2[NMB1]==0)
+     {
+      n=(NomSP2[NMB1]-1);
+      if(n==0) n=ROUND(kolSpan2-1);
+      if(Tk2[n]!=0)
+       {
+        if(Tk2[n]<0) U=4*arctg((-Tk2[n]))*180/3.1416;
+          else U=4*arctg(Tk2[n])*180/3.1416; 
+        Er=sqrt((Xper1[NMB1]-XcP2)*(Xper1[NMB1]-XcP2)+(Yper1[NMB1]-YcP2)*(Yper1[NMB1]-YcP2));
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Br=(RcP2*RcP2+Er*Er-Kr*Kr)/(2*RcP2*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper2[NMB1]-XcP2;
+        Y=Yper2[NMB1]-YcP2;
+        if(Tk2[n]<0)
+         {
+          Xrez2=X*Cos(Br)-Y*Sin(Br);
+          Yrez2=X*Sin(Br)+Y*Cos(Br);
+         }
+        if(Tk2[n]>0)
+         {
+          Xrez2=X*Cos(Br)+Y*Sin(Br);
+          Yrez2=-X*Sin(Br)+Y*Cos(Br);
+         }
+        Pz2=(3.1416*RcP2*(U-(Br*180/3.1416))/180)/(3.1416*RcP2*U/180);
+        Xrez2=Xrez2+XcP2;
+        Yrez2=Yrez2+YcP2;
+       }
+       else
+        {
+         Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P2*3.1416/180)*Cos(3.1416/2-P2*3.1416/180)));
+         Dr=sqrt((Xper2[NMB1]-Xk2[n])*(Xper2[NMB1]-Xk2[n])+(Yper2[NMB1]-yk2[n])*(Yper2[NMB1]-yk2[n]));
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk2[n]-Xper2[NMB1];
+         Y=Yk2[n]-Yper2[NMB1];
+         Xrez2=Br*X+Xper2[NMB1];
+         Yrez2=Br*Y+Yper2[NMB1];
+         Pz2=(Dr-Er)/Dr;
+        }    
+     } 
+    if(POZ2[NMB1]==1)
+     {
+      n=NomSP2[NMB1]+1;
+      if(n==kolSpan2) n=1;
+      if(Tk2[n]!=0)
+      {
+       if(Tk2[n]<0) U=4*arctg((-Tk2[n]))*180/3.1416;
+         else U=4*arctg(Tk2[n])*180/3.1416; 
+       Er=sqrt((Xper1[NMB1]-XcP2)*(Xper1[NMB1]-XcP2)+(Yper1[NMB1]-YcP2)*(Yper1[NMB1]-YcP2));
+       Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+       Br=(RcP2*RcP2+Er*Er-Kr*Kr)/(2*RcP2*Er);
+       if(Br>1) Br=1;
+       if(Br<-1) Br=-1;
+       Br=arccos(Br);                     //угол поворота//
+       X=Xper2[NMB1]-XcP2;
+       Y=Yper2[NMB1]-YcP2;
+       if(Tk2[n]<0)
+        {
+         Xrez2=X*Cos(Br)+Y*Sin(Br);
+         Yrez2=-X*Sin(Br)+Y*Cos(Br);
+        }
+       if(Tk2[n]>0)
+        {
+         Xrez2=X*Cos(Br)-Y*Sin(Br);
+         Yrez2=X*Sin(Br)+Y*Cos(Br);
+        }
+ 
+        Pz2=(3.1416*RcP2*(Br*180/3.1416)/180)/(3.1416*RcP2*U/180);
+        Xrez2=Xrez2+XcP2;
+        Yrez2=Yrez2+YcP2;
+       }
+       else
+        {
+         Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P2*3.1416/180)*Cos(3.1416/2-P2*3.1416/180)));
+         Dr=sqrt((Xper2[NMB1]-Xk2[n+1])*(Xper2[NMB1]-Xk2[n+1])+(Yper2[NMB1]-yk2[n+1])*(Yper2[NMB1]-yk2[n+1]));         
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk2[n+1]-Xper2[NMB1];
+         Y=Yk2[n+1]-Yper2[NMB1];
+         Xrez2=Br*X+Xper2[NMB1];
+         Yrez2=Br*Y+Yper2[NMB1];  
+         Pz2=Br;
+        } 
+     }
+
+   }   
+
+ }
+ }
+
+ if((POZ2[NMB1]!=0)&&(POZ2[NMB1]!=1))
+  {
+   if(P2<=35)
+   {
+    n=NomSP2[NMB1];
+    if(Tk2[NomSP2[NMB1]]!=0)
+     {
+      if(Tk2[NomSP2[NMB1]]<0) U=4*arctg((-Tk2[NomSP2[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk2[NomSP2[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper1[NMB1]-XcP2)*(Xper1[NMB1]-XcP2)+(Yper1[NMB1]-YcP2)*(Yper1[NMB1]-YcP2));
+      Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+      Br=(RcP2*RcP2+Er*Er-Kr*Kr)/(2*RcP2*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper2[NMB1]-XcP2;
+      Y=Yper2[NMB1]-YcP2;
+      L3=(3.1416*RcP2*(Br*180/3.1416))/180;
+      L2=(3.1416*RcP2*U)/180;
+      L1=POZ2[NMB1]*L2;
+      if(Tk2[NomSP2[NMB1]]<0)
+       {
+        Xrez2=X*Cos(Br)-Y*Sin(Br);
+        Yrez2=X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1-L3)/L2;
+
+       }
+      if(Tk2[NomSP2[NMB1]]>0)
+       {
+        Xrez2=X*Cos(Br)+Y*Sin(Br);
+        Yrez2=-X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1-L3)/L2;
+       }
+         
+      Xrez2=Xrez2+XcP2;
+      Yrez2=Yrez2+YcP2;
+     }
+      else
+       {
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-P2*3.1416/180)*Cos(3.1416/2-P2*3.1416/180)));
+        
+        Dr=sqrt((Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])*(Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])+(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1])*(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1]));       
+        Dr1=sqrt((Xk2[NomSP2[NMB1]]-Xper2[NMB1])*(Xk2[NomSP2[NMB1]]-Xper2[NMB1])+(yk2[NomSP2[NMB1]]-Yper2[NMB1])*(yk2[NomSP2[NMB1]]-Yper2[NMB1]));
+       
+        Br=(Dr1-Er)/Dr;                                  //позиция на спане//
+        X=Xk2[NomSP2[NMB1]+1]-Xk2[NomSP2[NMB1]];
+        Y=Yk2[NomSP2[NMB1]+1]-Yk2[NomSP2[NMB1]];
+        Xrez2=Br*X+Xk2[NomSP2[NMB1]];
+        Yrez2=Br*Y+Yk2[NomSP2[NMB1]];
+        Pz2=Br;
+       }   
+   }
+  if(Q2<=35)
+   {
+    n=NomSP2[NMB1];
+    if(Tk2[NomSP2[NMB1]]!=0)
+     {
+      if(Tk2[NomSP2[NMB1]]<0) U=4*arctg((-Tk2[NomSP2[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk2[NomSP2[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper1[NMB1]-XcQ2)*(Xper1[NMB1]-XcQ2)+(Yper1[NMB1]-YcQ2)*(Yper1[NMB1]-YcQ2));
+      Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+      Br=(RcQ2*RcQ2+Er*Er-Kr*Kr)/(2*RcQ2*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper2[NMB1]-XcQ2;
+      Y=Yper2[NMB1]-YcQ2;
+      L3=(3.1416*RcQ2*(Br*180/3.1416))/180;
+      L2=(3.1416*RcQ2*U)/180;
+      L1=POZ2[NMB1]*L2;
+
+      if(Tk2[NomSP2[NMB1]]<0)
+       {
+        Xrez2=X*Cos(Br)+Y*Sin(Br);
+        Yrez2=-X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1+L3)/L2;
+       }
+      if(Tk2[NomSP2[NMB1]]>0)
+       {
+        Xrez2=X*Cos(Br)-Y*Sin(Br);
+        Yrez2=X*Sin(Br)+Y*Cos(Br);
+        PZ2=(L1+L3)/L2;
+       }
+         
+      Xrez2=Xrez2+XcQ2;
+      Yrez2=Yrez2+YcQ2;
+     }
+      else
+       {
+        Kr=sqrt((Xper1[NMB1]-Xper2[NMB1])*(Xper1[NMB1]-Xper2[NMB1])+(Yper1[NMB1]-Yper2[NMB1])*(Yper1[NMB1]-Yper2[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-Q2*3.1416/180)*Cos(3.1416/2-Q2*3.1416/180)));
+        
+        Dr=sqrt((Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])*(Xk2[NomSP2[NMB1]]-Xk2[NomSP2[NMB1]+1])+(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1])*(yk2[NomSP2[NMB1]]-yk2[NomSP2[NMB1]+1]));       
+        Dr1=sqrt((Xk2[NomSP2[NMB1]]-Xper2[NMB1])*(Xk2[NomSP2[NMB1]]-Xper2[NMB1])+(yk2[NomSP2[NMB1]]-Yper2[NMB1])*(yk2[NomSP2[NMB1]]-Yper2[NMB1]));
+       
+        Br=(Dr1+Er)/Dr;                                  //позиция на спане//
+        X=Xk2[NomSP2[NMB1]+1]-Xk2[NomSP2[NMB1]];
+        Y=Yk2[NomSP2[NMB1]+1]-Yk2[NomSP2[NMB1]];
+        Xrez2=Br*X+Xk2[NomSP2[NMB1]];
+        Yrez2=Br*Y+Yk2[NomSP2[NMB1]];
+        Pz2=Br;
+       }   
+   }
+
+
+}
+Xper2[NMB1]=Xrez2;
+Yper2[NMB1]=Yrez2;
+POZ2[NMB1]=Pz2;
+NomSP2[NMB1]=n;
+}
+
+//print(Xper1[NMB1]);
+//print(Yper1[NMB1]);
+//print(Xper2[NMB1]);
+//print(Yper2[NMB1]);
+//print(POZ2[NMB1]);
+//print(NomSP2[NMB1]);
+
+SNYG();
+
+
+
+if((Q1<=35)||(P1<=35))
+  {
+  if((POZ1[NMB1]==0)||(POZ1[NMB1]==1))
+   {
+    if(Q1<=35)
+     {
+      n=NomSP1[NMB1];
+      if(Tk1[NomSP1[NMB1]]!=0)
+       {
+        if(Tk1[NomSP1[NMB1]]<0) U=4*arctg((-Tk1[NomSP1[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk1[NomSP1[NMB1]])*180/3.1416; 
+        Er=sqrt((Xper2[NMB1]-XcQ1)*(Xper2[NMB1]-XcQ1)+(Yper2[NMB1]-YcQ1)*(Yper2[NMB1]-YcQ1));
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Br=(RcQ1*RcQ1+Er*Er-Kr*Kr)/(2*RcQ1*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper1[NMB1]-XcQ1;
+        Y=Yper1[NMB1]-YcQ1;
+        if(POZ1[NMB1]==0)
+         {
+          if(Tk1[NomSP1[NMB1]]<0)
+           {
+            Xrez1=X*Cos(Br)+Y*Sin(Br);
+            Yrez1=-X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk1[NomSP1[NMB1]]>0)
+           {
+            Xrez1=X*Cos(Br)-Y*Sin(Br);
+            Yrez1=X*Sin(Br)+Y*Cos(Br);
+           }
+
+          Pz1=(3.1416*RcQ1*(Br*180/3.1416)/180)/(3.1416*RcQ1*U/180);
+
+         }
+        if(POZ1[NMB1]==1)
+         {
+          if(Tk1[NomSP1[NMB1]]<0)
+           {
+            Xrez1=X*Cos(Br)-Y*Sin(Br);
+            Yrez1=X*Sin(Br)+Y*Cos(Br);
+           }
+          if(Tk1[NomSP1[NMB1]]>0)
+           {
+            Xrez1=X*Cos(Br)+Y*Sin(Br);
+            Yrez1=-X*Sin(Br)+Y*Cos(Br);
+           }
+          Pz1=(3.1416*RcQ1*(U-(Br*180/3.1416))/180)/(3.1416*RcQ1*U/180);
+
+         }
+        Xrez1=Xrez1+XcQ1;
+        Yrez1=Yrez1+YcQ1;
+       }
+       else
+        {
+         Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-Q1*3.1416/180)*Cos(3.1416/2-Q1*3.1416/180)));
+         if(POZ1[NMB1]==0) 
+          {         
+           Dr=sqrt((Xper1[NMB1]-Xk1[NomSP1[NMB1]+1])*(Xper1[NMB1]-Xk1[NomSP1[NMB1]+1])+(Yper1[NMB1]-yk1[NomSP1[NMB1]+1])*(Yper1[NMB1]-yk1[NomSP1[NMB1]+1]));       
+           Br=Er/Dr;                                  //позиция на спане//
+           X=Xk1[NomSP1[NMB1]+1]-Xper1[NMB1];
+           Y=Yk1[NomSP1[NMB1]+1]-Yper1[NMB1];
+           Xrez1=Br*X+Xper1[NMB1];
+           Yrez1=Br*Y+Yper1[NMB1];
+           Pz1=Br;
+          }
+         if(POZ1[NMB1]==1)
+          {
+           Dr=sqrt((Xper1[NMB1]-Xk1[NomSP1[NMB1]])*(Xper1[NMB1]-Xk1[NomSP1[NMB1]])+(Yper1[NMB1]-yk1[NomSP1[NMB1]])*(Yper1[NMB1]-yk1[NomSP1[NMB1]]));                  
+           Br=Er/Dr;                                  //позиция на спане//
+           X=Xk1[NomSP1[NMB1]]-Xper1[NMB1];
+           Y=Yk1[NomSP1[NMB1]]-Yper1[NMB1];
+           Xrez1=Br*X+Xper1[NMB1];
+           Yrez1=Br*Y+Yper1[NMB1];
+           Pz1=(Dr-Er)/Dr;
+          }
+
+        } 
+    }
+   else
+   {
+
+   if(P1<=35)
+    {
+    if(POZ1[NMB1]==0)
+     {
+      n=(NomSP1[NMB1]-1);
+      if(n==0) n=ROUND(kolSpan1-1);
+      if(Tk1[n]!=0)
+       {
+        if(Tk1[n]<0) U=4*arctg((-Tk1[n]))*180/3.1416;
+          else U=4*arctg(Tk1[n])*180/3.1416; 
+        Er=sqrt((Xper2[NMB1]-XcP1)*(Xper2[NMB1]-XcP1)+(Yper2[NMB1]-YcP1)*(Yper2[NMB1]-YcP1));
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Br=(RcP1*RcP1+Er*Er-Kr*Kr)/(2*RcP1*Er);
+        if(Br>1) Br=1;
+        if(Br<-1) Br=-1;
+        Br=arccos(Br);                     //угол поворота//
+        X=Xper1[NMB1]-XcP1;
+        Y=Yper1[NMB1]-YcP1;
+        if(Tk1[n]<0)
+         {
+          Xrez1=X*Cos(Br)-Y*Sin(Br);
+          Yrez1=X*Sin(Br)+Y*Cos(Br);
+         }
+        if(Tk1[n]>0)
+         {
+          Xrez1=X*Cos(Br)+Y*Sin(Br);
+          Yrez1=-X*Sin(Br)+Y*Cos(Br);
+         }
+        Pz1=(3.1416*RcP1*(U-(Br*180/3.1416))/180)/(3.1416*RcP1*U/180);
+        Xrez1=Xrez1+XcP1;
+        Yrez1=Yrez1+YcP1;
+       }
+       else
+        {
+         Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P1*3.1416/180)*Cos(3.1416/2-P1*3.1416/180)));
+         Dr=sqrt((Xper1[NMB1]-Xk1[n])*(Xper1[NMB1]-Xk1[n])+(Yper1[NMB1]-yk1[n])*(Yper1[NMB1]-yk1[n]));
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk1[n]-Xper1[NMB1];
+         Y=Yk1[n]-Yper1[NMB1];
+         Xrez1=Br*X+Xper1[NMB1];
+         Yrez1=Br*Y+Yper1[NMB1];
+         Pz1=(Dr-Er)/Dr;
+        }    
+     } 
+    if(POZ1[NMB1]==1)
+     {
+      n=NomSP1[NMB1]+1;
+      if(n==kolSpan1) n=1;
+      if(Tk1[n]!=0)
+      {
+       if(Tk1[n]<0) U=4*arctg((-Tk1[n]))*180/3.1416;
+         else U=4*arctg(Tk1[n])*180/3.1416; 
+       Er=sqrt((Xper2[NMB1]-XcP1)*(Xper2[NMB1]-XcP1)+(Yper2[NMB1]-YcP1)*(Yper2[NMB1]-YcP1));
+       Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+       Br=(RcP1*RcP1+Er*Er-Kr*Kr)/(2*RcP1*Er);
+       if(Br>1) Br=1;
+       if(Br<-1) Br=-1;
+       Br=arccos(Br);                     //угол поворота//
+       X=Xper1[NMB1]-XcP1;
+       Y=Yper1[NMB1]-YcP1;
+       if(Tk1[n]<0)
+        {
+         Xrez1=X*Cos(Br)+Y*Sin(Br);
+         Yrez1=-X*Sin(Br)+Y*Cos(Br);
+        }
+       if(Tk1[n]>0)
+        {
+         Xrez1=X*Cos(Br)-Y*Sin(Br);
+         Yrez1=X*Sin(Br)+Y*Cos(Br);
+        }
+ 
+        Pz1=(3.1416*RcP1*(Br*180/3.1416)/180)/(3.1416*RcP1*U/180);
+        Xrez1=Xrez1+XcP1;
+        Yrez1=Yrez1+YcP1;
+       }
+       else
+        {
+         Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+         Er=Kr*sqrt(1-(Cos(3.1416/2-P1*3.1416/180)*Cos(3.1416/2-P1*3.1416/180)));
+         Dr=sqrt((Xper1[NMB1]-Xk1[n+1])*(Xper1[NMB1]-Xk1[n+1])+(Yper1[NMB1]-yk1[n+1])*(Yper1[NMB1]-yk1[n+1]));         
+         Br=Er/Dr;                                  //позиция на спане//
+         X=Xk1[n+1]-Xper1[NMB1];
+         Y=Yk1[n+1]-Yper1[NMB1];
+         Xrez1=Br*X+Xper1[NMB1];
+         Yrez1=Br*Y+Yper1[NMB1];  
+         Pz1=Br;
+        } 
+     }
+
+   }   
+
+ }
+ }
+
+ if((POZ1[NMB1]!=0)&&(POZ1[NMB1]!=1))
+  {
+   if(P1<=35)
+   {
+    n=NomSP1[NMB1];
+    if(Tk1[NomSP1[NMB1]]!=0)
+     {
+      if(Tk1[NomSP1[NMB1]]<0) U=4*arctg((-Tk1[NomSP1[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk1[NomSP1[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper2[NMB1]-XcP1)*(Xper2[NMB1]-XcP1)+(Yper2[NMB1]-YcP1)*(Yper2[NMB1]-YcP1));
+      Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+      Br=(RcP1*RcP1+Er*Er-Kr*Kr)/(2*RcP1*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper1[NMB1]-XcP1;
+      Y=Yper1[NMB1]-YcP1;
+      L3=(3.1416*RcP1*(Br*180/3.1416))/180;
+      L2=(3.1416*RcP1*U)/180;
+      L1=POZ1[NMB1]*L2;
+      if(Tk1[NomSP1[NMB1]]<0)
+       {
+        Xrez1=X*Cos(Br)-Y*Sin(Br);
+        Yrez1=X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1-L3)/L2;
+
+       }
+      if(Tk1[NomSP1[NMB1]]>0)
+       {
+        Xrez1=X*Cos(Br)+Y*Sin(Br);
+        Yrez1=-X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1-L3)/L2;
+       }
+         
+      Xrez1=Xrez1+XcP1;
+      Yrez1=Yrez1+YcP1;
+     }
+      else
+       {
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-P1*3.1416/180)*Cos(3.1416/2-P1*3.1416/180)));
+        
+        Dr=sqrt((Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])*(Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])+(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1])*(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1]));       
+        Dr1=sqrt((Xk1[NomSP1[NMB1]]-Xper1[NMB1])*(Xk1[NomSP1[NMB1]]-Xper1[NMB1])+(yk1[NomSP1[NMB1]]-Yper1[NMB1])*(yk1[NomSP1[NMB1]]-Yper1[NMB1]));
+       
+        Br=(Dr1-Er)/Dr;                                  //позиция на спане//
+        X=Xk1[NomSP1[NMB1]+1]-Xk1[NomSP1[NMB1]];
+        Y=Yk1[NomSP1[NMB1]+1]-Yk1[NomSP1[NMB1]];
+        Xrez1=Br*X+Xk1[NomSP1[NMB1]];
+        Yrez1=Br*Y+Yk1[NomSP1[NMB1]];
+        Pz1=Br;
+       }   
+   }
+  if(Q1<=35)
+   {
+    n=NomSP1[NMB1];
+    if(Tk1[NomSP1[NMB1]]!=0)
+     {
+      if(Tk1[NomSP1[NMB1]]<0) U=4*arctg((-Tk1[NomSP1[NMB1]]))*180/3.1416;
+          else U=4*arctg(Tk1[NomSP1[NMB1]])*180/3.1416; 
+      Er=sqrt((Xper2[NMB1]-XcQ1)*(Xper2[NMB1]-XcQ1)+(Yper2[NMB1]-YcQ1)*(Yper2[NMB1]-YcQ1));
+      Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+      Br=(RcQ1*RcQ1+Er*Er-Kr*Kr)/(2*RcQ1*Er);
+      if(Br>1) Br=1;
+      if(Br<-1) Br=-1;
+      Br=arccos(Br);                     //угол поворота//
+      X=Xper1[NMB1]-XcQ1;
+      Y=Yper1[NMB1]-YcQ1;
+      L3=(3.1416*RcQ1*(Br*180/3.1416))/180;
+      L2=(3.1416*RcQ1*U)/180;
+      L1=POZ1[NMB1]*L2;
+      if(Tk1[NomSP1[NMB1]]<0)
+       {
+        Xrez1=X*Cos(Br)+Y*Sin(Br);
+        Yrez1=-X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1+L3)/L2;
+       }
+      if(Tk1[NomSP1[NMB1]]>0)
+       {
+        Xrez1=X*Cos(Br)-Y*Sin(Br);
+        Yrez1=X*Sin(Br)+Y*Cos(Br);
+        PZ1=(L1+L3)/L2;
+       }
+         
+      Xrez1=Xrez1+XcQ1;
+      Yrez1=Yrez1+YcQ1;
+     }
+      else
+       {
+        Kr=sqrt((Xper2[NMB1]-Xper1[NMB1])*(Xper2[NMB1]-Xper1[NMB1])+(Yper2[NMB1]-Yper1[NMB1])*(Yper2[NMB1]-Yper1[NMB1]));
+        Er=Kr*sqrt(1-(Cos(3.1416/2-Q1*3.1416/180)*Cos(3.1416/2-Q1*3.1416/180)));
+        
+        Dr=sqrt((Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])*(Xk1[NomSP1[NMB1]]-Xk1[NomSP1[NMB1]+1])+(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1])*(yk1[NomSP1[NMB1]]-yk1[NomSP1[NMB1]+1]));       
+        Dr1=sqrt((Xk1[NomSP1[NMB1]]-Xper1[NMB1])*(Xk1[NomSP1[NMB1]]-Xper1[NMB1])+(yk1[NomSP1[NMB1]]-Yper1[NMB1])*(yk1[NomSP1[NMB1]]-Yper1[NMB1]));
+       
+        Br=(Dr1+Er)/Dr;                                  //позиция на спане//
+        X=Xk1[NomSP1[NMB1]+1]-Xk1[NomSP1[NMB1]];
+        Y=Yk1[NomSP1[NMB1]+1]-Yk1[NomSP1[NMB1]];
+        Xrez1=Br*X+Xk1[NomSP1[NMB1]];
+        Yrez1=Br*Y+Yk1[NomSP1[NMB1]];
+        Pz1=Br;
+       }   
+   }
+
+
+}
+Xper1[NMB1]=Xrez1;
+Yper1[NMB1]=Yrez1;
+POZ1[NMB1]=Pz1;
+NomSP1[NMB1]=n;
+}
+
+
+
+

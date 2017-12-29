@@ -1,0 +1,72 @@
+extern long W100;
+extern float W101;
+float Det1Dx,Det2Dy;  //  смещение по Х и по У
+float BazX,BazY;  // координаты основного контура с подпрог. 
+float BazShX,BazShY;  // координаты базового контура - 1 элемент матр. 
+float RoyX,RoyY; // координаты соседних элементов матрицы
+float NomPr;  // номер подпрограммы
+float ShiftX,ShiftY; // смещение базы от основного контура
+float KolX,KolY,KolO;
+long nom;
+ 
+nom:=W100; 
+print("Введите номеp подпpогpаммы("+str(W100)+")");
+read(nom);
+if (nom>W100)
+ {
+  print("Номер подпрограммы неверный!!! Нажмите Any Key");
+  read(ch);
+  return;
+ }
+W101:=nom; 
+ 
+ print("                             ");
+ print("Укажите основной контур(С подпрограммой) ");
+ W(-2);
+ BazX=Heap[16];
+ BazY=Heap[15];
+
+ print("                             ");
+ print("Укажите базовый контур(ДлЯ первого элемента матрицы) ");
+ W(-2);
+ BazShX=Heap[16];
+ BazShY=Heap[15];
+ print("                                      ");
+ print("Укажите контур справа/слева курсором");
+ W(-2);
+ RoyX=Heap[16];
+
+ print("                                      ");
+ print("Укажите контур снизу/сверху курсором");
+ W(-2);
+ print("                                      ");
+ RoyY=Heap[15];
+
+ Det1Dx=RoyX-BazShX;
+ Det2Dy=RoyY-BazShY;
+ ShiftX=BazShX-BazX;
+ ShiftY=BazShY-BazY;
+ KolX=100;
+ KolY=100;
+ KolO=500;
+ if (abs(Det1Dx)<0.01)
+ {
+  KolO=KolY;
+  KolX=1;
+ }
+ if (abs(Det2Dy)<0.01) 
+ {
+  KolO=KolX; 	
+  KolY=1;
+ }
+ print("Количество строчек("+str(KolY)+")");
+ read(KolY);
+ print("Количество колонок("+str(KolX)+")");
+ read(KolY);
+ print("Общее Количество("+str(KolO)+")");
+ read(KolO);
+ 
+ // TMARK/5,N1,KO,KX,KY,Propusk,Strateg,BazaX,BazaY,DX,DY,DXMat,DYMat,Ugol
+ TMARK(5,W101,KolO,KolX,KolY,1,0,ShiftX,ShiftY,Det1Dx,Det2Dy);
+ BLOK();
+ return;

@@ -1,0 +1,781 @@
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2;
+extern float Xper1[200],Yper1[200],Xper2[200],Yper2[200],POZ1[100],POZ2[100];
+extern float Q1,P1,Q2,P2,RcP1,RcQ1,RcP2,RcQ2,XcP1,YcP1,XcQ1,YcQ1,XcP2,YcP2,XcQ2,YcQ2;
+extern long NMB,NMB1,NomSP1[100],NomSP2[100];
+float xc,yc,rc,xd,yd,cons,k,b,Ax1,Bx1,Cx1,Ax2,Bx2,Cx2,Ay1,By1,Cy1,Ay2,By2,Cy2,S,Er,Kr,Br,Dr;
+float X,Y,Xrez1,Yrez1,Xrez2,Yrez2;
+long n;
+
+Cx1=Xper2[NMB1]-Xper1[NMB1];
+Cy1=Yper2[NMB1]-Yper1[NMB1];
+Cx2=Xper1[NMB1]-Xper2[NMB1];
+Cy2=Yper1[NMB1]-Yper2[NMB1];
+
+if(POZ1[NMB1]==0)
+ {
+  if(Tk1[NomSP1[NMB1]]!=0)
+   {   
+    cons = ( tk1[NomSP1[NMB1]]-1./ tk1[NomSP1[NMB1]])*0.25;
+    xc = (Xk1[NomSP1[NMB1]] + Xk1[NomSP1[NMB1]+1])*0.5+(Yk1[NomSP1[NMB1]+1] - Yk1[NomSP1[NMB1]])*cons;
+    yc = (Yk1[NomSP1[NMB1]] + Yk1[NomSP1[NMB1]+1])*0.5-(Xk1[NomSP1[NMB1]+1] - Xk1[NomSP1[NMB1]])*cons;
+
+    xd =  Xk1[NomSP1[NMB1]]-xc;
+    yd =  Yk1[NomSP1[NMB1]]-yc;
+    rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+    if(Round(Yper1[NMB1]-yc)!=0)
+     {
+      k=(xc-Xper1[NMB1])/(Yper1[NMB1]-yc);
+      b=(rc*rc-yc*yc+Yper1[NMB1]*yc-xc*xc+Xper1[NMB1]*xc)/(Yper1[NMB1]-yc);
+      xd=Xper1[NMB1]+10;
+      yd=xd*k+b; 
+      Ax1=10;
+      Ay1=yd-Yper1[NMB1];
+      S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);             //Направление вектора//
+      if(Tk1[NomSP1[NMB1]]<0)
+       {
+       if(S<0)
+        {
+         xd=Xper1[NMB1]-10;
+         yd=xd*k+b; 
+         Ax1=-10;
+         Ay1=yd-Yper1[NMB1];
+        }
+       }
+      if(Tk1[NomSP1[NMB1]]>0)
+       {
+        if(S>0)
+         {
+          xd=Xper1[NMB1]-10;
+          yd=xd*k+b; 
+          Ax1=-10;
+          Ay1=yd-Yper1[NMB1];
+         }
+        }
+      } 
+       else
+        {
+         xd=Xper1[NMB1];
+         yd=Yper1[NMB1]+10;
+         Ax1=0;
+         Ay1=10;
+         S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);
+         if(Tk1[NomSP1[NMB1]]<0)
+          {
+           if(S<0)  Ay1=-10;
+          }
+         if(Tk1[NomSP1[NMB1]]>0)
+          {
+           if(S>0) Ay1=-10;
+          }
+         }
+       Q1=(Cx1*Ax1+Cy1*Ay1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Ax1*Ax1+Ay1*Ay1));
+       if(Q1>1) Q1=1;
+       if(Q1<-1) Q1=-1;
+       Q1=arccos(Q1)*180/3.1416;
+       RcQ1=rc; 
+       XcQ1=xc;
+       YcQ1=yc;     
+     }
+      else
+       {
+        Ax1=Xk1[NomSP1[NMB1]+1]-Xper1[NMB1];
+        Ay1=yk1[NomSP1[NMB1]+1]-Yper1[NMB1];
+        Q1=(Cx1*Ax1+Cy1*Ay1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Ax1*Ax1+Ay1*Ay1));
+        if(Q1>1) Q1=1;
+        if(Q1<-1) Q1=-1;
+        Q1=arccos(Q1)*180/3.1416;
+       }
+     n=(NomSP1[NMB1]-1);
+     if(n==0) n=ROUND(kolSpan1-1);
+     if(Tk1[n]!=0)
+     {   
+      cons = ( tk1[n]-1./ tk1[n])*0.25;
+      xc = (Xk1[n] + Xk1[n+1])*0.5+(Yk1[n+1] - Yk1[n])*cons;
+      yc = (Yk1[n] + Yk1[n+1])*0.5-(Xk1[n+1] - Xk1[n])*cons;
+
+      xd =  Xk1[n]-xc;
+      yd =  Yk1[n]-yc;
+      rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+      if(Round(Yper1[NMB1]-yc)!=0)
+       {
+        k=(xc-Xper1[NMB1])/(Yper1[NMB1]-yc);
+        b=(rc*rc-yc*yc+Yper1[NMB1]*yc-xc*xc+Xper1[NMB1]*xc)/(Yper1[NMB1]-yc);
+        xd=Xper1[NMB1]+10;
+        yd=xd*k+b; 
+        Bx1=10;
+        By1=yd-Yper1[NMB1];
+        S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);                  //Направление вектора//
+        if(Tk1[n]<0)
+         {
+          if(S>0)
+          {
+           xd=Xper1[NMB1]-10;
+           yd=xd*k+b; 
+           Bx1=-10;
+           By1=yd-Yper1[NMB1];
+          }
+         }
+        if(Tk1[n]>0)
+         {
+          if(S<0)
+          {
+           xd=Xper1[NMB1]-10;
+           yd=xd*k+b; 
+           Bx1=-10;
+           By1=yd-Yper1[NMB1];
+          }
+         } 
+
+       } 
+        else
+         {
+          xd=Xper1[NMB1];
+          yd=Yper1[NMB1]+10;
+          Bx1=0;
+          By1=10;
+          S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);
+          if(Tk1[n]<0)
+           {
+           if(S>0)  By1=-10;
+           } 
+          if(Tk1[n]>0)
+           {
+           if(S<0) By1=-10;
+           }
+         }
+       P1=(Cx1*Bx1+Cy1*By1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Bx1*Bx1+By1*By1));
+       if(P1>1) P1=1;
+       if(P1<-1) P1=-1;
+       P1=arccos(P1)*180/3.1416; 
+       RcP1=rc; 
+       XcP1=xc;
+       YcP1=yc;    
+     }
+      else
+       {
+        Bx1=Xk1[n]-Xper1[NMB1];
+        By1=yk1[n]-Yper1[NMB1];
+        P1=(Cx1*Bx1+Cy1*By1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Bx1*Bx1+By1*By1));
+        if(P1>1) P1=1;
+        if(P1<-1) P1=-1;
+        P1=arccos(P1)*180/3.1416;
+       } 
+  }
+
+if(POZ1[NMB1]==1)
+ {
+  if(Tk1[NomSP1[NMB1]]!=0)
+   {   
+    cons = ( tk1[NomSP1[NMB1]]-1./ tk1[NomSP1[NMB1]])*0.25;
+    xc = (Xk1[NomSP1[NMB1]] + Xk1[NomSP1[NMB1]+1])*0.5+(Yk1[NomSP1[NMB1]+1] - Yk1[NomSP1[NMB1]])*cons;
+    yc = (Yk1[NomSP1[NMB1]] + Yk1[NomSP1[NMB1]+1])*0.5-(Xk1[NomSP1[NMB1]+1] - Xk1[NomSP1[NMB1]])*cons;
+
+    xd =  Xk1[NomSP1[NMB1]]-xc;
+    yd =  Yk1[NomSP1[NMB1]]-yc;
+    rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+    if(Round(Yper1[NMB1]-yc)!=0)
+     {
+      k=(xc-Xper1[NMB1])/(Yper1[NMB1]-yc);
+      b=(rc*rc-yc*yc+Yper1[NMB1]*yc-xc*xc+Xper1[NMB1]*xc)/(Yper1[NMB1]-yc);
+      xd=Xper1[NMB1]+10;
+      yd=xd*k+b; 
+      Ax1=10;
+      Ay1=yd-Yper1[NMB1];
+      S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);             //Направление вектора//
+      if(Tk1[NomSP1[NMB1]]<0)
+       {
+        if(S>0)
+         {
+          xd=Xper1[NMB1]-10;
+          yd=xd*k+b; 
+          Ax1=-10;
+          Ay1=yd-Yper1[NMB1];
+         }
+        }
+      if(Tk1[NomSP1[NMB1]]>0)
+       {
+        if(S<0)
+         {
+          xd=Xper1[NMB1]-10;
+          yd=xd*k+b; 
+          Ax1=-10;
+          Ay1=yd-Yper1[NMB1];
+         }
+       }
+      } 
+       else
+        {
+         xd=Xper1[NMB1];
+         yd=Yper1[NMB1]+10;
+         Ax1=0;
+         Ay1=10;
+         S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);
+         if(Tk1[NomSP1[NMB1]]<0)
+          {
+          if(S>0) Ay1=-10;
+          }
+         if(Tk1[NomSP1[NMB1]]>0)
+          {
+          if(S<0) Ay1=-10;
+          }
+         }
+       Q1=(Cx1*Ax1+Cy1*Ay1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Ax1*Ax1+Ay1*Ay1));
+       if(Q1>1) Q1=1;
+       if(Q1<-1) Q1=-1;
+       Q1=arccos(Q1)*180/3.1416; 
+       RcQ1=rc; 
+       XcQ1=xc;
+       YcQ1=yc;    
+     }
+      else
+       {
+        Ax1=Xk1[NomSP1[NMB1]]-Xper1[NMB1];
+        Ay1=yk1[NomSP1[NMB1]]-Yper1[NMB1];
+        Q1=(Cx1*Ax1+Cy1*Ay1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Ax1*Ax1+Ay1*Ay1));
+        if(Q1>1) Q1=1;
+        if(Q1<-1) Q1=-1;
+        Q1=arccos(Q1)*180/3.1416;
+       }
+     n=NomSP1[NMB1]+1;
+     if(n==kolSpan1) n=1;
+     if(Tk1[n]!=0)
+     {   
+      cons = ( tk1[n]-1./ tk1[n])*0.25;
+      xc = (Xk1[n] + Xk1[n+1])*0.5+(Yk1[n+1] - Yk1[n])*cons;
+      yc = (Yk1[n] + Yk1[n+1])*0.5-(Xk1[n+1] - Xk1[n])*cons;
+
+      xd =  Xk1[n]-xc;
+      yd =  Yk1[n]-yc;
+      rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+      if(Round(Yper1[NMB1]-yc)!=0)
+       {
+        k=(xc-Xper1[NMB1])/(Yper1[NMB1]-yc);
+        b=(rc*rc-yc*yc+Yper1[NMB1]*yc-xc*xc+Xper1[NMB1]*xc)/(Yper1[NMB1]-yc);
+        xd=Xper1[NMB1]+10;
+        yd=xd*k+b; 
+        Bx1=10;
+        By1=yd-Yper1[NMB1];
+        S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);             //Направление вектора//
+        if(Tk1[n]<0)
+         { 
+          if(S<0)
+           {
+           xd=Xper1[NMB1]-10;
+           yd=xd*k+b; 
+           Bx1=-10;
+           By1=yd-Yper1[NMB1];
+           }
+         }
+        if(Tk1[n]>0)
+         { 
+          if(S>0)
+           {
+           xd=Xper1[NMB1]-10;
+           yd=xd*k+b; 
+           Bx1=-10;
+           By1=yd-Yper1[NMB1];
+           }
+         } 
+       } 
+        else
+         {
+          xd=Xper1[NMB1];
+          yd=Yper1[NMB1]+10;
+          Bx1=0;
+          By1=10;
+          S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);
+          if(S<0) By1=-10;
+         }
+       P1=(Cx1*Bx1+Cy1*By1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Bx1*Bx1+By1*By1));
+       if(P1>1) P1=1;
+       if(P1<-1) P1=-1;
+       P1=arccos(P1)*180/3.1416;  
+       RcP1=rc; 
+       XcP1=xc;
+       YcP1=yc;   
+     }
+      else
+       {
+        Bx1=Xk1[n+1]-Xper1[NMB1];
+        By1=yk1[n+1]-Yper1[NMB1];
+        P1=(Cx1*Bx1+Cy1*By1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Bx1*Bx1+By1*By1));
+        if(P1>1) P1=1;
+        if(P1<-1) P1=-1;
+        P1=arccos(P1)*180/3.1416;
+       } 
+  }
+
+if(POZ2[NMB1]==0)
+   {
+    if(Tk2[NomSP2[NMB1]]!=0)
+     {   
+      cons = ( tk2[NomSP2[NMB1]]-1./ tk2[NomSP2[NMB1]])*0.25;
+      xc = (Xk2[NomSP2[NMB1]] + Xk2[NomSP2[NMB1]+1])*0.5+(Yk2[NomSP2[NMB1]+1] - Yk2[NomSP2[NMB1]])*cons;
+      yc = (Yk2[NomSP2[NMB1]] + Yk2[NomSP2[NMB1]+1])*0.5-(Xk2[NomSP2[NMB1]+1] - Xk2[NomSP2[NMB1]])*cons;
+
+      xd =  Xk2[NomSP2[NMB1]]-xc;
+      yd =  Yk2[NomSP2[NMB1]]-yc;
+      rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+      if(Round(Yper2[NMB1]-yc)!=0)
+       {
+        k=(xc-Xper2[NMB1])/(Yper2[NMB1]-yc);
+        b=(rc*rc-yc*yc+Yper2[NMB1]*yc-xc*xc+Xper2[NMB1]*xc)/(Yper2[NMB1]-yc);
+        xd=Xper2[NMB1]+10;
+        yd=xd*k+b; 
+        Ax2=10;
+        Ay2=yd-Yper2[NMB1];
+        S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+        if(Tk2[NomSP2[NMB1]]<0)
+         {
+          if(S<0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Ax2=-10;
+           Ay2=yd-Yper2[NMB1];
+          }
+         }
+        if(Tk2[NomSP2[NMB1]]>0)
+         {
+          if(S>0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Ax2=-10;
+           Ay2=yd-Yper2[NMB1];
+          }
+         }
+       } 
+        else
+         {
+          xd=Xper2[NMB1];
+          yd=Yper2[NMB1]+10;
+          Ax2=0;
+          Ay2=10;
+          S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+          if(Tk2[NomSP2[NMB1]]<0)
+           {
+           if(S<0) Ay2=-10;
+           }
+          if(Tk2[NomSP2[NMB1]]>0)
+           {
+           if(S>0) Ay2=-10;
+           }           
+         }
+       Q2=(Cx2*Ax2+Cy2*Ay2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Ax2*Ax2+Ay2*Ay2));
+       if(Q2>1) Q2=1;
+       if(Q2<-1) Q2=-1;
+       Q2=arccos(Q2)*180/3.1416;
+       RcQ2=rc; 
+       XcQ2=xc;
+       YcQ2=yc;     
+     }
+      else
+       {
+        Ax2=Xk2[NomSP2[NMB1]+1]-Xper2[NMB1];
+        Ay2=yk2[NomSP2[NMB1]+1]-Yper2[NMB1];
+        Q2=(Cx2*Ax2+Cy2*Ay2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Ax2*Ax2+Ay2*Ay2));
+        if(Q2>1) Q2=1;
+        if(Q2<-1) Q2=-1;
+        Q2=arccos(Q2)*180/3.1416;
+       }
+     n=(NomSP2[NMB1]-1);
+     if(n==0) n=ROUND(kolSpan2-1);
+     if(Tk2[n]!=0)
+     {   
+      cons = ( tk2[n]-1./ tk2[n])*0.25;
+      xc = (Xk2[n] + Xk2[n+1])*0.5+(Yk2[n+1] - Yk2[n])*cons;
+      yc = (Yk2[n] + Yk2[n+1])*0.5-(Xk2[n+1] - Xk2[n])*cons;
+
+      xd =  Xk2[n]-xc;
+      yd =  Yk2[n]-yc;
+      rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+      if(Round(Yper2[NMB1]-yc)!=0)
+       {
+        k=(xc-Xper2[NMB1])/(Yper2[NMB1]-yc);
+        b=(rc*rc-yc*yc+Yper2[NMB1]*yc-xc*xc+Xper2[NMB1]*xc)/(Yper2[NMB1]-yc);
+        xd=Xper2[NMB1]+10;
+        yd=xd*k+b; 
+        Bx2=10;
+        By2=yd-Yper2[NMB1];
+        S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+        if(Tk2[n]<0)
+         {
+         if(S>0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Bx2=-10;
+           By2=yd-Yper2[NMB1]; 
+          }
+         }
+        if(Tk2[n]>0)
+         {
+         if(S<0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Bx2=-10;
+           By2=yd-Yper2[NMB1]; 
+          }
+         }
+       } 
+        else
+         {
+          xd=Xper2[NMB1];
+          yd=Yper2[NMB1]+10;
+          Bx2=0;
+          By2=10;
+          S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+          if(Tk2[n]<0)
+           {
+           if(S>0) By2=-10; 
+           }
+          if(Tk2[n]>0)
+           {
+           if(S<0) By2=-10; 
+           }
+         }
+       P2=(Cx2*Bx2+Cy2*By2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Bx2*Bx2+By2*By2));
+       if(P2>1) P2=1;
+       if(P2<-1) P2=-1;
+       P2=arccos(P2)*180/3.1416; 
+       RcP2=rc; 
+       XcP2=xc;
+       YcP2=yc;    
+     }
+      else
+       {
+        Bx2=Xk2[n]-Xper2[NMB1];
+        By2=yk2[n]-Yper2[NMB1];
+        P2=(Cx2*Bx2+Cy2*By2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Bx2*Bx2+By2*By2));
+        if(P2>1) P2=1;
+        if(P2<-1) P2=-1;
+        P2=arccos(P2)*180/3.1416;
+       } 
+  }
+
+  if(POZ2[NMB1]==1)
+   {
+    if(Tk2[NomSP2[NMB1]]!=0)
+     {   
+      cons = ( tk2[NomSP2[NMB1]]-1./ tk2[NomSP2[NMB1]])*0.25;
+      xc = (Xk2[NomSP2[NMB1]] + Xk2[NomSP2[NMB1]+1])*0.5+(Yk2[NomSP2[NMB1]+1] - Yk2[NomSP2[NMB1]])*cons;
+      yc = (Yk2[NomSP2[NMB1]] + Yk2[NomSP2[NMB1]+1])*0.5-(Xk2[NomSP2[NMB1]+1] - Xk2[NomSP2[NMB1]])*cons;
+
+      xd =  Xk2[NomSP2[NMB1]]-xc;
+      yd =  Yk2[NomSP2[NMB1]]-yc;
+      rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+      if(Round(Yper2[NMB1]-yc)!=0)
+       {
+        k=(xc-Xper2[NMB1])/(Yper2[NMB1]-yc);
+        b=(rc*rc-yc*yc+Yper2[NMB1]*yc-xc*xc+Xper2[NMB1]*xc)/(Yper2[NMB1]-yc);
+        xd=Xper2[NMB1]+10;
+        yd=xd*k+b; 
+        Ax2=10;
+        Ay2=yd-Yper2[NMB1];
+        S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+        if(Tk2[NomSP2[NMB1]]<0)
+         {
+         if(S>0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Ax2=-10;
+           Ay2=yd-Yper2[NMB1];
+          }
+         }
+        if(Tk2[NomSP2[NMB1]]>0)
+         {
+         if(S<0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Ax2=-10;
+           Ay2=yd-Yper2[NMB1];
+          }
+         }
+       } 
+        else
+         {
+          xd=Xper2[NMB1];
+          yd=Yper2[NMB1]+10;
+          Ax2=0;
+          Ay2=10;
+          S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+          if(Tk2[NomSP2[NMB1]]<0)
+           {
+           if(S>0)  Ay2=-10;
+           }
+          if(Tk2[NomSP2[NMB1]]>0)
+           {
+           if(S<0) Ay2=-10;   
+           }
+         }
+       Q2=(Cx2*Ax2+Cy2*Ay2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Ax2*Ax2+Ay2*Ay2));
+       if(Q2>1) Q2=1;
+       if(Q2<-1) Q2=-1;
+       Q2=arccos(Q2)*180/3.1416; 
+       RcQ2=rc; 
+       XcQ2=xc;
+       YcQ2=yc;    
+     }
+      else
+       {
+        Ax2=Xk2[NomSP2[NMB1]]-Xper2[NMB1];
+        Ay2=yk2[NomSP2[NMB1]]-Yper2[NMB1];
+        Q2=(Cx2*Ax2+Cy2*Ay2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Ax2*Ax2+Ay2*Ay2));
+        if(Q2>1) Q2=1;
+        if(Q2<-1) Q2=-1;
+        Q2=arccos(Q2)*180/3.1416;
+       }
+     n=NomSP2[NMB1]+1;
+     if(n==kolSpan2) n=1;
+     if(Tk2[n]!=0)
+     {   
+      cons = ( tk2[n]-1./ tk2[n])*0.25;
+      xc = (Xk2[n] + Xk2[n+1])*0.5+(Yk2[n+1] - Yk2[n])*cons;
+      yc = (Yk2[n] + Yk2[n+1])*0.5-(Xk2[n+1] - Xk2[n])*cons;
+
+      xd =  Xk2[n]-xc;
+      yd =  Yk2[n]-yc;
+      rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+      if(Round(Yper2[NMB1]-yc)!=0)
+       {
+        k=(xc-Xper2[NMB1])/(Yper2[NMB1]-yc);
+        b=(rc*rc-yc*yc+Yper2[NMB1]*yc-xc*xc+Xper2[NMB1]*xc)/(Yper2[NMB1]-yc);
+        xd=Xper2[NMB1]+10;
+        yd=xd*k+b; 
+        Bx2=10;
+        By2=yd-Yper2[NMB1];
+        S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+        if(Tk2[n]<0)  
+         {
+          if(S<0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Bx2=-10;
+           By2=yd-Yper2[NMB1];
+          }
+         }
+        if(Tk2[n]>0)  
+         {
+          if(S>0)
+          {
+           xd=Xper2[NMB1]-10;
+           yd=xd*k+b; 
+           Bx2=-10;
+           By2=yd-Yper2[NMB1];
+          }
+         }
+       } 
+        else
+         {
+          xd=Xper2[NMB1];
+          yd=Yper2[NMB1]+10;
+          Bx2=0;
+          By2=10;
+          S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+          if(Tk2[n]<0)  
+           {
+           if(S<0)  By2=-10;
+           }
+          if(Tk2[n]>0)  
+           {
+           if(S>0) By2=-10;
+           }
+         }
+       P2=(Cx2*Bx2+Cy2*By2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Bx2*Bx2+By2*By2));
+       if(P2>1) P2=1;
+       if(P2<-1) P2=-1;
+       P2=arccos(P2)*180/3.1416; 
+       RcP2=rc; 
+       XcP2=xc;
+       YcP2=yc;    
+     }
+      else
+       {
+        Bx2=Xk2[n+1]-Xper2[NMB1];
+        By2=yk2[n+1]-Yper2[NMB1];
+        P2=(Cx2*Bx2+Cy2*By2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Bx2*Bx2+By2*By2));
+        if(P2>1) P2=1;
+        if(P2<-1) P2=-1;
+        P2=arccos(P2)*180/3.1416;
+       } 
+  }
+
+ 
+if((POZ1[NMB1]!=0)&&(POZ1[NMB1]!=1))
+ {
+  if(Tk1[NomSP1[NMB1]]!=0)
+   {   
+    cons = ( tk1[NomSP1[NMB1]]-1./ tk1[NomSP1[NMB1]])*0.25;
+    xc = (Xk1[NomSP1[NMB1]] + Xk1[NomSP1[NMB1]+1])*0.5+(Yk1[NomSP1[NMB1]+1] - Yk1[NomSP1[NMB1]])*cons;
+    yc = (Yk1[NomSP1[NMB1]] + Yk1[NomSP1[NMB1]+1])*0.5-(Xk1[NomSP1[NMB1]+1] - Xk1[NomSP1[NMB1]])*cons;
+
+    xd =  Xk1[NomSP1[NMB1]]-xc;
+    yd =  Yk1[NomSP1[NMB1]]-yc;
+    rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+    if(Round(Yper1[NMB1]-yc)!=0)
+     {
+      k=(xc-Xper1[NMB1])/(Yper1[NMB1]-yc);
+      b=(rc*rc-yc*yc+Yper1[NMB1]*yc-xc*xc+Xper1[NMB1]*xc)/(Yper1[NMB1]-yc);
+      xd=Xper1[NMB1]+10;
+      yd=xd*k+b;                                                          //Касат к окр//
+      Ax1=10;
+      Ay1=yd-Yper1[NMB1];
+      S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);             //Направление вектора//
+      if(Tk1[NomSP1[NMB1]]<0)
+       {
+       if(S<0)
+        {
+         xd=Xper1[NMB1]-10;
+         yd=xd*k+b; 
+         Ax1=-10;
+         Ay1=yd-Yper1[NMB1];
+        }
+       }
+      if(Tk1[NomSP1[NMB1]]>0)
+       {
+        if(S>0)
+         {
+          xd=Xper1[NMB1]-10;
+          yd=xd*k+b; 
+          Ax1=-10;
+          Ay1=yd-Yper1[NMB1];
+         }
+        }
+      } 
+       else
+        {
+         xd=Xper1[NMB1];
+         yd=Yper1[NMB1]+10;
+         Ax1=0;
+         Ay1=10;
+         S=(xd-xc)*(Yper1[NMB1]-yc)-(yd-yc)*(Xper1[NMB1]-xc);
+         if(Tk1[NomSP1[NMB1]]<0)
+          {
+           if(S<0)  Ay1=-10;
+          }
+         if(Tk1[NomSP1[NMB1]]>0)
+          {
+           if(S>0) Ay1=-10;
+          }
+         }
+       Q1=(Cx1*Ax1+Cy1*Ay1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Ax1*Ax1+Ay1*Ay1));
+       if(Q1>1) Q1=1;
+       if(Q1<-1) Q1=-1;
+       Q1=arccos(Q1)*180/3.1416;
+       P1=180-Q1;
+       RcQ1=rc; 
+       XcQ1=xc;
+       YcQ1=yc; 
+       RcP1=rc; 
+       XcP1=xc;
+       YcP1=yc;   
+     }
+      else
+       {
+        Ax1=Xk1[NomSP1[NMB1]+1]-Xper1[NMB1];
+        Ay1=yk1[NomSP1[NMB1]+1]-Yper1[NMB1];
+        Q1=(Cx1*Ax1+Cy1*Ay1)/(sqrt(Cx1*Cx1+Cy1*Cy1)*sqrt(Ax1*Ax1+Ay1*Ay1));
+        if(Q1>1) Q1=1;
+        if(Q1<-1) Q1=-1;
+        Q1=arccos(Q1)*180/3.1416;
+        P1=180-Q1;
+       }
+
+ }
+
+if((POZ2[NMB1]!=0)&&(POZ2[NMB1]!=1))
+ {
+  if(Tk2[NomSP2[NMB1]]!=0)
+   {   
+    cons = ( tk2[NomSP2[NMB1]]-1./ tk2[NomSP2[NMB1]])*0.25;
+    xc = (Xk2[NomSP2[NMB1]] + Xk2[NomSP2[NMB1]+1])*0.5+(Yk2[NomSP2[NMB1]+1] - Yk2[NomSP2[NMB1]])*cons;
+    yc = (Yk2[NomSP2[NMB1]] + Yk2[NomSP2[NMB1]+1])*0.5-(Xk2[NomSP2[NMB1]+1] - Xk2[NomSP2[NMB1]])*cons;
+
+    xd =  Xk2[NomSP2[NMB1]]-xc;
+    yd =  Yk2[NomSP2[NMB1]]-yc;
+    rc = (xd*xd+yd*yd)**0.5;                       //Радиус центра окр//
+      
+    if(Round(Yper2[NMB1]-yc)!=0)
+     {
+      k=(xc-Xper2[NMB1])/(Yper2[NMB1]-yc);
+      b=(rc*rc-yc*yc+Yper2[NMB1]*yc-xc*xc+Xper2[NMB1]*xc)/(Yper2[NMB1]-yc);
+      xd=Xper2[NMB1]+10;
+      yd=xd*k+b; 
+      Ax2=10;
+      Ay2=yd-Yper2[NMB1];
+      S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+      if(Tk2[NomSP2[NMB1]]<0)
+       {
+        if(S<0)
+         {
+          xd=Xper2[NMB1]-10;
+          yd=xd*k+b; 
+          Ax2=-10;
+          Ay2=yd-Yper2[NMB1];
+         }
+       }
+      if(Tk2[NomSP2[NMB1]]>0)
+       {
+        if(S>0)
+         {
+          xd=Xper2[NMB1]-10;
+          yd=xd*k+b; 
+          Ax2=-10;
+          Ay2=yd-Yper2[NMB1];
+         }
+       }
+      } 
+       else
+        {
+         xd=Xper2[NMB1];
+         yd=Yper2[NMB1]+10;
+         Ax2=0;
+         Ay2=10;
+         S=(xd-xc)*(Yper2[NMB1]-yc)-(yd-yc)*(Xper2[NMB1]-xc);             //Направление вектора   ????????????????//   
+         if(Tk2[NomSP2[NMB1]]<0)
+          {
+           if(S<0) Ay2=-10;
+          }
+         if(Tk2[NomSP2[NMB1]]>0)
+          {
+           if(S>0) Ay2=-10;
+          }           
+        }
+       Q2=(Cx2*Ax2+Cy2*Ay2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Ax2*Ax2+Ay2*Ay2));
+       if(Q2>1) Q2=1;
+       if(Q2<-1) Q2=-1;
+       Q2=arccos(Q2)*180/3.1416;
+       P2=180-Q2;
+       RcQ2=rc; 
+       XcQ2=xc;
+       YcQ2=yc;
+       RcP2=rc; 
+       XcP2=xc;
+       YcP2=yc;      
+     }
+      else
+       {
+        Ax2=Xk2[NomSP2[NMB1]+1]-Xper2[NMB1];
+        Ay2=yk2[NomSP2[NMB1]+1]-Yper2[NMB1];
+        Q2=(Cx2*Ax2+Cy2*Ay2)/(sqrt(Cx2*Cx2+Cy2*Cy2)*sqrt(Ax2*Ax2+Ay2*Ay2));
+        if(Q2>1) Q2=1;
+        if(Q2<-1) Q2=-1;
+        Q2=arccos(Q2)*180/3.1416;
+        P2=180-Q2;
+       }
+
+ }

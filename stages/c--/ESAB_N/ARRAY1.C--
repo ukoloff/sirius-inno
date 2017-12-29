@@ -1,0 +1,14 @@
+extern long W100;
+float W126,W127,W128;
+if(W100>0)
+{
+  print("Количество повтоpов ");
+  read(W126);
+  print("Смещение по оси X  ");
+  read(W127);
+  print("Смещение по оси Y  ");
+  read(W128);
+  TMARK(3,W100,W126,W127,W128,0.0);
+}
+BLOK();
+return;

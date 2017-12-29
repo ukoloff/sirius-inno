@@ -1,0 +1,26 @@
+param char OK1;
+extern float W6;
+extern float udl;
+extern long W100;
+extern long pin;
+extern float pinok;
+extern long npodpr;
+float koma;
+CHAR CH;
+ if(udl>0)
+ {
+   N(-udl);
+   D(udl);
+   Progon();
+ }
+  if((pin==1))
+   {
+    K();
+    Koma=HEAP[7];
+    if (pinok>(Koma-udl)
+     {
+      W100:=W100-1;
+      npodpr=npodpr-1;
+     }
+   }
+

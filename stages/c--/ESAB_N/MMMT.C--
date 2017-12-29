@@ -1,0 +1,11 @@
+static long MMM1, MMM2;
+
+MMM1 := 3;
+
+MMM2 := 4;
+
+print(" MMM1=", MMM1, " MMM2=", MMM2);  read();
+
+MMM2:=5; MMM1:=6;
+
+print(" MMM1=", MMM1, " MMM2=", MMM2); read();
