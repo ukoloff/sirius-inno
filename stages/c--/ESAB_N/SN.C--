@@ -69,11 +69,11 @@ While(i<KolKon-1)
 TOF(123);
 MOVE(KNT[1],Lange,SPv,0,spanvx);                      //Резка внешних контуров//
 TON(123);
-PROF(KNT[1],0,SPv,0,0,NomSP1[1],POZ1[1],spanvx);
+PROF(KNT[1],0,SPv,0,0,NomSP1[1],POZ1[1],0);
 i=2;
 While(i<(KolKon-1))
 {
- PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],spanvx);
+ PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],0);
  i++;
 }
 

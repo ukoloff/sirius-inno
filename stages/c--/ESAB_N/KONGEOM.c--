@@ -1,0 +1,84 @@
+char OK;
+char stroka[120];
+char putin[120];
+char putino[120];
+float KONT,XPN,YPN,XPB,YPB;
+float NOM8I;
+float  DIRECTS;
+extern float Lange;    // дистанция врезки
+extern float spanvx;   //    выход из способа резки ”√ќЋ
+extern float kasatel;  //    ¬ыход по касательной из способа  ќЌ“”–
+extern float normalv;  //  ¬ыход по нормали
+extern float pramoid;  //  прямой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированная резка
+extern char  Korr; // Y- есть коррекция,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в —ириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  ¬озврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  ќбход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float DCutt;
+extern float W7,W144;
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern float centrx,centry,vilo; // центр и длина большого контура
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+
+float xa,ya;
+float x3,y3;
+float TVrezx,TVrexy;
+float vkasat1;
+long SpProf;
+float dis,SPAN11,POS11;
+float SPAN1,POS1,SPAN2,POS2,XN1,YN1,XN2,YN2;
+float X1n,Y1n,T1n, X2n, Y2n, T2n, X1b, Y1b, T1b,X2b, Y2b, T2b;
+float KolCpan;
+long Filt,Filt1;
+long spoc;
+float spano;
+long W71,KolSpan,i1;
+
+putin=PATHNAM+"REZABTOM.RRR";
+putino=PATHNAM+"GEOMOUT.GOU";
+NEWFUN(323,0,0);  //  глобальная сортировка
+Filt:=fopen(putin,"rt");
+if (Filt<=0)
+{
+ print("‘айл невозможно открыть=="+putin);
+ W(-1);
+ return;
+}
+Filt1:=fopen(putino,"wt");
+if (Filt1<=0)
+{
+ print("‘айл невозможно открыть=="+putino);
+ W(-1);
+ return;
+}
+
+while(! feof(Filt) )
+ {
+   fscan(Filt,stroka);
+//  print(stroka);
+//  W(-1);
+   KONT:=Val(substr(stroka,1,7));     /*  Ќомер контура */
+   NOM8I:=Val(substr(stroka,53,6));     /*   »ндекс массива записи типа 8 в буфере */
+   if (KONT<=1) continue;
+   NEWFUN(302,0,KONT);          /* искать адрес текущего контура */ 
+   W71:=HEAP[25];
+   NEWFUN(305,0,W71);         /* получить число спанов в контуре */  
+   KolSpan:= HEAP[47];
+   i1:=0;
+   while (i1<=KolSpan)
+   		{
+   			i1++;
+   			NEWFUN(306,i1,W71);         /* получить спан в контуре */
+   			X0:=HEAP[35],
+        Y0:=HEAP[36],
+        T0:=HEAP[37].
+        fprint(Filt1,KONT," ",X0," ",Y0," ",T0);
+   		} 
+  }
+fclose(Filt1);
+fclose(Filt);

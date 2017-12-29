@@ -1,0 +1,41 @@
+extern float xnr,ynr;
+extern float x1,y1,x2,y2,tp,x3b,y3b;
+extern float spanvx;   //    выход из способа резки УГОЛ
+float nerez,cons,xc,yc;
+float A1,B1,C1,DXY,tp1;
+nerez=spanvx;
+if (spanvx<0) nerez=-spanvx;
+if (spanvx>0) return;
+tp1=tp;
+if (tp<0) tp1=-tp;
+if (tp1>=0.001)
+{
+ cons = ( tp-1./tp)*0.25;
+ xc = ( HEAP[13]+ HEAP[11])*0.5+( HEAP[10]- HEAP[12])*cons;
+ yc = ( HEAP[12]+ HEAP[10])*0.5-( HEAP[11]- HEAP[13])*cons;
+ A1=y3b-yc;
+ B1=xc-x3b;
+ DXY=(A1*A1+B1*B1)**0.5;
+ if (DXY>0) C1=nerez/DXY;
+ else C1=0.0;
+ if (tp<0)
+ {
+   xnr=x3b+A1*C1;
+   ynr=y3b+B1*C1;
+ }
+  else
+  {
+    xnr=x3b-A1*C1;
+    ynr=y3b-B1*C1;
+  }
+}
+else
+{
+ A1=y2-y1;
+ B1=x1-x2;
+ DXY=(A1*A1+B1*B1)**0.5;
+ if (DXY>0) C1=nerez/DXY;
+ else C1=0.0;
+ xnr=x3b+A1*C1;
+ ynr=y3b+B1*C1;
+}

@@ -1,0 +1,417 @@
+  extern float W7,W8,W86,W87,W4,W110,W120,DX[100],DY[100];
+  extern float DCutt,Lange;
+  char   Left,OK,OK1,PER;
+  float  W1,W2,W10,W11,W12;
+  extern float Ygol1[100],Ygol2[100];
+  extern long pin;
+  extern float Perx[100];
+  extern float Pery[100];
+  extern long W100;
+  float A1,A2,AB,B1,B2;
+  float x3,y3,vixod,Tang;
+  float W71,W144,spann,posspn;
+  float xm,ym,xb,yb,xp1,yp1,xp10,yp10,xp2,yp2;
+  long    Adres,pont,torez,verx,vniz,points;
+ long i1,i2,i3;
+  print("Укажите деталь длЯ резки с перемычкой,P-пп/ESC-выход)>");
+  W(-2);
+  x3=HEAP[22];     // ближайщаЯ точка к спану
+  y3=HEAP[21];     // ближайщаЯ точка к спану
+  W7=HEAP[3];
+  W4=HEAP[4];
+  W12=HEAP[8];     // ПозициЯ на спане 0..1
+  OK1:='Y';
+  OK :='Y';
+  if (S_GETCH=='P') OK1:='P';
+  print("На торцах нужны перемычки? ([Y]/N/ESC)>");
+  W(-1);
+  if(S_GETCH>22) OK=S_GETCH;
+  if (OK==27) return;
+  if (OK=='Y') torez=1;
+  else torez=0;
+  OK='Y';
+  print("Сверху детали нужны перемычки? ([Y]/N/ESC)>");
+  W(-1);
+  if(S_GETCH>22) OK=S_GETCH;
+  if (OK==27) return;
+  if (OK=='Y') verx=1;
+  else verx=0;
+  OK='Y';
+  print("Снизу детали нужны перемычки? ([Y]/N/ESC)>");
+  W(-1);
+  if(S_GETCH>22) OK=S_GETCH;
+  if (OK==27) return;
+  if (OK=='Y') vniz=1;
+  else vniz=0;
+  pont=0;
+  points=0;
+  while(pont==0)
+   {
+     print("Укажите место перемычки( " +str(points+1)+") /ESC-конец выбора )>");
+     W(-2);
+     if (S_GETCH==27) break; 
+     points++;
+     x3=HEAP[22];     // ближайщаЯ точка к спану
+     y3=HEAP[21];     // ближайщаЯ точка к спану
+    print("Введите координату Х("+str(x3)+")");
+    read(x3);
+    Perx[points-1]=x3;
+    Pery[points-1]=y3;
+    }
+ if (points<1) return;
+// *************** сортировка по х по убыванию**************************
+ if (points>1)
+ {
+  i1=-1;
+  i2=0;
+  i3=points-1;
+  while(i1<points)
+  {
+   i1++;
+   while(i2<i3)
+   {
+     i2++;
+     A1=Perx[i2-1];
+     A2=Perx[i2];
+     B1=Pery[i2-1];
+     B2=Pery[i2];
+     if (A1<A2)  // по убыванию
+      {
+        Perx[i2-1]=A2;
+        Perx[i2]=A1;
+        Pery[i2-1]=B2;
+        Pery[i2]=B1;
+      }
+   }
+   i2=0;
+  }
+ }
+// ***********************************************************
+NEWFUN(302,0,W7);          // искать адрес текущего контура
+//  При этом адрес контура  заноситсЯ в элемент массива HEAP[25];
+W71=HEAP[25];              /* адрес текущего контура */
+NEWFUN(303,0,W71);         /* искать номер главного (записи типа 8) */
+if (NISTAT==1) 
+{
+  print("Ошибка! Нет детали -только контур, нажмите Л. К.");
+  W(-1);
+  return;
+}
+// При этом номер главного  заноситсЯ в элемент массива HEAP[26];
+   W144=HEAP[26];          // номер главного (записи типа 8)
+   NEWFUN(307,0,W144);     // получить адрес записи 8
+// При этом адрес главного заноситсЯ в элемент массива   HEAP[27].
+  NewFun(308,HEAP[27],0);
+  W8=HEAP[43];             // адрес контура 1 в записи типа 8
+  W86=HEAP[44];           // адрес контура N в записи типа 8
+  NEWFUN(312,HEAP[27],W86);     // ГАБАРИТЫ ДЕТАЛИ
+  xm=HEAP[45];     // малый Х
+  xb=HEAP[46];     // большой Х
+  ym=HEAP[51];   // малый У
+  yb=HEAP[52];    // большой У
+ if (torez==1)
+{
+  xp1=xb+100;
+  yp1=(yb+ym)/2.0-10;
+  xp10=xb+100;
+  yp10=(yb+ym)/2.0+10;
+  NEWFUN(319,508,xp1);
+  NEWFUN(319,509,yp1);
+  NEWFUN(327,0,W7);
+ spann=HEAP[115];
+ posspn=HEAP[116];
+ vixod=0.0;
+ Tang=Lange;
+  if (vniz==1) //  если есть снизу перемычки
+   {
+      xp2=Perx[0]+20.0;
+      yp2=ym-100;
+   }
+   else
+   {
+      xp2=xm-100;
+      yp2=(yb+ym)/2.0-10;
+   }
+   RAPID();
+   MOVE(W7,Lange,spann,posspn,0);
+   KL();
+   LEAD(0);
+   PROF(W7,0,xp1,yp1,xp2,yp2);
+   OFT();
+}
+else
+{
+ xp1=xb+100.0;
+ yp1=yb-4.0;
+ xp10=xb-4.0;
+ yp10=yb+100.0;
+ NEWFUN(319,508,xp1);
+ NEWFUN(319,509,yp1);
+ NEWFUN(327,0,W7); 
+ spann=HEAP[115];
+ posspn=0;
+ vixod=-Lange;
+ Tang=0.0;
+ RAPID();
+ MOVE(W7,0,spann,0,-Lange);
+ KL();
+ LEAD(0);
+ if (vniz==1)
+   {
+     xp2=Perx[0]+20.0;
+     yp2=ym-100;
+     PROF(W7,0,xp1,yp1,xp2,yp2);
+     OFT();
+   }
+   else
+   {
+     if (verx==1)
+      {
+         xp2=Perx[points-1];
+         yp2=yb+100;
+         PROF(W7,0,xp1,yp1,xp2,yp2);
+         OFT();
+       }
+      else
+      {
+         xp2=xp10;
+         yp2=yp10;
+         PROF(W7,0,xp1,yp1,xp2,yp2);
+         xp1=xp2;
+         yp1=yp2;
+         NEWFUN(319,508,xp1);
+         NEWFUN(319,509,yp1);
+         NEWFUN(327,0,W7); 
+         spann=HEAP[115];
+         MOVE(W7,0,spann,1,0);
+         OFT();
+         ppkon(); 
+        BLOK();
+        return;
+      }
+   }
+  
+}
+
+// ************************ снизу  детали**************************
+//   - начать вырезку перемычек на длинном спане снизу
+// *****************************************************************
+if ((vniz==1) && (points>1))
+{
+ i1=0;
+ while(i1<points-1)
+   {
+     i1++;
+     xp1=Perx[i1-1];
+     yp1=ym-100.0;
+     NEWFUN(319,508,xp1);
+     NEWFUN(319,509,yp1);
+     NEWFUN(327,0,W7);
+    spann=HEAP[115];
+    posspn=HEAP[116];
+     xp2=Perx[i1]+20.0;
+     yp2=ym-100.0;
+     RAPID();
+     MOVE(W7,15,spann,posspn,15);
+     KL();
+     LEAD(0);
+     MOVE(W7,15,spann,posspn,0);
+     PROF(W7,0,xp1,yp1,xp2,yp2);
+     OFT();
+    }
+}
+//  ***************************************************
+//  Вырезка левого торца , если есть перемычка на торец
+//  **************************************************
+  if (torez==1)
+   {
+      if (vniz==1) //  если есть снизу перемычки
+        {
+          xp1=Perx[points-1];
+          yp1=ym-100;
+        }
+       else
+        {
+         xp1=xm-100;
+         yp1=(yb+ym)/2.0+10;
+        }
+      NEWFUN(319,508,xp1);
+      NEWFUN(319,509,yp1);
+      NEWFUN(327,0,W7);
+      spann=HEAP[115];
+      posspn=HEAP[116];
+      RAPID();
+      if (vniz==1)
+       MOVE(W7,15,spann,posspn,15);
+      else
+       MOVE(W7,15,spann,posspn,0);
+      KL();
+      LEAD(0);
+      if (vniz==1)
+       {
+         xp2=xm-100;
+         yp2=(yb+ym)/2.0-10;
+         MOVE(W7,15,spann,posspn,0);
+         PROF(W7,0,xp1,yp1,xp2,yp2);
+         OFT();
+         xp1=xm-100;
+         yp1=(yb+ym)/2.0+10;
+         NEWFUN(319,508,xp1);
+         NEWFUN(319,509,yp1);
+         NEWFUN(327,0,W7);
+         spann=HEAP[115];
+         posspn=HEAP[116];
+         RAPID();
+         MOVE(W7,Lange,spann,posspn,0);
+         KL();
+         LEAD(0);
+       }
+       if (verx==1)
+         {
+           xp2=Perx[points-1];
+           yp2=yb+100.0;
+           PROF(W7,0,xp1,yp1,xp2,yp2);
+           OFT();
+         }
+       else
+        {
+           xp2=xp10;
+           yp2=yp10;
+           PROF(W7,0,xp1,yp1,xp2,yp2);
+           xp1=xp2;
+           yp1=yp2;
+           NEWFUN(319,508,xp1);
+           NEWFUN(319,509,yp1);
+           NEWFUN(327,0,W7); 
+           spann=HEAP[115];
+           posspn=HEAP[116];
+           MOVE(W7,0,spann,posspn,0);
+           OFT();
+           ppkon(); 
+           BLOK();
+           return;
+         }
+ }
+else   //  нет торца
+ {
+      if (vniz==1)
+       {
+          xp1=Perx[points-1];
+          yp1=ym-100;
+         NEWFUN(319,508,xp1);
+         NEWFUN(319,509,yp1);
+         NEWFUN(327,0,W7);
+         spann=HEAP[115];
+         posspn=HEAP[116];
+         RAPID();
+         MOVE(W7,15,spann,posspn,15);
+         KL();
+         LEAD(0);
+         if (verx==1)
+             {
+                    xp2=Perx[points-1];
+                    yp2=yb+100.0;
+                    MOVE(W7,15,spann,posspn,0);
+                    PROF(W7,0,xp1,yp1,xp2,yp2);
+                    OFT();
+             }
+            else
+             {
+                  xp2=xp10;
+                  yp2=yp10;
+                  MOVE(W7,15,spann,posspn,0);
+                  PROF(W7,0,xp1,yp1,xp2,yp2);
+                  xp1=xp2;
+                  yp1=yp2;
+                  NEWFUN(319,508,xp1);
+                  NEWFUN(319,509,yp1);
+                  NEWFUN(327,0,W7); 
+                  spann=HEAP[115];
+                  MOVE(W7,0,spann,1,0);
+                  OFT();
+                  ppkon(); 
+                  BLOK();
+                  return;
+             }       
+        }
+ }
+// ********************************************************
+// **************ВерхнЯЯ  длиннаЯ сторона***
+//  ******************************************************
+// print("Выход правильный=verx=("+str(verx)+")");
+// read(verx);
+
+if ((verx==1) && (points>1))
+{
+  i1=points;
+  while(i1>1)
+   {
+     i1--;
+     xp1=Perx[i1]+20.0;
+     yp1=yb+100.0;
+     NEWFUN(319,508,xp1);
+     NEWFUN(319,509,yp1);
+     NEWFUN(327,0,W7);
+     spann=HEAP[115];
+     posspn=HEAP[116];
+     xp2=Perx[i1-1];
+     yp2=yb+100.0;
+     RAPID();
+     MOVE(W7,15,spann,posspn,15);
+     KL();
+     LEAD(0);
+     MOVE(W7,15,spann,posspn,0);
+     PROF(W7,0,xp1,yp1,xp2,yp2);
+     OFT();
+   }
+}
+// ************************************************
+// завершающаЯ стадиЯ --- перемычки на торцах или нет
+//  ***********************************************
+// print("Выход =points=("+str(points)+")");
+// read(points);
+ if (verx==1)
+ {
+  xp1=Perx[0]+20.0;
+  yp1=yb+100.0;
+  NEWFUN(319,508,xp1);
+  NEWFUN(319,509,yp1);
+  NEWFUN(327,0,W7);
+  spann=HEAP[115];
+  posspn=HEAP[116];
+  RAPID();
+  MOVE(W7,15,spann,posspn,15);
+  KL();
+  LEAD(0);
+  if (torez==1)
+     {
+        xp2=xb+100.0;
+        yp2=(yb+ym)/2.0+10.0;
+        MOVE(W7,15,spann,posspn,0);
+        PROF(W7,0,xp1,yp1,xp2,yp2); 
+        OFT();
+       }
+   else
+      {
+         xp2=xp10;
+         yp2=yp10;
+         MOVE(W7,15,spann,posspn,0);
+         PROF(W7,0,xp1,yp1,xp2,yp2); 
+        xp1=xp2;
+        yp1=yp2;
+        NEWFUN(319,508,xp1);
+        NEWFUN(319,509,yp1);
+        NEWFUN(327,0,W7);
+        spann=HEAP[115];
+        posspn=HEAP[116];
+        MOVE(W7,0,spann,1,0);
+        OFT();
+        ppkon(); 
+        BLOK();
+        return;
+      }
+}
+ppkon(); 
+BLOK();
+return;
+

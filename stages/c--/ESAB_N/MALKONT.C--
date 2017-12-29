@@ -1,0 +1,89 @@
+extern float W7,W4,W12;
+extern float Lange;
+extern char Fik;
+extern float x2,y2,tp;
+extern float xmin,yxmin,xmax,yxmax,xymin,ymin,xymax,ymax;
+extern float minx,miny,maxx,maxy;
+extern float xpert,ypert; // первая точка контура
+float KolSpan,PosSpan;
+float W71,kolsp,kolsp1,kolsp2;
+extern float x0,y0,t0;
+extern float x1,y1,t1;
+extern float areas;
+extern long Sposob;
+extern float Width;
+extern float centrx,centry,vilo;
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+float NextSpan;
+extern float vilx,vily;
+long perv1;
+// — правой стороны от прямой знак +
+// — левой стороны от прямой знак -
+// x1=HEAP[13];       // x первая точка спана
+// y1=HEAP[12];       // y первая точка спана
+// x2=HEAP[11];       // x вторая точка спана
+// y2=HEAP[10];       // y вторая точка спана
+// tp=HEAP[9];        // t фактор кривизны
+// x3=HEAP[22];       // x ближайщая точка к спану
+// y3=HEAP[21];       // y ближайщая точка к спану
+// W7=HEAP[3];        // номер контура
+// W4=HEAP[4];        // номер спана
+// KolSpan=HEAP[5];   // количество спанов в контуре
+// PosSpan=HEAP[8];   // позиция на спане
+NEWFUN(302,0,W7);  // искать адрес текущего контура
+W71=HEAP[25];
+NEWFUN(305,0,W71);         // получить число спанов в контуре
+KolSpan=HEAP[47];
+areas=0.0;
+if (KolSpan<2) return;
+perv1=0;
+kolsp=0;
+kontmal=1;
+kontl=1;
+minx=99999.0;
+miny=99999.0;
+maxx=-99999.0;
+maxy=-99999.0;
+while(kolsp<KolSpan)
+ {
+   kolsp++;
+   NEWFUN(306,kolsp,W71);         /* получить спан в контуре */
+   x0=HEAP[35];
+   y0=HEAP[36];
+   t0=HEAP[37];
+   if (kolsp==1)
+   {
+    xpert=x0;
+    ypert=y0;
+   }
+   kolsp1=kolsp+1;
+   if (kolsp1>KolSpan) break;
+   NEWFUN(306,kolsp1,W71);         /* получить спан в контуре */
+   x1=HEAP[35];
+   y1=HEAP[36];
+   t1=HEAP[37];
+   mnmx();
+   asp();
+  if(minx>xmin) minx=xmin;
+  if(maxx<xmax) maxx=xmax;
+  if(miny>ymin) miny=ymin;
+  if(maxy<ymax) maxy=ymax;
+ }
+vilx=maxx-minx;
+vily=maxy-miny;
+vilo=vilx;
+if (vilx<vily) vilo=vily;
+if (areas<0.0)
+ {
+  if (vilo<Width*2.0)  kontmal=0;
+  if ((vilo<21.0) || (vilo<(Lange*2.0)))  kontl=0;
+ }
+centrx=(maxx+minx)/2.0;
+centry=(maxy+miny)/2.0;
+//print ("minx="+str(minx)+" miny="+str(miny)+" maxx="+str(maxx)+" maxy="+str(maxy));
+//W(-1);
+//print ("area="+str(areas));
+//W(-1);
+//print ("d="+str(vilx)+" s="+str(vily)+" xc="+str(centrx)+" yc="+str(centry));
+//W(-1);

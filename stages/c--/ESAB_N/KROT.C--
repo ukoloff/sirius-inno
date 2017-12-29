@@ -1,0 +1,4 @@
+extern float W1,W2;
+W(-2);
+W1=HEAP[3];
+W2=HEAP[4];

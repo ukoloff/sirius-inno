@@ -1,0 +1,835 @@
+char stroka[120];
+char putin[100];
+float KONT,XPN,YPN,XPB,YPB;
+float NOM8I,KolSpan,spa1;
+float  DIRECTS;
+float XSer,YSer;
+float XR,YR,XR1,YR1;
+extern float W86,W87,W86N,W87N;
+float DisSmoll; // ближайщее расстоЯние между деталЯми
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+extern float kasatel;  //    Выход по касательной из способа КОНТУР
+extern float normalv;  //  Выход по нормали
+extern float pramoid;  //  прЯмой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированнаЯ резка
+extern char  Korr; // Y- есть коррекциЯ,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в Сириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  Обход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float XNazRez,YNazRez; // НачальнаЯ точка врезки длЯ змейки
+extern float DCutt;
+extern float W7,W71,W144,W2,W4;
+extern float W7N,W2N,W4N;
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern float centrx,centry,vilo; // центр и длина большого контура
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+extern float Xgn[100],Ygn[100],Xgv[100],Ygv[100];
+extern float KONTm[100],NOM8Im[100];
+extern float Xgng[100],Ygng[100],Xgvg[100],Ygvg[100];
+extern float KONTmg[100],NOM8Img[100],KSpanM[100],NoKont[100];
+extern long Vnutri[100],Vnesh[100];
+extern float Rastoani[100];
+extern float span1M[100],span2M[100]; 
+float xa,ya,x1,y1,x,y,dim;
+float x3,y3;
+float TVrezx,TVrexy;
+long SpProf,ik,ik1,ik2,ik3,ipr;
+float dis,SPAN11,POS11;
+float SPAN1,POS1,SPAN2,POS2,XN1,YN1,XN2,YN2;
+float X1n,Y1n,T1n, X2n, Y2n, T2n, X1b, Y1b, T1b,X2b, Y2b, T2b;
+float KolCpan;
+long Filt;
+long i1,i2,i3,KENT,i,ik22;
+float A1,A2,B1,B2,C1,C2,D1,D2,E1,E2,F1,F2,G1,G2;
+long spoc,j,Ctrelka;
+float spano;
+float vkasat1;
+
+putin=PATHNAM+"REZVREM.RRR";
+NEWFUN(323,0,0);  //  глобальнаЯ сортировка
+W7=0;
+NEWFUN(322,0,0);
+Filt:=fopen(putin,"rt");
+if (Filt<=0)
+{
+ print("Файл невозможно открыть=="+putin);
+ W(-1);
+ return;
+}
+ik:=-1;
+while(! feof(Filt) )
+ {
+  fscan(Filt,stroka);
+//  print(stroka);
+//  W(-1);
+ ik++;
+ KONT:=Val(substr(stroka,1,7));        /* Номер контура */
+ NOM8I:=Val(substr(stroka,53,6));     /*   Индекс массива записи типа 8 в буфере */
+ KONTm[ik]:=KONT;
+ NOM8Im[ik]:=NOM8I;	
+ DIRECTS:=Val(substr(stroka,61,6));     /*  Направление реза 1- слева, 2- справа */
+ if (DIRECTS==2.0)  //  сортировка справа
+ {
+  XPB:= Val(substr(stroka,7,12));    /* ЛеваЯ нижнЯЯ точка */
+  YPB:= Val(substr(stroka,19,12));  /* ЛеваЯ нижнЯЯ точка */
+  XPN:= Val(substr(stroka,28,12));  /* ЛеваЯ верхнЯЯ точка */
+  YPN:= Val(substr(stroka,39,12));  /* ЛеваЯ верхнЯЯ точка */
+  	Xgn[ik]:=XPB;
+  	Ygn[ik]:=YPB;
+  	Xgv[ik]:=XPN;
+  	Ygv[ik]:=YPN;
+  	NoKont[ik]:=0;	
+ }
+ else   // сортировка слева
+ {
+  XPN:= Val(substr(stroka,7,12));    /* ПраваЯ нижнЯЯ точка */
+  YPN:= Val(substr(stroka,19,12));  /* ПраваЯ нижнЯЯ точка */
+  XPB:= Val(substr(stroka,28,12));  /* ПраваЯ верхнЯЯ точка */
+  YPB:= Val(substr(stroka,39,12));  /* ПраваЯ верхнЯЯ точка */
+  	Xgn[ik]:=XPN;
+  	Ygn[ik]:=YPN;
+  	Xgv[ik]:=XPB;
+  	Ygv[ik]:=YPB;
+  	NoKont[ik]:=0;	
+//  	print("X0=("+str(Xgn[ik],10)+")"+"Y0="+str(Ygn[ik],10)+"X1="+str(Xgv[ik],10)+"Y1="+str(Ygv[ik],10)); 
+//  	W(-1);
+  }
+ }
+ ik=ik-1;
+ if (ik<=0) 
+ 	{
+ 		 print("-Нет деталей длЯ змейки-1 - нажмите любую клавишу) ");
+       W(-1);
+       print("                                                                   ");
+       return;
+ 	}
+fseek(Filt, 0);
+//  подбор только внешних контуров и только подходЯщих змейке
+for(i=0;i<=ik;i++)
+{
+	 Vnesh[i]:=0;
+}
+for(i=0;i<=ik;i++)
+{
+  for(j=0;j<=ik;j++)
+    {
+    	if (NOM8Im[i]==NOM8Im[j]) ipr:=j;
+    }
+   Vnesh[ipr]:=1; 
+ }
+ ik2:=-1;
+ for(i=0;i<=ik;i++)
+{
+	 if (Vnesh[i]==1)
+	 	{
+	 			ik2++;
+//	 			print("Индекс ipr=("+str(i,10)+")"); 
+//          	W(-1);
+   			   KONTmg[ik2]:=KONTm[i];
+//   			   	print("Контур1=("+str(KONTm[i],10)+")"); 
+//   			   	W(-1);	
+            NOM8Img[ik2]:=NOM8Im[i];
+            Xgng[ik2]:=Xgn[i];
+  	        Ygng[ik2]:=Ygn[i];
+  	        Xgvg[ik2]:=Xgv[i];
+  	        Ygvg[ik2]:=Ygv[i];
+//	 			print("X0=("+str(Xgng[ik2],10)+")"+"Y0="+str(Ygng[ik2],10)+"X1="+str(Xgvg[ik2],10)+"Y1="+str(Ygvg[ik2],10)); 
+//  	         W(-1);
+	 	}
+}
+// print("Кол-во ik2-1=("+str(ik2,10)+")"); 
+// W(-1);	
+
+ if (ik2<=0) 
+ 	{
+ 		 print("-Нет деталей длЯ змейки-2 - нажмите любую клавишу) ");
+       W(-1);
+       print("                                                                   ");
+       return;
+ 	}
+// ******************
+//  убрать детали внутри дырок при змейке
+// ******************* 
+for(i=0;i<=ik2;i++)
+{
+  for(j=0;j<=ik2;j++)
+    {
+    	if (j==i) continue;
+	   if (Xgng[i]> Xgng[j] && Xgvg[i]< Xgvg[j] && Ygng[i]> Ygng[j] && Ygvg[i]< Ygvg[j] ) Vnutri[i]:=1;
+	   	else Vnutri[i]:=0;
+     }
+ }
+ik3:=-1;
+ for(i=0;i<=ik2;i++)
+{ 
+	if (Vnutri[i]==0) 
+	{
+		ik3++;
+		KONTmg[ik3]:=KONTmg[i];
+      NOM8Img[ik3]:=NOM8Img[i];
+      Xgng[ik3]:=Xgng[i];
+      Ygng[ik3]:=Ygng[i];
+      Xgvg[ik3]:=Xgvg[i];
+      Ygvg[ik3]:=Ygvg[i];		
+	}
+ }
+ ik2:=ik3; //  ко-во контуров длЯ змейки
+// print("Кол-во ik2-2=("+str(ik2,10)+")"); 
+// W(-1);	
+	
+ // Заполнить массив расстоЯний от точки врезки змейки
+ for(i=0;i<=ik2;i++)
+{
+	x1:=(Xgng[i]+Xgvg[i])/2.0;
+	y1:=(Ygng[i]+Ygvg[i])/2.0;
+   x:=abs(x1-W86N);
+   y:=abs(y1-W87N);
+   dim:=(x*x+y*y)**0.5;
+   Rastoani[i]:=dim;
+ }
+ 
+//  for(i=0;i<=ik2;i++)
+//  {
+//  	print("РасстоЯние=("+str(Rastoani[i],10)+")"); 
+//  	W(-1);	
+//  }
+// ************************
+//  сортировка внешних контуров  деталей
+//*************************
+ i1:=-1;
+ i2:=0;
+ i3:=ik2;
+ if (i3<0) 
+ 	{
+ 		 print("-Нет деталей длЯ змейки -3- нажмите любую клавишу) ");
+       W(-1);
+       print("                                                                   ");
+       return;
+ 	}
+while(i1<=ik2)
+ {
+  i1++;
+  while(i2<i3)
+  {
+   i2++;
+   A1:=Rastoani[i2-1];
+   A2:=Rastoani[i2];
+   B1:=NOM8Img[i2-1];
+   B2:=NOM8Img[i2];
+   C1:=Xgng[i2-1];
+   C2:=Xgng[i2];
+  	D1:=Ygng[i2-1];
+  	D2:=Ygng[i2];
+  	E1:=Xgvg[i2-1];
+  	E2:=Xgvg[i2];
+  	F1:=Ygvg[i2-1];
+  	F2:=Ygvg[i2];
+  	G1:=KONTmg[i2-1];
+  	G2:=KONTmg[i2];
+   if (A1>A2)  // по возрастанию
+   {
+    Rastoani[i2-1]:=A2;
+    Rastoani[i2]:=A1;
+    NOM8Img[i2-1]:=B2;
+    NOM8Img[i2]:=B1;
+    Xgng[i2-1]:=C2;
+    Xgng[i2]:=C1;
+  	 Ygng[i2-1]:=D2;
+  	 Ygng[i2]:=D1;
+  	 Xgvg[i2-1]:=E2;
+  	 Xgvg[i2]:=E1;
+  	 Ygvg[i2-1]:=F2;
+  	 Ygvg[i2]:=F1;
+  	 KONTmg[i2-1]:=G2;
+  	 KONTmg[i2]:=G1;
+   }
+ }
+i2:=0;
+}
+ 
+//  for(i=0;i<=ik2;i++)
+//  {
+//  	print("Контура=("+str( KONTmg[i],10)+")"); 
+//  	W(-1);
+//	print("X0=("+str(Xgng[i],10)+")"+"Y0="+str(Ygng[i],10)+"X1="+str(Xgvg[i],10)+"Y1="+str(Ygvg[i],10)); 
+//   W(-1);
+	
+//  }
+//  ***********************
+//  выбор направлениЯ змейки
+//  *********************
+// Ctrelka==1 -  направление слева направо ( по возрастанию Х)   
+// Ctrelka==2 -  направление снизу вверх ( по возрастанию У)   
+// Ctrelka==3 -  направление справа налево ( по убыванию Х)   
+// Ctrelka==4 -  направление сверху вниз ( по убыванию У)
+if (abs(Xgng[0]-Xgng[ik2])>abs(Ygng[0]-Ygng[ik2]))
+	{    //  направление по Х
+		 if (Xgng[ik2]-Xgng[0]>0) Ctrelka:=1;
+		 else Ctrelka:=3;
+	}
+	else
+	{   //  направление по У
+		 if (Ygng[ik2]-Ygng[0]>0) Ctrelka:=2;
+		 else Ctrelka:=4;
+	}   
+//	print("Направление=("+str(Ctrelka,10)+")"); 
+//  	W(-1);
+//   убрать другие детали, которые не годЯтсЯ длЯ змейки
+if (Ctrelka==1) //  смотреть с верхней стороны по У
+	{
+		for(i=0;i<=ik2;i++)
+       {
+	        if (Ygvg[i]> Ygvg[0]-5.0 && Ygvg[i]< Ygvg[0]+5.0 ) Vnutri[i]:=1;
+	   	     else Vnutri[i]:=0;
+        }
+	}
+if (Ctrelka==3) //  смотреть с нижней стороны по У
+	{
+		for(i=0;i<=ik2;i++)
+       {
+	        if (Ygng[i]> Ygng[0]-5.0 && Ygng[i]< Ygng[0]+5.0 ) Vnutri[i]:=1;
+	   	     else Vnutri[i]:=0;
+        }
+	}
+	if (Ctrelka==2) //  снизу вверх смотреть с левой стороны по Х
+	{
+		for(i=0;i<=ik2;i++)
+       {
+	        if (Xgng[i]> Xgng[0]-5.0 && Xgng[i]< Xgng[0]+5.0 ) Vnutri[i]:=1;
+	   	     else Vnutri[i]:=0;
+        }
+	}
+if (Ctrelka==4) //  сверху вниз смотреть с правой стороны по У
+	{
+		for(i=0;i<=ik2;i++)
+       {
+	        if (Xgvg[i]> Xgvg[0]-5.0 && Xgvg[i]< Xgvg[0]+5.0 ) Vnutri[i]:=1;
+	   	     else Vnutri[i]:=0;
+        }
+	} 	
+ 	
+ik3:=-1;
+ for(i=0;i<=ik2;i++)
+{ 
+	if (Vnutri[i]==1)  // только детали длЯ данной змейки 
+	{
+		ik3++;
+		KONTmg[ik3]:=KONTmg[i];
+      NOM8Img[ik3]:=NOM8Img[i];
+      Xgng[ik3]:=Xgng[i];
+      Ygng[ik3]:=Ygng[i];
+      Xgvg[ik3]:=Xgvg[i];
+      Ygvg[ik3]:=Ygvg[i];		
+	}
+ }
+ ik2:=ik3; //  ко-во контуров длЯ змейки	
+ if (ik2<=0) 
+ 	{
+ 		 print("-Нет деталей длЯ змейки-4 - нажмите любую клавишу) ");
+       W(-1);
+       print("                                                                   ");
+       return;
+ 	}
+ 	
+// ***************************************	 	
+//  резка внутренних контуров !!!!!!!!!!!
+// ***************************************
+// ************************************
+//    резка внутренних контуров и деталей внутри внутренних контуров
+// *************************************
+while(! feof(Filt) )
+ {
+  fscan(Filt,stroka);
+//  print(stroka);
+//  W(-1);
+ KONT:=Val(substr(stroka,1,7));        /* Номер контура */
+ NOM8I:=Val(substr(stroka,53,6));     /*   Индекс массива записи типа 8 в буфере */
+ DIRECTS:=Val(substr(stroka,61,6));     /*  Направление реза 1- слева, 2- справа */
+ if (DIRECTS==2.0)  //  сортировка справа
+ {
+  XPB:= Val(substr(stroka,7,12));    /* ЛеваЯ нижнЯЯ точка */
+  YPB:= Val(substr(stroka,19,12));  /* ЛеваЯ нижнЯЯ точка */
+  XPN:= Val(substr(stroka,28,12));  /* ЛеваЯ верхнЯЯ точка */
+  YPN:= Val(substr(stroka,39,12));  /* ЛеваЯ верхнЯЯ точка */
+ }
+ else   // сортировка слева
+ {
+  XPN:= Val(substr(stroka,7,12));    /* ПраваЯ нижнЯЯ точка */
+  YPN:= Val(substr(stroka,19,12));  /* ПраваЯ нижнЯЯ точка */
+  XPB:= Val(substr(stroka,28,12));  /* ПраваЯ верхнЯЯ точка */
+  YPB:= Val(substr(stroka,39,12));  /* ПраваЯ верхнЯЯ точка */
+  }
+  if (KONT<=1) continue;
+  KENT:=0;
+  for(i=0;i<=ik2;i++)
+    {
+	    if (KONTmg[i]==KONT) KENT:=1;
+     }
+   if (KENT==1) continue;  	
+  stroka="         ";
+  NEWFUN(328,0,KONT);      // Проверка вырезан ли контур
+  if (HEAP[117]==1)  // контур уже вырезан
+   {
+      print(" Контур вырезан- Нажмите любую клавишу");
+      W(-1);
+      print("                              ");
+       return;
+    }
+  kontl=1;
+  kontmal=1;
+  if (W7==KONT) continue;
+  W7=KONT;
+  malkon();
+  if (kontl==0)
+    {
+     LINEM(centrx,centry,1);
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+     x3=centrx-1.0;
+     y3=centry-1.0;
+     KL();
+     LL();
+     xa=XCURR;
+     ya=YCURR;
+     PROF(KONT,0,x3,y3,x3,y3);
+     if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+   else
+    {
+      NEWFUN(319,502,10);
+      NEWFUN(319,504,XPN);
+      NEWFUN(319,505,YPN);
+      NEWFUN(319,506,XPB);
+      NEWFUN(319,507,XPB);
+// ***********************************
+      NEWFUN(321,0,KONT);
+      SPAN1=HEAP[80];
+      POS1=HEAP[81];
+      SPAN2=HEAP[82];
+      POS2=HEAP[83];
+      XN1=HEAP[76];
+      YN1=HEAP[77];
+      XN2=HEAP[78];
+      YN2=HEAP[79];
+// ПерваЯ точка исходного спана длЯ нижней точки
+      X1n=HEAP[86];
+      Y1n=HEAP[87];
+      T1n=HEAP[88];
+// ВтораЯ точка исходного спана длЯ нижней точки
+      X2n=HEAP[89];
+      Y2n=HEAP[90];
+      T2n=HEAP[91];
+      SpProf=0;
+      if (POS1<0.5)
+       {
+         dis=(XN1-X1n)*(XN1-X1n)+(YN1-Y1n)*(YN1-Y1n);
+         dis=dis**0.5;
+         if (dis<1.0)
+          {
+            SpProf=1;
+            POS1=0.0;
+           }
+        }
+   else
+        {
+          dis=(XN1-X2n)*(XN1-X2n)+(YN1-Y2n)*(YN1-Y2n);
+          dis=dis**0.5;
+          if (dis<1.0)
+           {
+            SpProf=1;
+            POS1=1.0;
+           }
+        }
+// ПерваЯ точка исходного спана длЯ верхней точки
+      X1b=HEAP[92];
+      Y1b=HEAP[93];
+      Y1b=HEAP[94];
+// ВтораЯ точка исходного спана длЯ верхней точки
+      X2b=HEAP[95];
+      Y2b=HEAP[96];
+      T2b=HEAP[97];
+      KolCpan=HEAP[98];
+      RAPID();
+//      LINEM(XPN,YPN,1);
+      if (SpProf==1)
+      {
+        if (Pos1<0.5)
+          MOVE(KONT,Lange/1.4142,SPAN1,POS1,-Lange/1.4142);
+        else
+          MOVE(KONT,Lange/1.4142,SPAN1,POS1,Lange/1.4142);
+       }
+      else
+      {
+      	vkasat1=0.0;
+      	if (((Sposob==1) || (Sposob==2)|| (Sposob==5)) && LineXod=='Y')
+         {
+          vkasat1=vkasat;
+         }
+         MOVE (KONT,Lange,SPAN1,POS1,-vkasat1);
+         TVrezx=XCURR;
+         TVrexy=YCURR;
+       }
+     KL();
+     LL();
+     if (((Sposob==1)||(Sposob==2)||(Sposob==5))&&LineXod=='Y'&&SpProf!=1)
+     {       
+      if (Lange>vnormal) MOVE(KONT,vnormal,SPAN1,POS1,-vkasat);
+     }
+     spoc=Sposob;
+     if (spoc>3) spoc=spoc-4;
+     LEAD(Spoc);
+     spano=SPAN1;
+     if (SpProf==1)
+      {
+       if (POS1<0.5)
+        {
+          if (SPAN1-1<1) SPAN11=KolCpan;
+          else SPAN11=SPAN1-1;
+          POS11=1;
+          PROF(KONT,0,SPAN1,0,0,SPAN11,1,0);
+          MOVE(KONT,0,SPAN11,1,spanvx);
+          spano=SPAN11;
+        }
+       else
+        {
+          if (SPAN1+1>KolCpan) SPAN11=1;
+          else SPAN11=SPAN1+1;
+          PROF(KONT,0,SPAN11,0,0,SPAN1,1,0);
+          MOVE(KONT,0,SPAN1,1,spanvx);
+          spano=SPAN1;
+        }
+      }
+      else
+      {
+        PROF(KONT,0,SPAN1,POS1,0,SPAN1,POS1,-0.001);
+//     PROF(KONT,0,XPN,YPN,XPN,YPN);
+//      MOVE(KONT,0,SPAN1,POS1,1);
+       if (Sposob>1)
+          MOVE(KONT,normalv,SPAN1,POS1,kasatel);
+      }
+    }
+    OFT();
+    if (SpProf==1) 
+    {
+      if (ZadXod=='Y') MOVE (KONT,0,spano,1,spanvx+10);
+    }
+    else
+    {
+      if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+  }
+// ***************************************	 	
+//  резка змейкой !!!!!!!!!!!
+// ***************************************
+    RAPID();
+    LEAD(0);
+    MOVE (W7N,Lange,W2N,0,0);
+    XNazRez=XCURR;
+    YNazRez=YCURR;
+// ****************************************************************  
+// проверка и удаление деталей не соответсвующих длЯ резки змейкой (вне зоны змейки)
+// ****************************************************************
+for(i=0;i<=ik2;i++)
+   {
+    if (i==0) continue;
+    XSer=(Xgvg[i]+Xgng[i])/2.0;
+    YSer=(Ygvg[i]+Ygng[i])/2.0;	  	  
+   	switch(Ctrelka)
+     {
+          case 1:  //  по возрастанию  по Х	
+                 if (XSer<XNazRez) NoKont[i]:=1; 
+        	       break;
+          case 3:  	 //  по убыванию  по Х      
+          	     if (XSer>XNazRez) NoKont[i]:=1; 
+                 break;
+          case 2:   //  по возрастанию  по Y
+          	     if (YSer<YNazRez) NoKont[i]:=1; 
+                 break;
+          case 4: //  по убыванию по Y
+          	     if (YSer>YNazRez) NoKont[i]:=1; 
+                 break;
+     }
+   }
+   ik22=-1;     
+   for(i=0;i<=ik2;i++)
+   {
+    if (NoKont[i]==0)
+    	{
+    	 ik22++;
+    	 A1:=Rastoani[i];
+       Rastoani[ik22]=A1;
+       B1:=NOM8Img[i];
+       NOM8Img[ik22]=B1;
+       C1:=Xgng[i];
+       Xgng[ik22]=C1;    
+  	   D1:=Ygng[i];
+  	   Ygng[ik22]=D1;
+  	   E1:=Xgvg[i];
+  	   Xgvg[ik22]=E1;
+  	   F1:=Ygvg[i];
+  	   Ygvg[ik22]=F1;
+  	   G1:=KONTmg[i];
+  	   KONTmg[ik22]=G1;
+     	} 
+   }     
+   ik2=ik22;
+   if (ik2<1)
+   	{
+   		print("-Нет деталей длЯ змейки-U - нажмите любую клавишу) ");
+       W(-1);
+       print("                                                                   ");
+       return;
+   	}
+   KL();
+   for(i=0;i<ik2;i++)
+        {
+  // ДлЯ первого контура конец спана      	
+        	switch(Ctrelka)
+         {
+          case 1:  //  по возрастанию  по Х	
+                  NEWFUN(319,508,Xgvg[i]); // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygvg[i]); // занести данные в HEAP[509]
+        	        XR=Xgvg[i];
+        	        YR=Ygvg[i];
+        	   break;
+          case 3:  	 //  по убыванию  по Х      
+          	      NEWFUN(319,508,Xgng[i]); // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygng[i]); // занести данные в HEAP[509]
+        	        XR=Xgng[i];
+        	        YR=Ygng[i];
+              break;
+          case 2:   //  по возрастанию  по Y
+          		    NEWFUN(319,508,Xgng[i]);  // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygvg[i]);  // занести данные в HEAP[509]
+        	        XR=Xgng[i];
+        	        YR=Ygvg[i];
+              break;
+          case 4: //  по убыванию по Y
+                 	NEWFUN(319,508,Xgvg[i]); // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygng[i]); // занести данные в HEAP[509]
+        	        XR=Xgng[i];
+        	        YR=Ygvg[i];
+             break;
+         }
+      //  HEAP[508]  координата Х заданной точки длЯ функции  NEWFUN(327
+      //  HEAP[509]  координата У заданной точки длЯ функции  NEWFUN(327
+        	NEWFUN(327,0,KONTmg[i]);      //  Найти ближайшую точку   
+        	XR1=HEAP[84];
+        	YR1=HEAP[85];
+ //  HEAP[113]- Координата Х ближайшей точки на контуре;
+//  HEAP[114]- Координата У ближайшей точки на контуре;
+//  HEAP[115]- Номер ближайшего спана;
+//  HEAP[84] - Координата Х ближайшей точки на контуре;
+//  HEAP[85] - Координата У ближайшей точки на контуре;
+//  HEAP[116]- позициЯ на спане
+// ************************************************************
+// Проверка на фаски при змейке
+// ************************************************************
+     dis=((XR1-XR)*(XR1-XR)+(YR1-YR)*(YR1-YR))**0.5;
+     if (dis>0.5) // подозрение на фаску - попытка вырезать эту фаску
+     {
+     	switch(Ctrelka)
+         {
+          case 1:  //  по возрастанию  по Х	
+                  NEWFUN(319,508,Xgvg[i]); // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygvg[i]-dis); // занести данные в HEAP[509]
+        	   
+        	        break;
+          case 3:  	 //  по убыванию  по Х      
+          	      NEWFUN(319,508,Xgng[i]); // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygng[i]+dis); // занести данные в HEAP[509]
+        	        
+              break;
+          case 2:   //  по возрастанию  по Y
+          		    NEWFUN(319,508,Xgng[i]+dis);  // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygvg[i]);  // занести данные в HEAP[509]
+        	        
+              break;
+          case 4: //  по убыванию по Y
+                 	NEWFUN(319,508,Xgvg[i]-dis); // занести данные в HEAP[508]
+        	        NEWFUN(319,509,Ygng[i]); // занести данные в HEAP[509]
+        	        
+             break;
+         }
+      //  HEAP[508]  координата Х заданной точки длЯ функции  NEWFUN(327
+      //  HEAP[509]  координата У заданной точки длЯ функции  NEWFUN(327
+        	NEWFUN(327,0,KONTmg[i]);      //  Найти ближайшую точку   
+        	
+ //  HEAP[113]- Координата Х ближайшей точки на контуре;
+//  HEAP[114]- Координата У ближайшей точки на контуре;
+//  HEAP[115]- Номер ближайшего спана;
+//  HEAP[84] - Координата Х ближайшей точки на контуре;
+//  HEAP[85] - Координата У ближайшей точки на контуре;
+//  HEAP[116]- позициЯ на спане
+     } 
+
+         if (HEAP[116]<0.4)
+         	{
+         	   spa1=HEAP[115]-1;
+         	   NewFun(302,0,KONTmg[i]);
+             NewFun(302,0,HEAP[67]); //  найти количeство точек по оригинальному контуру
+             KolSpan=HEAP[75];   //  количество точек на контуре
+             KSpanM[i]=KolSpan;
+         		 if (spa1<1) spa1:=KolSpan-1;
+         		 span2M[i]:=spa1;
+         }
+         	else 
+         		{
+         			spa1:=HEAP[115];
+      				span2M[i]:=spa1;
+	            NewFun(302,0,KONTmg[i]);
+              NewFun(302,0,HEAP[67]); //  найти количeство точек по оригинальному контуру
+              KolSpan=HEAP[75];   //  количество точек на контуре
+              KSpanM[i]=KolSpan;
+      	   	}
+
+// длЯ второго контура - начало спана
+         switch(Ctrelka)
+         {
+          case 1:  //  по возрастанию  по Х	
+                     NEWFUN(319,508,Xgng[i+1]); 
+        	           NEWFUN(319,509,Ygvg[i+1]);
+        	           XR=Xgng[i+1];
+                     YR=Ygvg[i+1];
+         	           break;
+          case 3:  	 //  по убыванию  по Х      
+                     	NEWFUN(319,508,Xgvg[i+1]); 
+        	            NEWFUN(319,509,Ygng[i+1]);
+        	            XR=Xgvg[i+1];
+                      YR=Ygng[i+1];  
+                      break;
+          case 2:   //  по возрастанию  по Y
+                     	NEWFUN(319,508,Xgng[i+1]); 
+        	            NEWFUN(319,509,Ygng[i+1]);
+        	            XR=Xgng[i+1];
+                      YR=Ygng[i+1];
+
+              break;
+          case 4: //  по убыванию по Y
+                     	NEWFUN(319,508,Xgvg[i+1]); 
+        	            NEWFUN(319,509,Ygvg[i+1]);
+        	            XR=Xgvg[i+1];
+                      YR=Ygvg[i+1];
+
+             break;
+         }
+      	NEWFUN(327,0,KONTmg[i+1]);      //  Найти ближайшую точку   
+//  HEAP[113]- Координата Х ближайшей точки на контуре;
+//  HEAP[114]- Координата У ближайшей точки на контуре;
+//  HEAP[115]- Номер ближайшего спана;
+//  HEAP[84] - Координата Х ближайшей точки на контуре;
+//  HEAP[85] - Координата У ближайшей точки на контуре;
+//  HEAP[116]- позициЯ на спане
+ 
+       	XR1=HEAP[84];
+      	YR1=HEAP[85];
+        dis=((XR1-XR)*(XR1-XR)+(YR1-YR)*(YR1-YR))**0.5;	
+// ************************************************************
+// Проверка на фаски при змейке
+// ************************************************************
+if (dis>0.5) // подозрение на фаску - попытка вырезать эту фаску
+ {
+ switch(Ctrelka)
+         {
+          case 1:  //  по возрастанию  по Х	
+                     NEWFUN(319,508,Xgng[i+1]); 
+        	           NEWFUN(319,509,Ygvg[i+1]-dis);
+         	           break;
+          case 3:  	 //  по убыванию  по Х      
+                     	NEWFUN(319,508,Xgvg[i+1]); 
+        	            NEWFUN(319,509,Ygng[i+1]+dis);
+                      break;
+          case 2:   //  по возрастанию  по Y
+                     	NEWFUN(319,508,Xgng[i+1]+dis); 
+        	            NEWFUN(319,509,Ygng[i+1]);
+      
+              break;
+          case 4: //  по убыванию по Y
+                     	NEWFUN(319,508,Xgvg[i+1]-dis); 
+        	            NEWFUN(319,509,Ygvg[i+1]);
+      
+             break;
+         }
+      	NEWFUN(327,0,KONTmg[i+1]);      //  Найти ближайшую точку  
+     } 	
+// ************************************************************      
+        if (HEAP[116]<0.4)
+         	{
+         	   span1M[i+1]=HEAP[115];
+         	 	 NEWFUN(302,0,KONTmg[i+1]);      // искать адрес текущего контура 
+             NewFun(302,0,HEAP[67]);         //  найти количество точек по оригинальному контуру
+             KolSpan=HEAP[75];               //  количество точек на контуре
+             KSpanM[i+1]=KolSpan;
+         }
+         	else 
+         		{
+         			spa1:=HEAP[115]+1;
+         			NEWFUN(302,0,KONTmg[i+1]);    // искать адрес текущего контура 
+              NewFun(302,0,HEAP[67]);       //  найти количество точек по оригинальному контуру
+              KolSpan=HEAP[75];             //  количество точек на контуре
+              KSpanM[i+1]=KolSpan;
+         			if (spa1>=KolSpan) spa1:=1;
+         			span1M[i+1]:=spa1;
+      	   		}
+      	   		if (DisSmoll>0.0) //  проверка на скосы -фаски.
+      	   			{
+      	   			}
+        }
+// *******************	
+//  резка по змейке	
+// *******************	
+for(i=0;i<ik2;i++)
+{
+	 W7:=KONTmg[i];
+	 W2:=span1M[i];
+	 W4:=span2M[i];	
+	 PROF(W7,0.0,W2,0,0,W4,1,0);
+	 W7:=KONTmg[i+1];
+	 W2:=span1M[i+1];
+	 MOVE (W7,0,W2,0,0);
+}
+for(i=ik2;i>0;i--)
+{
+	 W7:=KONTmg[i];
+	 if (i==ik2)
+	 	{
+	 	 W2:=span1M[i];
+	 	 W4:=span1M[i]-1;
+	 	 if (W4<1) W4:=KSpanM[i]-1; 			
+	 	}
+	 else 
+	 	{
+	    	 W2:=span2M[i]+1;
+	    	 if (W2>(KSpanM[i]-1)) W2:=1;	
+	 	    W4:=span1M[i]-1;
+	 	    if (W4<1) W4:=KSpanM[i]-1; 			
+	 	}	
+	 LEAD(0); 
+	 PROF(W7,0.0,W2,0,0,W4,1,0);
+	 MOVE (W7,0,W4,1,spanvx);
+	 W7:=KONTmg[i-1];
+	 W2:=span2M[i-1]+1;
+ 	if (W2>(KSpanM[i-1]-1)) W2:=1;	
+	 MOVE (W7,0,W2,0,-spanvx);
+}
+ W2:=span2M[0]+1;
+  if (W2>(KSpanM[0]-1)) W2:=1;	
+  W4:=span1M[0]-1;
+  if (W4<1) W4:=KSpanM[0]-1; 			
+  PROF(W7,0.0,W2,0,0,W4,1,0);
+  MOVE (W7,0,W4,1,spanvx);
+
+    OFT();
+    if (SpProf==1) 
+    {
+      if (ZadXod=='Y') MOVE (KONT,0,spano,1,spanvx+10);
+    }
+    else
+    {
+      if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }

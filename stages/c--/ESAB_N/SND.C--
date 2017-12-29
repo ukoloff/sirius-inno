@@ -1,7 +1,7 @@
-extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER,Napr,NomSpVr,PozSpVr;
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER;
 extern long NMB,NMB1,nomR1[100],nomR2[100];
-float P77,P7,D,min1,min,Vmin[200];
-long KolSp,KolSp1,KolSp2,nom1,nom2,i,j,k,n,VN[200],Vrem1[200],Vrem2[200],Ns,nb1,nb2;
+float NomSpVr,PozSpVr,P77,P7,D,min1,min;
+long KolSp,KolSp1,KolSp2,nom1,nom2;
 
 NEWFUN(302,0,KNT[NMB]);               // искать адрес текущего контура//
 P77=HEAP[25];
@@ -35,15 +35,11 @@ While(KolSp2<KolSpan2)
   }
  KolSp2++;
 }
-i=1;
+
 KolSp1=2;
 min=min1;
-//nomR1[NMB1]=nom1;
-//nomR2[NMB1]=nom2;
-Vrem1[1]=nom1;
-Vrem2[1]=nom2;
-Vmin[1]=min;
-k=KolSp1;
+nomR1[NMB1]=nom1;
+nomR2[NMB1]=nom2;
 While(KolSp1<KolSpan1)
 {
  KolSp2:=1;
@@ -63,152 +59,14 @@ While(KolSp1<KolSpan1)
    }
   KolSp2++;
  }
- i++;
- Vrem1[i]=nom1;
- Vrem2[i]=nom2;
- Vmin[i]=min1;
-
- if(min1<min)                         //поиск минимального расст//
+ if(min1<min)
  {
   min=min1;
-  //nomR1[NMB1]=nom1;
-  //nomR2[NMB1]=nom2;
-  //i++;
- // Vrem1[i]=nom1;
- // Vrem2[i]=nom2;
-
-  k=KolSp1;
- 
-
-
+  nomR1[NMB1]=nom1;
+  nomR2[NMB1]=nom2;
  }
  KolSp1++;
 }
-
-
-
-
-
-
-j=1;
-k=1;
-while(j<=i)
-{ 
- if(Vmin[j]<Vmin[k]) k=j;     //мин раст//
- j++;
-}
-
-
-
-j=1;
-n=0;
-While(j<=i)
-{
- if(Vmin[j]<=(Vmin[k]+5))     //неск мин раст//
- {
-  n++;
-  Vn[n]=j;
- }
- j++;
-}
-
-
-
-
-
-
-if(n==1)
-{
- nomR1[NMB1]=Vrem1[k];
- nomR2[NMB1]=Vrem2[k];
-}
-
-if(n!=1)
-{
- if(NMB1==1)
- {
-  if(PozSpVr==1)
-  {
-   if(NomSpVr==(KolSpan1-1)) Ns=1;
-   else Ns=Round(NomSpVr)+1;
-  }
-  else Ns=Round(NomSpVr);
- }
- if(NMB1!=1) Ns=nomR2[NMB1-1]; 
-
-
- i=1;
- nom1=Vrem1[Vn[1]];
- nom2=Vrem1[Vn[1]];
- nb1=Vrem2[Vn[1]];
- nb2=Vrem2[Vn[1]];
- While(i<=n)
- {
-  if(Vrem1[Vn[i]]<nom1)
-   {
-    nom1=Vrem1[Vn[i]];
-    nb1=Vrem2[Vn[i]];
-   } 
-  if(Vrem1[Vn[i]]>nom2)
-   {
-    nom2=Vrem1[Vn[i]]; 
-    nb2=Vrem2[Vn[i]];
-   }
-  i++;
- }
-
-
- if(Napr==1)
- {
-  k=1;
-  While(k==1)
-  {
-   if(Ns==(KolSpan1-1)) Ns=1;
-   else Ns=Ns+1; 
-   if(Ns==nom1)
-   {
-    nomR1[NMB1]=nom1;
-    nomR2[NMB1]=nb1;  
-    k=0;
-   }
-   if(Ns==nom2)
-   {
-    nomR1[NMB1]=nom2; 
-    nomR2[NMB1]=nb2;
-    k=0;
-   }
-
-  }
-
-  
- }
-
- if(Napr==2)
- {
-  k=1;
-  While(k==1)
-  {
-   if(Ns==1) Ns=Round(KolSpan1-1);
-   else Ns=Ns-1; 
-   if(Ns==nom1)
-   {
-    nomR1[NMB1]=nom1;
-    nomR2[NMB1]=nb1; 
-    k=0;
-   }
-   if(Ns==nom2)
-   {
-    nomR1[NMB1]=nom2;
-    nomR2[NMB1]=nb2; 
-    k=0;
-   }
-
-  }
- }
-
-
-}
-
 
 
 DPER=sqrt((xk2[nomR2[NMB1]]-xk1[nomR1[NMB1]])*(xk2[nomR2[NMB1]]-xk1[nomR1[NMB1]])+(yk2[nomR2[NMB1]]-yk1[nomR1[NMB1]])*(yk2[nomR2[NMB1]]-yk1[nomR1[NMB1]]));

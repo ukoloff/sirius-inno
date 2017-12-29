@@ -1,0 +1,445 @@
+char stroka[120];
+char putin[100];
+float KONT,XPN,YPN,XPB,YPB;
+float NOM8I;
+float  DIRECTS;
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+extern float kasatel;  //    Выход по касательной из способа КОНТУР
+extern float normalv;  //  Выход по нормали
+extern float pramoid;  //  прЯмой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированнаЯ резка
+extern char  Korr; // Y- есть коррекциЯ,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в Сириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  Обход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float DCutt;
+extern float W7,W71,W144;
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern float centrx,centry,vilo; // центр и длина большого контура
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+
+float xa,ya;
+float x3,y3;
+float TVrezx,TVrexy;
+long SpProf;
+float dis,SPAN11,POS11;
+float SPAN1,POS1,SPAN2,POS2,XN1,YN1,XN2,YN2;
+float X1n,Y1n,T1n, X2n, Y2n, T2n, X1b, Y1b, T1b,X2b, Y2b, T2b;
+float KolCpan,cons,T0;
+long Filt;
+long spoc;
+float spano;
+float vkasat1;
+float KONT2, SPANNUMBER, SPANNUMBER2, XS0, YS0, TS0, XS1, YS1, TS1, K, R1, R2, A, B, XV, YV;
+
+putin=PATHNAM+"REZVREM.RRR";
+NEWFUN(323,0,0);  //  глобальнаЯ сортировка
+
+NEWFUN(322,0,0);
+Filt:=fopen(putin,"rt");
+if (Filt<=0)
+{
+ print("Файл невозможно открыть=="+putin);
+ W(-1);
+ return;
+}
+while(! feof(Filt) )
+ {
+  fscan(Filt,stroka);
+//  print(stroka);
+//  W(-1);
+ KONT:=Val(substr(stroka,1,7));        /* Номер контура */
+ NOM8I:=Val(substr(stroka,53,6));     /*   Индекс массива записи типа 8 в буфере */
+ DIRECTS:=Val(substr(stroka,61,6));     /*  Направление реза 1- слева, 2- справа */
+ if (DIRECTS==2.0)  //  сортировка справа
+ {
+  XPB:= Val(substr(stroka,7,12));    /* ЛеваЯ нижнЯЯ точка */
+  YPB:= Val(substr(stroka,19,12));  /* ЛеваЯ нижнЯЯ точка */
+  XPN:= Val(substr(stroka,28,12));  /* ЛеваЯ верхнЯЯ точка */
+  YPN:= Val(substr(stroka,39,12));  /* ЛеваЯ верхнЯЯ точка */
+ }
+ else   // сортировка слева
+ {
+  XPN:= Val(substr(stroka,7,12));    /* ПраваЯ нижнЯЯ точка */
+  YPN:= Val(substr(stroka,19,12));  /* ПраваЯ нижнЯЯ точка */
+  XPB:= Val(substr(stroka,28,12));  /* ПраваЯ верхнЯЯ точка */
+  YPB:= Val(substr(stroka,39,12));  /* ПраваЯ верхнЯЯ точка */
+  }
+  if (KONT<=1) continue;
+  stroka="         ";
+  kontl=1;
+  kontmal=1;
+  W7=KONT;
+  malkon();
+  if (kontl==0)
+    {
+     LINEM(centrx,centry,1);
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+     x3=centrx-1.0;
+     y3=centry-1.0;
+     KL();
+     LL();
+     xa=XCURR;
+     ya=YCURR;
+     PROF(KONT,0,x3,y3,x3,y3);
+     if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+   else
+    {
+      NEWFUN(319,502,10);
+      NEWFUN(319,504,XPN);
+      NEWFUN(319,505,YPN);
+      NEWFUN(319,506,XPB);
+      NEWFUN(319,507,XPB);
+// ***********************************
+      NEWFUN(321,0,KONT);
+      SPAN1=HEAP[80];
+      POS1=HEAP[81];
+      SPAN2=HEAP[82];
+      POS2=HEAP[83];
+      XN1=HEAP[76];
+      YN1=HEAP[77];
+      XN2=HEAP[78];
+      YN2=HEAP[79];
+// ПерваЯ точка исходного спана длЯ нижней точки
+      X1n=HEAP[86];
+      Y1n=HEAP[87];
+      T1n=HEAP[88];
+// ВтораЯ точка исходного спана длЯ нижней точки
+      X2n=HEAP[89];
+      Y2n=HEAP[90];
+      T2n=HEAP[91];
+      SpProf=0;
+      if (POS1<0.5)
+       {
+         dis=(XN1-X1n)*(XN1-X1n)+(YN1-Y1n)*(YN1-Y1n);
+         dis=dis**0.5;
+         if (dis<1.0)
+          {
+            SpProf=1;
+            POS1=0.0;
+           }
+        }
+   else
+        {
+          dis=(XN1-X2n)*(XN1-X2n)+(YN1-Y2n)*(YN1-Y2n);
+          dis=dis**0.5;
+          if (dis<1.0)
+           {
+            SpProf=1;
+            POS1=1.0;
+           }
+        }
+// ПерваЯ точка исходного спана длЯ верхней точки
+      X1b=HEAP[92];
+      Y1b=HEAP[93];
+      Y1b=HEAP[94];
+// ВтораЯ точка исходного спана длЯ верхней точки
+      X2b=HEAP[95];
+      Y2b=HEAP[96];
+      T2b=HEAP[97];
+      KolCpan=HEAP[98];
+      RAPID();
+//      LINEM(XPN,YPN,1);
+      if (SpProf==1)
+      {
+        if (Pos1<0.5)
+          MOVE(KONT,Lange/1.4142,SPAN1,POS1,-Lange/1.4142);
+        else
+          MOVE(KONT,Lange/1.4142,SPAN1,POS1,Lange/1.4142);
+       }
+      else
+      {
+      	vkasat1=0.0;
+      	if (((Sposob==1) || (Sposob==2)|| (Sposob==5)) && LineXod=='Y')
+         {
+          vkasat1=vkasat;
+         }
+         MOVE (KONT,Lange,SPAN1,POS1,-vkasat1);
+         TVrezx=XCURR;
+         TVrexy=YCURR;
+       }
+
+/////////////////////////////////////////////////////////////////
+     XV=XCURR;
+     YV=YCURR;
+     NEWFUN(324,XV,YV);
+     // если контур наш
+     if (HEAP[102]==KONT)
+      {
+       KL();
+       LL();
+       if (((Sposob==1)||(Sposob==2)||(Sposob==5))&&LineXod=='Y'&&SpProf!=1)
+       {       
+        if (Lange>vnormal) MOVE(KONT,vnormal,SPAN1,POS1,-vkasat);
+       }
+       spoc=Sposob;
+       if (spoc>3) spoc=spoc-4;
+        LEAD(Spoc);
+       spano=SPAN1;
+       if (SpProf==1)
+       {
+        if (POS1<0.5)
+        {
+          if (SPAN1-1<1) SPAN11=KolCpan;
+           else SPAN11=SPAN1-1;
+          POS11=1;
+          PROF(KONT,0,SPAN1,0,0,SPAN11,1,0);
+          MOVE(KONT,0,SPAN11,1,spanvx);
+          spano=SPAN11;
+        }
+        else
+        {
+          if (SPAN1+1>KolCpan) SPAN11=1;
+          else SPAN11=SPAN1+1;
+          PROF(KONT,0,SPAN11,0,0,SPAN1,1,0);
+          MOVE(KONT,0,SPAN1,1,spanvx);
+          spano=SPAN1;
+        }
+       }
+       else
+       {
+        PROF(KONT,0,SPAN1,POS1,0,SPAN1,POS1,-0.001);
+//      PROF(KONT,0,XPN,YPN,XPN,YPN);
+//      MOVE(KONT,0,SPAN1,POS1,1);
+        if (Sposob>1)
+          MOVE(KONT,normalv,SPAN1,POS1,kasatel);
+       } 
+      }
+// контур не наш, проверЯем не поврежден ли соседний
+     else
+      {
+       KONT2=HEAP[102];
+       SPANNUMBER=Heap[103];
+       NEWFUN(302,0,KONT2); // получаем адресс спана в нашем контуре
+       W71=HEAP[25];
+       NEWFUN(305,0,W71);
+       NEWFUN(306,SPANNUMBER,W71); // получаем координаты начала спана
+       XS0=HEAP[35];
+       YS0=HEAP[36];
+       TS0=HEAP[37];
+       SPANNUMBER2=SPANNUMBER+1; // менЯем спан
+       NEWFUN(306,SPANNUMBER2,W71); // получаем координаты конца спана
+       XS1=HEAP[35];
+       YS1=HEAP[36];
+       TS1=HEAP[37];
+       if(TS0==0)
+        {
+         K=(XS1-XS0)*(XV-XS1)+(YS1-YS0)*(YV-YS0);
+         if(K>=0)
+         {
+          print("повреждение соседнего контура");
+         }
+         else
+         {
+          if(HEAP[102]>Lange)
+          {
+           KL();
+           LL();
+           if (((Sposob==1)||(Sposob==2)||(Sposob==5))&&LineXod=='Y'&&SpProf!=1)
+           {       
+            if (Lange>vnormal) MOVE(KONT,vnormal,SPAN1,POS1,-vkasat);
+           }
+           spoc=Sposob;
+           if (spoc>3) spoc=spoc-4;
+            LEAD(Spoc);
+           spano=SPAN1;
+           if (SpProf==1)
+           {
+            if (POS1<0.5)
+            {
+             if (SPAN1-1<1) 
+              SPAN11=KolCpan;
+             else 
+              SPAN11=SPAN1-1;
+             POS11=1;
+             PROF(KONT,0,SPAN1,0,0,SPAN11,1,0);
+             MOVE(KONT,0,SPAN11,1,spanvx);
+             spano=SPAN11;
+            }
+            else
+             {
+             if (SPAN1+1>KolCpan) 
+              SPAN11=1;
+             else 
+              SPAN11=SPAN1+1;
+             PROF(KONT,0,SPAN11,0,0,SPAN1,1,0);
+             MOVE(KONT,0,SPAN1,1,spanvx);
+             spano=SPAN1;
+             }
+           }
+           else
+           {
+            PROF(KONT,0,SPAN1,POS1,0,SPAN1,POS1,-0.001);
+//          PROF(KONT,0,XPN,YPN,XPN,YPN);
+//          MOVE(KONT,0,SPAN1,POS1,1);
+            if (Sposob>1)
+             MOVE(KONT,normalv,SPAN1,POS1,kasatel);
+           } 
+          }
+          else
+           {
+            print("повреждение соседнего контура");
+           }
+         }
+        }
+       else
+       {
+       // контур выпуклый
+        if(TS0>0) 
+        {
+         cons=(TS0-1./TS0)*0.25; //получаем координаты центра
+         XC=(XS0+XS1)*0.5+(YS1-YS0)*cons;
+         YC=(YS0+YS1)*0.5-(XS1-XS0)*cons;
+         XK=HEAP[100]; //координаты ближайшей токи на контуре
+         YK=HEAP[101];
+         R1=((XC-XK)*(XC-XK)+(YC-YK)*(YC-YK))**0.5; //расстоЯние от центра до точки на контуре
+         A=((XC-XV)*(XC-XV)+(YC-YV)*(YC-YV))**0.5; //расстоЯние от центра до точки врезки
+         if (A>R1)
+          {
+           if (HEAP[102]>lenge)
+            {
+            KL();
+            LL();
+            if (((Sposob==1)||(Sposob==2)||(Sposob==5))&&LineXod=='Y'&&SpProf!=1)
+            {       
+             if (Lange>vnormal) MOVE(KONT,vnormal,SPAN1,POS1,-vkasat);
+            }
+            spoc=Sposob;
+            if (spoc>3) spoc=spoc-4;
+             LEAD(Spoc);
+            spano=SPAN1;
+            if (SpProf==1)
+            {
+             if (POS1<0.5)
+             {
+              if (SPAN1-1<1) 
+               SPAN11=KolCpan;
+              else 
+               SPAN11=SPAN1-1;
+              POS11=1;
+              PROF(KONT,0,SPAN1,0,0,SPAN11,1,0);
+              MOVE(KONT,0,SPAN11,1,spanvx);
+              spano=SPAN11;
+             }
+             else
+              {
+              if (SPAN1+1>KolCpan) 
+               SPAN11=1;
+              else 
+               SPAN11=SPAN1+1;
+              PROF(KONT,0,SPAN11,0,0,SPAN1,1,0);
+              MOVE(KONT,0,SPAN1,1,spanvx);
+              spano=SPAN1;
+              }
+            }
+            else
+            {
+             PROF(KONT,0,SPAN1,POS1,0,SPAN1,POS1,-0.001);
+//           PROF(KONT,0,XPN,YPN,XPN,YPN);
+//           MOVE(KONT,0,SPAN1,POS1,1);
+             if (Sposob>1)
+              MOVE(KONT,normalv,SPAN1,POS1,kasatel);
+            } 
+           }
+           else
+            {
+             print("повреждение соседнего контура");
+            }
+          }
+         else
+          {
+           print("повреждение соседнего контура");
+          }
+        }
+        // контур вогнутый
+        else 
+         {
+          cons=(T0-1./T0)*0.25; //получаем координаты центра
+          XC=(XS0+XS1)*0.5+(YS1-YS0)*cons;
+          YC=(YS0+YS1)*0.5-(XS1-XS0)*cons;
+          XK=HEAP[100]; //координаты ближайшей токи на контуре
+          YK=HEAP[101];
+          R2=((XC-XK)*(XC-XK)+(YC-YK)*(YC-YK))**0.5; //расстоЯние от центра до точки на контуре
+          B=((XC-XV)*(XC-XV)+(YC-YV)*(YC-YV))**0.5; //расстоЯние от центра до точки врезки
+          if(B<R2)
+           {
+            if (HEAP[102]>lenge)
+             {
+             KL();
+             LL();
+             if (((Sposob==1)||(Sposob==2)||(Sposob==5))&&LineXod=='Y'&&SpProf!=1)
+             {       
+              if (Lange>vnormal) MOVE(KONT,vnormal,SPAN1,POS1,-vkasat);
+             }
+             spoc=Sposob;
+             if (spoc>3) 
+              spoc=spoc-4;
+             LEAD(Spoc);
+             spano=SPAN1;
+             if (SpProf==1)
+             {
+              if (POS1<0.5)
+              {
+               if (SPAN1-1<1) 
+                SPAN11=KolCpan;
+               else 
+                SPAN11=SPAN1-1;
+               POS11=1;
+               PROF(KONT,0,SPAN1,0,0,SPAN11,1,0);
+               MOVE(KONT,0,SPAN11,1,spanvx);
+               spano=SPAN11;
+              }
+              else
+               {
+               if (SPAN1+1>KolCpan) 
+                SPAN11=1;
+               else 
+                SPAN11=SPAN1+1;
+               PROF(KONT,0,SPAN11,0,0,SPAN1,1,0);
+               MOVE(KONT,0,SPAN1,1,spanvx);
+               spano=SPAN1;
+               }
+             }
+             else
+              {
+               PROF(KONT,0,SPAN1,POS1,0,SPAN1,POS1,-0.001);
+//             PROF(KONT,0,XPN,YPN,XPN,YPN);
+//             MOVE(KONT,0,SPAN1,POS1,1);
+               if (Sposob>1)
+                MOVE(KONT,normalv,SPAN1,POS1,kasatel);
+              } 
+             }
+            else
+             {
+              print("повреждение соседнего контура");
+             }
+           }
+          else
+           {
+            print("повреждение соседнего контура");
+           }
+         }
+       }
+      }
+//////////////////////////////////////////////////////////////////
+     
+    }
+    OFT();
+    if (SpProf==1) 
+    {
+      if (ZadXod=='Y') MOVE (KONT,0,spano,1,spanvx+10);
+    }
+    else
+    {
+      if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+    BLOK();  
+  }
+fclose(Filt);

@@ -55,20 +55,10 @@ while(! feof(Filt) )
  KONT:=Val(substr(stroka,1,7));        /* Ќомер контура */
  NOM8I:=Val(substr(stroka,53,6));     /*   »ндекс массива записи типа 8 в буфере */
  DIRECTS:=Val(substr(stroka,61,6));     /*  Ќаправление реза 1- слева, 2- справа */
- if (DIRECTS==2.0)  //  сортировка справа
- {
-  XPB:= Val(substr(stroka,7,12));    /* Ћевая нижняя точка */
-  YPB:= Val(substr(stroka,19,12));  /* Ћевая нижняя точка */
-  XPN:= Val(substr(stroka,28,12));  /* Ћевая верхняя точка */
-  YPN:= Val(substr(stroka,39,12));  /* Ћевая верхняя точка */
- }
- else   // сортировка слева
- {
-  XPN:= Val(substr(stroka,7,12));    /* ѕравая нижняя точка */
-  YPN:= Val(substr(stroka,19,12));  /* ѕравая нижняя точка */
-  XPB:= Val(substr(stroka,28,12));  /* ѕравая верхняя точка */
-  YPB:= Val(substr(stroka,39,12));  /* ѕравая верхняя точка */
-  }
+ XPN:= Val(substr(stroka,7,12));    /* Ћевая нижняя точка */
+ YPN:= Val(substr(stroka,19,12));  /* Ћевая нижняя точка */
+ XPB:= Val(substr(stroka,28,12));  /* ѕравая  верхняя точка */
+ YPB:= Val(substr(stroka,39,12));  /* ѕравая  верхняя точка */
   if (KONT<=1) continue;
   stroka="         ";
   kontl=1;
@@ -91,11 +81,21 @@ while(! feof(Filt) )
     }
    else
     {
-      NEWFUN(319,502,10);
-      NEWFUN(319,504,XPN);
-      NEWFUN(319,505,YPN);
-      NEWFUN(319,506,XPB);
-      NEWFUN(319,507,XPB);
+    	  NEWFUN(319,502,10);
+    	if (DIRECTS==2.0)  //  сортировка справа
+       {
+   	        NEWFUN(319,504,XPN);
+           NEWFUN(319,505,YPB);
+           NEWFUN(319,506,XPN);
+           NEWFUN(319,507,YPN);
+       }
+       else
+       {
+        NEWFUN(319,504,XPB);
+        NEWFUN(319,505,YPN);
+        NEWFUN(319,506,XPB);
+        NEWFUN(319,507,YPB);
+      }
 // ***********************************
       NEWFUN(321,0,KONT);
       SPAN1=HEAP[80];
@@ -138,7 +138,7 @@ while(! feof(Filt) )
 // ѕервая точка исходного спана для верхней точки
       X1b=HEAP[92];
       Y1b=HEAP[93];
-      Y1b=HEAP[94];
+      T1b=HEAP[94];
 // ¬торая точка исходного спана для верхней точки
       X2b=HEAP[95];
       Y2b=HEAP[96];

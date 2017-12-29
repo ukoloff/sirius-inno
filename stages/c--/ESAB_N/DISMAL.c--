@@ -1,0 +1,22 @@
+ extern float W12;
+ extern float x1,y1,x2,y2,tp,x3,y3,xt,yt;
+ float x,y,dis1,dis2;
+ 
+ x=abs(x1-x3);
+ y=abs(y1-y3);
+ dis1=(x*x+y*y)**0.5;
+ x=abs(x2-x3);
+ y=abs(y2-y3);
+ dis2=(x*x+y*y)**0.5;
+ if (dis1<2.5)
+ { 
+   W12=0.0;
+   x3=x1;
+   y3=y1;
+ }
+ if (dis2<2.5)
+ { 
+   W12=1.0;
+   x3=x2;
+   y3=y2;
+ }

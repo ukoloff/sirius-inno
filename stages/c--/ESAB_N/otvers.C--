@@ -1,0 +1,118 @@
+char OK1,Fiks;
+extern float Lange;    // дистанция врезки
+extern float spanvx;   //    выход из способа резки ”√ќЋ
+extern float kasatel;  //    ¬ыход по касательной из способа  ќЌ“”–
+extern float normalv;  //  ¬ыход по нормали
+extern float pramoid;  //  прямой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированная резка
+extern char  Korr; // Y- есть коррекция,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в —ириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  ¬озврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  ќбход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float W7,W4,W87,W86; // номер контура, номер спана, точка врезки
+extern float W12,W111;
+extern float x1,y1,x2,y2,tp,x3,y3,xt,yt;
+extern long pin; // признак 1- открытая подпр-ма 0- нет подпрограммы
+extern long npodpr;
+extern float centrx,centry,vilo;  // центр малого контура
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+float  KolSpan,PosSpan;
+float TVrezx,TVrexy;
+float vkasat1;
+long   ppod;  // признак начала подпрограммы
+long kadr,Topik;
+long blokk;  //  число вырезанных блоков 
+ 
+ kadr=0;
+ npodpr=0;
+ OK1='Y';
+ ppod=0;
+ blokk=0;
+ while(kadr!=1)
+ {
+  blokk++;
+  Fiks=Fik; 	
+ if(Fiks!='Y')
+  print("-”кажите контуp(CR-резка,K-косой рез,ESC-выход");
+ else
+  print("-”кажите контуp(CR-резка,(P)-пп, ESC-выход)-левая компенсация");
+ W(-2);
+ x1=HEAP[13];     // первая точка спана
+ y1=HEAP[12];     // первая точка спана
+ x2=HEAP[11];    // вторая точка спана
+ y2=HEAP[10];    // вторая точка спана
+ tp=HEAP[9];      // фактор кривизны
+ x3=HEAP[22];     // ближайщая точка к спану
+ y3=HEAP[21];     // ближайщая точка к спану
+ W7=HEAP[3];      // номер контура
+ W4=HEAP[4];      // номер спана
+ KolSpan=HEAP[5];  // количество спанов
+ PosSpan=HEAP[8];  // позиция на спане
+ W12=HEAP[8];     // ѕозиция на спане 0..1
+ print("                                                                      "); 
+ if (S_GETCH==27)
+  {
+   if (Fiks!='Y')
+    {
+     N(-1);
+     D(1);
+    }
+   ppkon();
+   print("                                                                      ");
+   break; /* нажата клавиша ESC */
+  }
+ kontl=1;
+ kontmal=1;
+ malkon(); //малый контур, если kontl==0
+ print("                                                                      ");
+ Topik=0;
+ if ((S_GETCH==80) && (Fiks=='Y')) /* нажата клавиша P */
+  {
+      Topik=89;
+      print("Y- начало N -конец подпрограммы");
+      print("                                                  ");
+      print(" Ќачало подпрограммы([Y]/N)>");
+      W(-1);
+      print("                              ");
+      if (S_GETCH>31) Topik=S_GETCH;
+      if (Topik!=78) ppod=1;
+      ppkon();
+      if (Topik==78) break;
+  }
+  if (kontl==0)
+   {
+     LINEM(centrx,centry,1);
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+     Fiks='N';
+   }
+   else
+   {
+    RAPID();
+    vkasat1=0.0;
+    if (LineXod=='Y') vkasat1=vkasat;
+    MOVE (W7,Lange,2,0,0);
+    TVrezx=XCURR;
+    TVrexy=YCURR;
+   }
+ W86=XCURR;
+ W87=YCURR;
+ OK1='Y';
+ if (ppod==1) /* нажата буква P -  подпрограммы */
+ {
+   ppod=0;
+   OK1='P';
+   nsubr(); // маркировка начала подпрограммы
+ }
+ KL();
+ LL();
+  PROF(W7,0,2,0,0,1,1,0);
+  OFT();
+  LINEM(TVrezx,TVrexy,0);
+ }
+ return;

@@ -1,0 +1,155 @@
+char OLD1[80],OLP[80];
+char FAIL[80];
+char GEODET1[90];
+char OK,OL1;
+extern float xt,yt;
+float x1[100];
+float y1[100];
+float TVrezx,TVrexy;
+long kadr,i;
+long Fint;
+long blokk;  //  число точек 
+float x,y,dim,dim1;
+float plos,Xmax,Ymax; 
+     
+
+OLD1=DBNAM;
+print("Введите имЯ файла(номер) делового отхода > ");
+read(OLP);
+// ***********************************
+L1:kadr=0;
+ blokk=-1;
+ while(kadr!=1)
+ {
+   print("-Укажите точку N - ближайщаЯ, U- угол, (CR)- курсором, ESC-выход ");
+   W(-2);
+   print("                                                                      ");
+   if (S_GETCH==27)
+   {
+     print("                                                                      ");
+     break; /* нажата клавиша ESC */
+   }
+   if (S_GETCH==78)
+   {
+//   HEAP[13]- Координата Х начала выбранного спана
+//   HEAP[12]- Координата У начала выбранного спана
+//   HEAP[11]- Координата Х конца выбранного спана
+//   HEAP[10]- Координата У конца выбранного спана
+	
+     xt=HEAP[165];     // точка курсора -врезка
+     yt=HEAP[166];     // точка курсора -врезка
+     NEWFUN(324,xt,yt);      // Найти ближайший контур от точки врезки  
+     xt=HEAP[100];     // БлижайшаЯ точка по Х на контуре;
+     yt=HEAP[101];     // БлижайшаЯ точка по У на контуре;
+     blokk++;
+     x1[blokk]=xt;
+     y1[blokk]=yt;
+     NEWFUN(336,xt,yt);      // изображение крестика длЯ ввода курсорных данных 
+//     SPAN(xt,yt,0.0);    // 3 параметра типа float 
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+   }
+   else
+   {
+     if (S_GETCH==85)  // U
+     {
+       //   HEAP[13]- Координата Х начала выбранного спана
+       //   HEAP[12]- Координата У начала выбранного спана
+       //   HEAP[11]- Координата Х конца выбранного спана
+       //   HEAP[10]- Координата У конца выбранного спана
+      xt=HEAP[165];     // точка курсора -врезка
+      yt=HEAP[166];     // точка курсора -врезка
+      NEWFUN(324,xt,yt);      // Найти ближайший контур от точки врезки  
+      xt=HEAP[100];     // БлижайшаЯ точка по Х на контуре;
+      yt=HEAP[101];     // БлижайшаЯ точка по У на контуре;
+      x=abs(xt-HEAP[13]);
+      y=abs(yt-HEAP[12]);
+      dim=(x*x+y*y)**0.5;
+      x=abs(xt-HEAP[11]);
+      y=abs(yt-HEAP[10]);
+      dim1=(x*x+y*y)**0.5;
+      if (dim>dim1)
+       {
+         xt=HEAP[11];
+         yt=HEAP[10];
+       }
+      else
+       {
+         xt=HEAP[13];
+         yt=HEAP[12];
+       }
+      blokk++;
+      x1[blokk]=xt;
+      y1[blokk]=yt;
+      NEWFUN(336,xt,yt);      // изображение крестика длЯ ввода курсорных данных 
+//     SPAN(xt,yt,0.0);    // 3 параметра типа float 
+      TVrezx=XCURR;
+      TVrexy=YCURR;
+
+     }
+     else
+     {	
+      xt=HEAP[165];     // точка курсора -врезка
+      yt=HEAP[166];     // точка курсора -врезка
+      blokk++;
+      x1[blokk]=xt;
+      y1[blokk]=yt;
+      NEWFUN(336,xt,yt);      // изображение крестика длЯ ввода курсорных данных 
+//     SPAN(xt,yt,0.0);    // 3 параметра типа float 
+      TVrezx=XCURR;
+      TVrexy=YCURR;
+   }
+// HEAP[99]- Содержит расстоЯние от точки до ближайшего контура (в мм);
+// HEAP[100]- БлижайшаЯ точка по Х на контуре;
+// HEAP[101]- БлижайшаЯ точка по У на контуре;
+// HEAP[102]- номер контура;
+// HEAP[103]- Номер спана;
+    }
+}
+// *******************************************
+if (OL1=='Q') return;
+ACCESS("TEMPORAR");
+UNSAVE(-999,-999);
+SAVE();
+EMPTY(-9999);
+// *****************
+KCURVE(1.0);
+i=-1;
+while(i<blokk)
+{
+  i++;
+  xt=x1[i];
+  yt=y1[i];
+  SPAN(xt,yt,0.0);    // 3 параметра типа float 
+}
+ xt=x1[0];
+ yt=y1[0];
+ SPAN(xt,yt,0.0);    // 3 параметра типа float 
+EOFF();  
+// ****************
+CUR(); DRA(0);
+ACCESS(OLP);
+PART(2,OLP);
+SAVE();
+GEODET1="C:\\GEODET\\"+OLP;
+ACCESS(GEODET1);
+SAVE();
+FAIL=OLP+".OTX";
+Fint:=fopen(FAIL,"wt");
+plos=HEAP[167];     // площадь
+Xmax=HEAP[168];     // перваЯ точка спана
+Ymax=HEAP[169];    // втораЯ точка спана
+plos=plos/10000.0;
+fprint(Fint,plos," ",Xmax," ",Ymax);
+fclose(Fint);
+print("                                                                 ");
+print("Правильно(Y/N)?>");
+W(-1);
+OL1=S_GETCH;
+EMPTY(-9999);
+ACCESS("TEMPORAR");
+LOAD();
+CUR(); CEN(); ERA(); DRA(0);
+ACCESS(OLD1);
+if (OL1=='N') goto L1;
+return;

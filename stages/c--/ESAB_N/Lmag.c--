@@ -1,0 +1,26 @@
+float x1min, y1min,x2max,y2max;
+float vremx,vremy,dliny,shagy;
+float x1,x2;
+ x1min=MAG_X1;
+ y1min=MAG_Y1;
+ x2max=MAG_X2;
+ y2max=MAG_Y2;
+ if (y1min>y2max)
+ {
+  vremy=y2max;
+  y2max=y1min;
+  y1min=vremy;	
+ }
+if (x1min>x2max)
+ {
+  vremx=x2max;
+  x2max=x1min;
+  x1min=vremx;	
+ }
+dliny=x2max-x1min;
+shagy=dliny/10.0;
+x1=x1min-shagy*7.0;
+x2=x2max-shagy*7.0;
+R();
+MAG(x1,y1min,x2,y2max);
+N(9999);

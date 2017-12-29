@@ -2,11 +2,11 @@ extern float Lange;    // дистанциЯ врезки
 extern float spanvx;   //    выход из способа резки УГОЛ
 
 
-extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER,PER,DST,Napr,NomSpVr,PozSpVr;
+extern float Xk1[200],yk1[200],KNT[100],Xk2[200],yk2[200],Tk1[200],Tk2[200],Kolspan1,Kolspan2,DPER,PER,DST;
 extern float Xper1[200],Yper1[200],Xper2[200],Yper2[200],POZ1[100],POZ2[100];
 extern long NMB,NMB1,nomR1[100],nomR2[100],NomSP1[100],NomSP2[100];
 char putin[100],stroka[150];
-float P77,P7,P78,NM,NM1,Xc[100],Yc[100],D[100],n,KNTv[100],PERv,Xv[100],Yv[100],Tv[100],Q,Xcv,Ycv,Xd,Yd,rc,cons,KolSPv,Lange1;
+float NomSpVr,PozSpVr,P77,P7,P78,Napr,NM,NM1,Xc[100],Yc[100],D[100],n,KNTv[100],PERv,Xv[100],Yv[100],Tv[100],Q,Xcv,Ycv,Xd,Yd,rc,cons,KolSPv,Lange1;
 long Filt,i,j,KolKon,KolSp,k,NMc,Kpor[100],FL,NMBv;
 
 
@@ -98,6 +98,7 @@ W(-2);                           //Координаты ближайшей точки контура//
 P7=HEAP[3];
 NomSpVr=HEAP[4];
 PozSpVr=HEAP[8];
+
 i=1;
 While(i<NMB)                    //координаты центра опис пр//
 {
@@ -281,20 +282,43 @@ if(NMBv!=0)
 }
 
 
-if(Napr==1)
-{
- OFT();
- MOVE(KNT[1],Lange,NomSpVr,PozSpVr,spanvx); 
- KL();
- PROF(KNT[1],0,NomSpVr,PozSpVr,0,NomSP1[1],POZ1[1],0);
- i=2;
- While(i<(KolKon-1))
- {
-  PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],0);
-  i++;
- }
 
- PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP2[i-1],POZ2[i-1],0);
+
+
+TOF(123);
+MOVE(KNT[1],Lange,NomSpVr,PozSpVr,spanvx);                      //Резка внешних контуров//
+TON(123);  
+PROF(KNT[1],0,NomSpVr,PozSpVr,0,NomSP1[1],POZ1[1],0);
+i=2;
+While(i<(KolKon-1))
+{
+ PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],0);
+ i++;
+}
+
+PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP2[i-1],POZ2[i-1],0);
+if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
+
+if(POZ2[i-1]==0)
+{
+ if(NomSP2[i-1]==1)
+ {
+  NEWFUN(302,0,KNT[i]);               
+  NEWFUN(305,0,HEAP[25]);                 
+  K=Round(HEAP[47])-1; 
+ }
+ if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1])-1;
+ MOVE(KNT[i],0,k,1,spanvx);
+}
+
+
+
+i--;
+While(i>1)
+{
+ PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSP2[i-1],POZ2[i-1],0);
+
+
  if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
 
  if(POZ2[i-1]==0)
@@ -310,119 +334,26 @@ if(Napr==1)
  }
 
 
-
  i--;
- While(i>1)
- {
-  PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSP2[i-1],POZ2[i-1],0);
-
-
-  if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
-
-  if(POZ2[i-1]==0)
-  {
-   if(NomSP2[i-1]==1)
-   {
-    NEWFUN(302,0,KNT[i]);               
-    NEWFUN(305,0,HEAP[25]);                 
-    K=Round(HEAP[47])-1; 
-   }
-   if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1])-1;
-   MOVE(KNT[i],0,k,1,spanvx);
-  }
-
-
-  i--;
- }
- PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSpVr,PozSpVr,0);
- if(PozSpVr!=0) MOVE(KNT[i],0,NomSpVr,PozSpVr,spanvx);
-
- if(PozSpVr==0)
- {
-  if(NomSpVr==1)
-  {
-   NEWFUN(302,0,KNT[i]);               
-   NEWFUN(305,0,HEAP[25]);                 
-   K=Round(HEAP[47])-1; 
-  }
-  if(NomSpVr!=1) k=Round(NomSpVr)-1;
-  MOVE(KNT[i],0,k,1,spanvx);
- }
-
- OFT();
 }
+PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSpVr,PozSpVr,0);
+if(PozSpVr!=0) MOVE(KNT[i],0,NomSpVr,PozSpVr,spanvx);
 
-
-if(Napr==2)
+if(PozSpVr==0)
 {
- OFT();
- MOVE(KNT[1],Lange,NomSpVr,PozSpVr,spanvx); 
- KR();
- PROF(KNT[1],0,NomSpVr,PozSpVr,0,NomSP1[1],POZ1[1],0);
- i=2;
- While(i<(KolKon-1))
+ if(NomSpVr==1)
  {
-  PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP1[i],POZ1[i],0);
-  i++;
+  NEWFUN(302,0,KNT[i]);               
+  NEWFUN(305,0,HEAP[25]);                 
+  K=Round(HEAP[47])-1; 
  }
-
- PROF(KNT[i],0,NomSP2[i-1],POZ2[i-1],0,NomSP2[i-1],POZ2[i-1],0);
- if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
-
- if(POZ2[i-1]==0)
- {
-  if(NomSP2[i-1]==1)
-  {
-   NEWFUN(302,0,KNT[i]);               
-   NEWFUN(305,0,HEAP[25]);                 
-   K=Round(HEAP[47])-1; 
-  }
-  if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1]);
-  MOVE(KNT[i],0,k,0,-spanvx);
- }
-
-
-
- i--;
- While(i>1)
- {
-  PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSP2[i-1],POZ2[i-1],0);
-
-
-  if(POZ2[i-1]!=0) MOVE(KNT[i],0,NomSP2[i-1],POZ2[i-1],spanvx);
-
-  if(POZ2[i-1]==0)
-  {
-   if(NomSP2[i-1]==1)
-   {
-    NEWFUN(302,0,KNT[i]);               
-    NEWFUN(305,0,HEAP[25]);                 
-    K=Round(HEAP[47])-1; 
-   }
-   if(NomSP2[i-1]!=1) k=Round(NomSP2[i-1]);
-   MOVE(KNT[i],0,k,0,-spanvx);
-  }
-
-
-  i--;
- }
- PROF(KNT[i],0,NomSP1[i],POZ1[i],0,NomSpVr,PozSpVr,0);
- if(PozSpVr!=0) MOVE(KNT[i],0,NomSpVr,PozSpVr,spanvx);
-
- if(PozSpVr==0)
- {
-  if(NomSpVr==1)
-  {
-   NEWFUN(302,0,KNT[i]);               
-   NEWFUN(305,0,HEAP[25]);                 
-   K=Round(HEAP[47])-1; 
-  }
-  if(NomSpVr!=1) k=Round(NomSpVr);
-  MOVE(KNT[i],0,k,0,-spanvx);
- }
-
- OFT();
+ if(NomSpVr!=1) k=Round(NomSpVr)-1;
+ MOVE(KNT[i],0,k,1,spanvx);
 }
+
+
+
+
 
 
 

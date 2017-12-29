@@ -1,0 +1,33 @@
+extern long prizmag;  // признак 1- маг, 0-продолжить, 2 - дальше
+prizmag=0;
+if (S_GETCH==85) // U
+ {
+  umag();
+  prizmag=1;
+  return;
+ }
+ if (S_GETCH==76) // L
+ {
+  lmag();
+  prizmag=1;
+  return;
+ }
+ if (S_GETCH==82) // R
+ {
+  rmag();
+  prizmag=1;
+  return;
+ }
+ if (S_GETCH==68) // D
+ {
+  dmag();
+  prizmag=1;
+  return;
+ }
+ if (S_GETCH==45) // -
+ {
+  minmag();
+  prizmag=1;
+  return;
+ }
+ return;

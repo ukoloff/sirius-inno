@@ -1,0 +1,12 @@
+static long W33;
+print("Æåëàåòå ïåðåéòè ê ðåæèìó ÐÅÇÊÈ = 0 , ÂÛÐÓÁÊÈ(ÂÛÑÅ×ÊÈ) =1 >");
+read(W33);
+  switch(W33)
+ {    
+     case 0: INSERT("G54");
+     break;
+     case 1: M(19); 
+             INSERT("G53");
+     break;
+     default:;     
+} 

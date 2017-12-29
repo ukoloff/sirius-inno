@@ -1,0 +1,180 @@
+ char OK,First,Ok2,OK1;
+ extern float spanvx;   //    выход из способа резки УГОЛ
+ extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет
+ extern float W70,W111;
+ extern float W86,W87,Lange,W86N,W87N;
+ extern float DCutt,VrCutt,DCuttR;
+ extern long pin;
+ extern char Fik,UGOL1;
+ long  kon,mnogo;
+ /*  W70 - тангенсальнаЯ составлЯющаЯ на спане */
+ extern float W7,W2,W4,kb,xb,yb,sb,xc,yc;
+ float  PosSpan,KolSpan,W12;
+/*  W70 - тангенсальнаЯ составлЯющаЯ на спане */
+
+ kon:=0;
+ W111=1;
+ mnogo=0;
+  NAZ1();
+   if (Fik!='Y')
+   {
+      if (S_GETCH==27)
+       {
+          print("                                                                  ");
+          if (mnogo>0)
+          {
+           ppkon();
+           BLOK();
+          }
+          return;
+        }
+   }
+   print("-Выберите угол (P- начало подпрограммы;ESC-конец) ");
+   W(-2);
+   print("                                                                   ");
+   W7=HEAP[3];
+   W2=HEAP[4];
+   OK=S_GETCH;
+   if (OK==27 ) /*клавиша ESC */
+   {
+     print("                                                         ");
+     kon:=1;
+     if (mnogo>0)
+     {
+      ppkon();
+       BLOK();
+     }
+     print("                                                          ");
+     return;
+   }
+   
+   NEWFUN(328,0,W7);      // Проверка вырезан ли контур
+   if (HEAP[117]==1)  // контур уже вырезан
+   {
+      print(" Контур вырезан- Нажмите любую клавишу");
+      W(-1);
+      print("                              ");
+       return;
+    }
+   if (mnogo>0) BLOK();
+  VrCutt=DCuttR;
+  CUTTER( DCutt);
+  PosSpan=HEAP[8];  // позициЯ спана напротив крестообразного курсора
+   W12=HEAP[8];         // позициЯ на спане напротив крестообразного курсора
+   NewFun(302,0,W7);
+   NewFun(302,0,HEAP[67]); //  найти количство точек по оригинальному контуру
+   KolSpan=HEAP[75];   //  количество точек на контуре
+ //  print("Количество спанов("+str(KolSpan)+")>");
+ //  W(-1);
+   if (PosSpan>0.5)
+    {
+      W12=1.0;
+      W4=W2+1;
+      if (W4>=KolSpan) W4=1;
+    }
+   else
+    {
+      W12=0.0;
+      W4=W2;
+      W2=W2-1;
+      if (W2<1) W2=KolSpan-1;
+    }
+      OK1='N';
+   if (S_GETCH==80) OK1='P'; /* клавиша P */
+   mnogo=1;
+   if (Fik=='Y')
+   {
+    RAPID();
+      MOVE (W7,Lange,W2,1,0);
+     W86=XCURR;
+     W87=YCURR;
+   }
+  else
+   {
+    LINEM(W86,W87,W111);
+     W86=XCURR;
+     W87=YCURR;
+     }
+  W70=HEAP[9];
+  if(OK1=='P') nsubr(); // маркировка начала подпрограммы
+   KR();
+  LEAD(0);
+  OK='Y';
+  print("                                                         ");
+  PROF(W7,0.0,W2,1,0,W4,0,0);
+  W86N=XCURR;
+  W87N=YCURR;
+  xc=W86N;
+  yc=W87N;
+  if (abs(W86-W86N)<abs(W87-W87N) )
+  	{
+  	   if (W87>W87N)
+  	   	{
+  	       xc=W86N+DCutt+10.0;
+  	       yc=W87N;
+  	    }
+  	    else
+  	    	{
+  	       xc=W86N-DCutt-10.0;
+  	       yc=W87N;
+  	    }
+  	}
+  	else
+  	{
+  		if (W86>W86N)
+  		{
+  	          xc=W86N;
+  	         yc=W87N-DCutt-10.0;
+  	       }
+  	       else
+  	       	{
+  	       		xc=W86N;
+  	              yc=W87N+DCutt+10.0;
+  	       	}
+  	}
+ NEWFUN(324,xc,yc);      //  Найти ближайший контур от точки врезки 
+  print("Координата Х("+str(xc)+")>");
+  W(-1);
+ xb=HEAP[100];
+ yb=HEAP[101];
+ kb=HEAP[102];
+ sb=HEAP[103];
+   print("Контур("+str(kb)+"-"+str(W7)+")>");
+  W(-1);
+ NEWFUN(319,508,xb);         //  занести временное значение   в HEAP 
+ NEWFUN(319,509,yb);         //  занести временное значение   в HEAP 
+ NEWFUN(327,0,kb);      //  Найти ближайшую точку  заданного контура
+PosSpan=HEAP[116];
+ if (kb==W7)
+ 	{
+ 	 print(" Ошибка"); 
+ 	 W(-1);
+   }
+    NewFun(302,0,kb);
+   NewFun(302,0,HEAP[67]); //  найти количство точек по оригинальному контуру
+   KolSpan=HEAP[75];   //  количество точек на контуре
+ //  print("Количество спанов("+str(KolSpan)+")>");
+ //  W(-1);
+  W2=sb;
+  if (PosSpan>0.5)
+    {
+      W12=1.0;
+      W4=W2;
+      W2=W2+1;
+      if (W2>=KolSpan) W2=1;
+    }
+   else
+    {
+      W12=0.0;
+      W4=W2-1;
+      if (W4<1) W4=KolSpan-1;
+    }
+    W4=W2-1;
+    if (W4<1) W4=KolSpan-1;
+    KL();
+    PROF(kb,0.0,W2,0,0,W4,0,0);
+   MOVE (kb,0,W4,0,0);
+  OFT();
+  CUTTER(VrCutt);
+  ppkon();
+  BLOK();

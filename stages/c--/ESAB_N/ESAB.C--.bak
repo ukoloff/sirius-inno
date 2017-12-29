@@ -1,0 +1,185 @@
+/* обьЯвление и инициализациЯ переменных */
+char OK; // переменнаЯ длЯ поддержки диалога
+char OLD[64],OLP[64]; // переменные длЯ ввода имен файлов и партидов 
+extern float W144,W145,DCutt,DCuttR; // внешние переменные
+extern float XFrom,YFrom;
+extern float XMINList,YMINList,XMAXList,YMAXList;
+extern float KCUList,DETList; 
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+extern float kasatel;  //    Выход по касательной из способа КОНТУР
+extern float normalv;  //  Выход по нормали
+extern float pramoid;  //  прЯмой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированнаЯ резка
+extern char  Korr; // Y- есть коррекциЯ,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в Сириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  Обход листа, N - нет 
+extern char  FromT;  // Y -  Точка FROM  с правой стороны, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern long pin;  //  длЯ маркировки подпрограмм
+extern float pinok; // длЯ начала подпрограмм
+extern long Fpoint;
+long BadPar;
+float W111,Kom;
+
+BadPar=0;
+pinok=0;
+pin=0;
+LOAD(); // Команды Сириуса, пишутсЯ заглавными буквами
+SEQ(1);
+if (KURSEQ==-1)
+{
+ NEW(1);
+ CUR();
+ CEN();
+ DRA(0);     /* сириуснаЯ команда центровки                   */
+ N(9999);   /* сириуснаЯ команда прогонки последовательности */
+}
+else
+{
+ CUR();
+ CEN();
+ DRA(0);     /* сириуснаЯ команда центровки                   */
+}
+pin=0;
+K();
+print("                        ");
+Kom=HEAP[7];
+if(Kom!=0)
+   OK:='N';
+else
+ {
+   N(1);
+   K();
+   print("                        ");
+   Kom=HEAP[7];
+   if(Kom!=0)
+   {
+     OK:='N';
+     N(-1);
+   }
+   else
+     OK:='Y';
+ }
+nastr1();
+// ********проверка глобальных данных*******************
+ if((Lange<0.0) || (Lange>500.0)) BadPar=1; // дистанциЯ врезки
+ if((spanvx<-500.0) || (spanvx>500.0)) BadPar=2; // выход из способа резки УГОЛ
+ if((kasatel<-500.0) || (kasatel>500.0)) BadPar=3; // Выход по касательной из способа КОНТУР
+ if((normalv<-500.0) || (normalv>500.0)) BadPar=4; //  Выход по нормали
+ if((vkasat<-500.0) || (vkasat>500.0)) BadPar=5; // отступ по касательной от точки врезки
+ if((vnormal<-500.0) || (vnormal>500.0)) BadPar=6; // отступ по нормали от точки врезки
+ if ((Fik!='Y') && (Fik!='N')) BadPar=7;  // фиксированнаЯ резка
+ if ((Korr!='Y') && (Korr!='N')) BadPar=8; // Y- есть коррекциЯ,N - нет коррекции
+ if ((CutYes!='Y') && (CutYes!='N')) BadPar=9; // Y- есть диаметр реза в Сириусе, N -  нет
+ if ((LineXod!='Y') && (LineXod!='N')) BadPar=10; // Y -  линейный ход перед дугой, N - нет 
+ if ((ZadXod!='Y') && (ZadXod!='N')) BadPar=11;  // Y -  Возврат в точку врезки, N - нет 
+ if ((ListOb!='Y') && (ListOb!='N')) BadPar=12;  // Y -  Обход листа, N - нет 
+ if ((FromT!='Y') && (FromT!='N')) BadPar=13;  // Y -  Точка FROM  с правой стороны, N - нет 
+ if((Sposob<0) || (Sposob>5)) BadPar=14;  // 0,1,2,3,4,5 - способы подхода и выхода
+ if (BadPar>0) nastr();
+// *****************************************************
+
+   NEWFUN(347,0,0);  //     Вычислить самую габаритную деталь и считать ее листом
+   KCUList=HEAP[157];
+   DETList=HEAP[158];
+//  HEAP ==157 - Номер внешнего контура листа
+//  HEAP ==158 - Номер детали листа
+   XMINList=HEAP[159];
+   YMINList=HEAP[160];
+   XMAXList=HEAP[161];
+   YMAXList=HEAP[162];
+//  HEAP ==159 - XMIN
+//  HEAP ==160 - YMIN
+//  HEAP ==161 - XMAX
+//  HEAP ==162 – YMAX
+W111=1;
+if (OK!='N') /* проверка введенного символа на неравенство с буквой N */
+{
+ ST1();
+ ST(); /*  старт подпрограммы ST из файла ST.C--              */
+ if (CutYes=='Y') 
+ 	{
+ 	  CUTTER(DCutt);
+ 	  DCuttR=DCutt;
+   }
+ else
+ 	{  
+ 	  CUTTER(0.0);
+ 	  DCuttR=0.0;
+   }
+//  ВНИМАНИЕ!
+// 1)имена подпрограмм при вызове должны совпадать с именами
+// файлов их содержащих
+// 2)имена подпрограмм не должны совпадать с именами функций сириусных команд
+if (FromT=='Y' || ListOb=='Y')
+{
+ L456:print("Ширина листа[0]> "); // печатать на нижней ком строке 
+ W144:=0;
+ read(W144);    // ввод числа типа float и занесение его в переменную W144 
+ print("Длина листа[0]> ");      // печатать на нижней ком строке 
+ W145:=0;
+ read(W145);     // ввод числа типа float и занесение его в переменную W144 
+ if (FromT=='Y')
+ {
+  FROM(W145,0,0);
+  XFrom=XCURR;
+  YFrom=YCURR;
+ }
+ else
+ {
+  FROM(0,0,0);
+  XFrom=XCURR;
+  YFrom=YCURR;
+ }
+  if(ListOb=='Y')
+  {
+    M(5);
+    GODEL(0,W144);
+    GODEL(W145,0);
+    GODEL(0,-W144);
+    GODEL(-W145,0);
+    M(6);
+    STOP();
+    OK:='Y';
+    print("обход листа OK([Y]/N)>");
+    read(OK);
+    if (OK =='N')
+    {
+      N(-7);
+      D(7);
+      goto L456;
+    }
+  }
+ }
+ else
+ {
+  FROM(0,0,0);
+  XFrom=XCURR;
+  YFrom=YCURR;
+}
+ R();
+ DRA(0);
+ N(999);
+}
+else
+{
+ OK:='Y';
+ print("Хотите прогнать ДО КОНЦА([Y]/N)>");  // печатать на нижней ком строке
+ W(-1);
+ print("                                  ");
+ if (S_GETCH>31) OK=S_GETCH;
+  // если ничего не ввели остаетсЯ старое значение переменных 
+  CUR();
+  CEN();
+  DRA(0);     /* сириуснаЯ команда центровки                   */
+  if (OK!='N') /* проверка введенного символа на неравенство с буквой N */
+  {
+    N(9999);   /* сириуснаЯ команда прогонки последовательности */
+  }
+}
+BLOK();

@@ -1,0 +1,61 @@
+extern float PosTmX[50]; /* позициЯ Х подпрограмм перед маркировкой */
+extern float PosTmY[50]; /* позициЯ У подпрограмм перед маркировкой */
+extern float Array1[30];
+extern float Distance;
+extern long Contur;
+extern float W6;
+extern float NumSub;
+char ch,ch1,pp1;
+float NumContur,NumSpan,PosSpan,XposN,YposN,XposK,YposK;
+long i2;
+i2=0;
+pp1='0';
+ print("                                    ");
+ print("Начало подпрограммы? P -начало ,N -не начало (P/E/[N])>");
+ ch1='N';
+ read(ch1);
+ if (ch1=='E') return;
+ NumContur=Array1[1];
+ NumSpan=Array1[2];
+ PosSpan=Array1[3];
+ MOVE(NumContur,Distance,NumSpan,PosSpan,0);
+ W6++;
+ if (ch1=='P')
+  {
+    pp1='1';
+    TMARK(1,++NumSub);
+    PosTmX[round(NumSub)]=XCURR;
+    PosTmY[round(NumSub)]=YCURR;
+    W6++;
+  }
+while (i2 < Contur)
+{
+  NumContur=Array1[++i2];
+  NumSpan=Array1[++i2];
+  PosSpan=Array1[++i2];
+  MOVE(NumContur,Distance,NumSpan,PosSpan,0);
+  XposN=XCURR;
+  YposN=YCURR;
+  XposK=XCURR;
+  YposK=YCURR;
+  UPCUT();
+  TON();
+  PROF(NumContur,0.0,XposN,YposN,XposK,YposK);
+  TOF();
+/*  MOVE(NumContur,Distance,NumSpan,PosSpan,0); */
+  W6+=6;
+}
+print("                                    ");
+print("Все верно? [Y]/P/E>");
+ch='Y';
+read(ch);
+if (ch=='P')
+ {
+  TMARK(2,NumSub);
+  W6++;
+ }
+if (ch=='E')
+ {
+   UDA(pp1);
+   return;
+ }

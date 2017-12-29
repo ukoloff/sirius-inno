@@ -1,0 +1,63 @@
+extern float SizeLx,SizeLy,Det1Dx1,Det2Dy1,Gabx,Gaby,Det1Dx1,Det2Dy1;
+extern float XFrom,YFrom;
+extern float NextPx,NextPy;
+extern float Det1Dxf,Det2Dyf;
+extern float SizeLx1,SizeLy1;
+float Gminx,Gmaxx,Gminy,Gmaxy;
+float i,     // ДлЯ циклов
+ Addr,
+ MinX,MinY,MaxX,MaxY,
+ Count,         // Счетчики деталей
+ X,Y;
+extern long W100;
+float W126,W127,W128;
+
+if(W100>0)
+{
+ print("                             ");
+ print("Укажите основной контур-шаблон подпрограммы ");
+ W(-2);
+ MinX=Heap[16];
+ MinY=Heap[15];
+ print("                                           ");
+ print("Укажите контур слева(справа) длЯ перехода курсором");
+ W(-2);
+ MaxX=Heap[16];
+ MaxY=Heap[15];
+ Det1Dx1=MaxX-MinX;
+ Det2Dy1=MaxY-MinY;
+ print("                                           ");
+ print("Смещение по Х справа(слева)=("+str(Det1Dx1,10)+")>");
+ read(Det1Dx1);
+ print("                                           ");
+ print("Смещение по Y справа(слева)=("+str(Det2Dy1,10)+")>");
+ read(Det2Dy1);
+ 
+ print("                                           ");
+ print("Укажите контур сверху(снизу) длЯ перехода курсором");
+ W(-2);
+ MaxX=Heap[16];
+ MaxY=Heap[15];
+ Det1Dx2=MaxX-MinX;
+ Det2Dy2=MaxY-MinY;
+ print("                                           ");
+ print("Смещение по Х сверху(снизу)=("+str(Det1Dx2,10)+")>");
+ read(Det1Dx2);
+ print("                                           ");
+ print("Смещение по Yсверху(снизу)=("+str(Det2Dy2,10)+")>");
+ read(Det2Dy2);
+ print("Количество повтоpов по Х> ");
+ read(W126);
+ print("Количество повтоpов по У> ");
+ read(W126);
+while()
+{
+  print("Смещение по оси OX  ");
+  read(W127);
+  print("Смещение по оси OY  ");
+  read(W128);
+  TMARK(3,W100,W126,W127,W128,1);
+ }
+}
+BLOK();
+return;

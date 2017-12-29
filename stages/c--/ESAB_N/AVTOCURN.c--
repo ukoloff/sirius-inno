@@ -1,0 +1,508 @@
+char stroka[120];
+char putin[100];
+char OK; // переменнаЯ длЯ поддержки диалога
+float KONT,XPN,YPN,XPB,YPB;
+float NOM8I;
+float  DIRECTS;
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+extern float kasatel;  //    Выход по касательной из способа КОНТУР
+extern float normalv;  //  Выход по нормали
+extern float pramoid;  //  прЯмой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированнаЯ резка
+extern char  Korr; // Y- есть коррекциЯ,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в Сириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  Обход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float DCutt;
+extern float W7,W71,W144;
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern float centrx,centry,vilo; // центр и длина большого контура
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+extern float XMINList,YMINList,XMAXList,YMAXList;
+extern float KCUList,DETList; 
+float xa,ya;
+float x3,y3;
+float Tvx[100],Tvy[100];
+float SpanM[100],PosM[100];
+long  SProfM[100],countTv;
+float TVrezx,TVrexy;
+extern long SpProf,SpProf0;
+extern float POS1,XN1,YN1,X1n,Y1n,X2n,Y2n;
+float dis,SPAN11,POS11;
+float SPAN1,SPAN2,POS2,XN2,YN2;
+float T1n,  T2n, X1b, Y1b, T1b,X2b, Y2b, T2b;
+float KolCpan;
+long Filt;
+long spoc;
+float spano;
+float vkasat1;
+float  DeltX0,DeltY0,DeltNY0,DeltVY0,DeltX1,DeltNX1,DeltVX1,DeltNY1,DeltX2,DeltNX2,DeltVX2,DeltNY2;
+long PENT,Idelt,isel,KontYes,Trai1; 
+float  NKCU,ISPA,xnn,ynn,PInner,ITochka, NSPAN;
+float  KONT0,SPAN0,POS0,figna;
+float vremnor,vremkas,vremspa;
+float Kom;
+
+Kom:=0;      
+K();
+print("                        ");
+Kom=HEAP[7];
+if(Kom>4)
+   {
+     OK:='N';
+     N(-1);
+   }
+   else
+  {
+   	esab();
+  }
+vremnor=vnormal;
+vremkas=vkasat;
+vremspa=spanvx;
+putin=PATHNAM+"REZVREM.RRR";
+NEWFUN(323,0,0);  //  глобальнаЯ сортировка
+
+NEWFUN(322,0,0);
+Filt:=fopen(putin,"rt");
+if (Filt<=0)
+{
+ print("Файл невозможно открыть=="+putin);
+ W(-1);
+ return;
+}
+while(! feof(Filt) )
+ {
+  fscan(Filt,stroka);
+//  print(stroka);
+//  W(-1);
+ KONT:=Val(substr(stroka,1,7));        /* Номер контура */
+ NOM8I:=Val(substr(stroka,53,6));     /*   Индекс массива записи типа 8 в буфере */
+ DIRECTS:=Val(substr(stroka,61,6));     /*  Направление реза 1- слева, 2- справа */
+ XPN:= Val(substr(stroka,7,12));    /* ЛеваЯ нижнЯЯ точка */
+ YPN:= Val(substr(stroka,19,12));  /* ЛеваЯ нижнЯЯ точка */
+ XPB:= Val(substr(stroka,28,12));  /* ПраваЯ  верхнЯЯ точка */
+ YPB:= Val(substr(stroka,39,12));  /* ПраваЯ  верхнЯЯ точка */
+// print("[XPN]="+str(XPN)+"[YPN]="+str(YPN)+"[XPB]="+str(XPB)+"[YPB]="+str(YPB));
+// W(-1);
+  if (KONT<=1) continue;
+  stroka="         ";
+  kontl=1;
+  kontmal=1;
+  W7=KONT;
+  malkon();
+  if (kontl==0)
+    {
+     LINEM(centrx,centry,1);
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+     x3=centrx-1.0;
+     y3=centry-1.0;
+     KL();
+     LL();
+     xa=XCURR;
+     ya=YCURR;
+     PROF(KONT,0,x3,y3,x3,y3);
+     if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+   else
+    {
+      NEWFUN(319,502,10);
+      if (DIRECTS==2.0)  //  сортировка справа
+       {
+          NEWFUN(319,504,XPN);
+          NEWFUN(319,505,YPB);
+          NEWFUN(319,506,XPN);
+          NEWFUN(319,507,YPN);
+       }
+       else
+       {
+        NEWFUN(319,504,XPB);
+        NEWFUN(319,505,YPN);
+        NEWFUN(319,506,XPB);
+        NEWFUN(319,507,YPB);
+      }
+// ***********************************
+      NEWFUN(321,0,KONT);
+      SPAN1=HEAP[80];
+      POS1=HEAP[81];
+      SPAN2=HEAP[82];
+      POS2=HEAP[83];
+      XN1=HEAP[76]; // ближайщаЯ точка контура длЯ нижней точки Х
+      YN1=HEAP[77];  // ближайщаЯ точка контура длЯ нижней точки У
+      XN2=HEAP[78];  // ближайщаЯ точка контура длЯ верхней точки Х
+      YN2=HEAP[79];  // ближайщаЯ точка контура длЯ нижней точки У
+// ПерваЯ точка исходного спана длЯ нижней точки
+      X1n=HEAP[86];
+      Y1n=HEAP[87];
+      T1n=HEAP[88];
+// ВтораЯ точка исходного спана длЯ нижней точки
+      X2n=HEAP[89];
+      Y2n=HEAP[90];
+      T2n=HEAP[91];
+// ПерваЯ точка исходного спана длЯ верхней точки
+      X1b=HEAP[92];
+      Y1b=HEAP[93];
+      T1b=HEAP[94];
+// ВтораЯ точка исходного спана длЯ верхней точки
+      X2b=HEAP[95];
+      Y2b=HEAP[96];
+      T2b=HEAP[97];
+      KolCpan=HEAP[98];
+      RAPID();
+      
+      if (DIRECTS==2.0)  //  сортировка справа
+      {
+         DeltX0:=XPN;
+         DeltY0:=(YPB-YPN)/16.0;
+         DeltNY0:=YPN;
+         DeltVY0:=YPB;
+      }
+      else
+      {
+         DeltX0:=XPB;
+         DeltY0:=(YPB-YPN)/16.0;
+         DeltNY0:=YPN;
+         DeltVY0:=YPB;
+
+      }
+      
+      DeltX1:=(XPB-XPN)/16.0;
+      DeltNX1:=XPN;
+      DeltVX1:=XPB;
+      DeltNY1:=YPB;
+      
+      DeltX2:=(XPB-XPN)/16.0;
+      DeltNX2:=XPN;
+      DeltVX2:=XPB;
+      DeltNY2:=YPN;
+      
+      
+ // ********************     
+ // начало цикла    
+ // ********************
+ 
+vnormal=vremnor;
+vkasat=vremkas;
+spanvx=vremspa;
+ PENT:=1;
+ Idelt=1;
+ isel=0;
+ countTv=-1;
+ KontYes=0;
+ Trai1:=-1; 
+ while (PENT==1)
+ {  
+      Trai1++;
+      SpProf=0; //  SpProf==0 -середина спана, SpProf==1 -начало спана  SpProf==2 -конец спана 
+      Span01();
+       switch(SpProf)
+         {
+           case 0: vkasat1=0.0;
+      	           if (((Sposob==1) || (Sposob==2)|| (Sposob==5)) && LineXod=='Y')
+                    {
+                      vkasat1=vkasat;
+                    }
+                    MOVE (KONT,Lange,SPAN1,POS1,-vkasat1);
+                    break;
+           case 1:
+                   MOVE(KONT,Lange/1.4142,SPAN1,POS1,-Lange/1.4142);
+                   break;
+           case 2:
+                   MOVE(KONT,Lange/1.4142,SPAN1,POS1,Lange/1.4142);
+                   break;
+             }  
+         TVrezx=XCURR;
+         TVrexy=YCURR;
+         if (Trai1==0)
+         {
+           KONT0=KONT;
+           SPAN0=SPAN1;
+           POS0=POS1;
+           SpProf0=SpProf;
+         }
+ // *********************************************************      
+     NEWFUN(402,XCURR,YCURR);      // Проверка алгоритма определениЯ точек врезки
+//    HEAP[178]=NKCU; //  Номер контура
+//    HEAP[179]=ISPA; //  Номер спана
+//    HEAP[180]=xnn; //  Точка на контуре Х
+//    HEAP[181]=ynn; //  Точка на контуре У
+//    HEAP[182]=PInner; //  Точка 1- внутри контура,0- вне контура 
+      NKCU=HEAP[178]; //  Номер контура
+      ISPA=HEAP[179]; //  Номер спана
+      xnn=HEAP[180]; //  Точка на контуре Х
+      ynn=HEAP[181]; //  Точка на контуре У
+      PInner=HEAP[182]; //  Точка 1- внутри контура,0- вне контура 
+      ITochka=0;  // доступнаЯ точка длЯ врезки
+      if (PInner==1 && NKCU!=KCUList ) // точка врезки  внутри другого контура
+      {  // искать дальше
+         ITochka=1; // НЕдопустимаЯ точка длЯ врезки
+      }
+      else // насколько близка к другому контуру
+      {
+        if (PInner==0 && NKCU!=KCUList) // точка врезки  вне другого контура
+        {
+        	dis=((TVrezx-xnn)*(TVrezx-xnn)+(TVrexy-ynn)*(TVrexy-ynn))**0.5;
+        	if (dis<4.0)  // НЕдопустимаЯ точка длЯ врезки
+        	{  // кандидаты на точку врезки
+        		ITochka=1;
+        		countTv++;
+        		Tvx[countTv]=XCURR;
+        		Tvy[countTv]=YCURR;
+        		SpanM[countTv]=SPAN1;
+        		PosM[countTv]=POS1;
+        		SProfM[countTv]=SpProf;
+        		
+        	}
+       	}
+      }
+      if (NKCU==KCUList && PInner==0)
+      {
+      	   ITochka=1; // НЕдопустимаЯ точка длЯ врезки
+      }
+      if (ITochka==1)
+      {
+        N(-1);
+      	D(1);
+      }
+      else 
+      {
+        KontYes=1; 
+        break;
+      }
+      			   
+// ***********************************************************итерациЯ
+     switch(Idelt)
+         {
+           case 1: isel++;
+                  if (DIRECTS==2.0)  //  сортировка справа
+                    {
+                       DeltX0:=XPN;
+                    }
+                   else
+                    {
+                       DeltX0:=XPB;
+                    }
+                   DeltNY0:=YPN+DeltY0*isel;
+                   if (DeltNY0>=YPB)
+                   {
+                   	Idelt=2;
+                   	isel=0;
+                   }
+                   else
+                   {
+                      TVrezx=DeltX0;
+                      TVrexy=DeltNY0;            
+                   }
+ //                      print("0=isel="+str(isel));
+ //                      print("[0=Dx]="+str(TVrezx)+"[Dy]="+str(TVrexy)+"[0]=");
+ //                      W(-1);
+
+                   break;
+           case 2: isel++; 
+                   DeltNX1=XPN+DeltX1*isel;
+                   DeltNY1:=YPB;
+                   if (DeltNX1>=XPB)
+                   {
+                   	Idelt=3;
+                   	isel=0;
+                   }
+                   else
+                   {
+                      TVrezx=DeltNX1;
+                      TVrexy=DeltNY1;            
+                   }
+//                    print("1=isel="+str(isel));
+//                    print("[1=Dx]="+str(TVrezx)+"[Dy]="+str(TVrexy)+"[1]=");
+//                    W(-1);
+                   break;
+           case 3:isel++; 
+                   DeltNX2=XPN+DeltX2*isel;
+                   DeltNY2:=YPN;
+                   if (DeltNX2>=XPB)
+                   {
+                   	Idelt=4;
+                   	isel=0;
+                   	PENT=0;
+                   }
+                   else
+                   {
+                      TVrezx=DeltNX2;
+                      TVrexy=DeltNY2;            
+                   }
+//                    print("2=isel="+str(isel));
+//                    print("[2=Dx]="+str(TVrezx)+"[Dy]="+str(TVrexy)+"[2]=");
+//                    W(-1);
+                   break;
+             }
+     if (isel==0) continue;
+     NEWFUN(319,508,TVrezx); // занести координаты контура в HEAP 
+     NEWFUN(319,509,TVrexy);  // занести координаты контура в HEAP 
+     NEWFUN(327,0,KONT);      // Найти ближайшую точку  на заданном контуре
+
+//  HEAP[113]- Координата Х ближайшей точки на контуре;
+//  HEAP[114]- Координата У ближайшей точки на контуре;
+//  HEAP[115]- Номер ближайшего спана;
+//  HEAP[84] - Координата Х ближайшей точки на контуре;
+//  HEAP[85] - Координата У ближайшей точки на контуре;
+//  HEAP[116]- позициЯ на спане
+    XN1=HEAP[113];
+    YN1=HEAP[114];
+    NSPAN=HEAP[115];
+    SPAN1=NSPAN;
+    POS1=HEAP[116];
+    NEWFUN(401,KONT,NSPAN); // Получить координаты начала спана и конца 
+//  NKCU – номер контура – входные данные
+//  NSPAN   -номер спана – входные данные
+
+//  HEAP[170]=sxn; //  координата Х начала спана
+//  HEAP[171]=syn; //  координата У начала спана
+//  HEAP[172]=stn; //  кривизна Т начала спана
+//  HEAP[173]=sxk; //  координата Х конца спана
+//  HEAP[174]=syk; //  координата У конца спана
+//  HEAP[175]=stk; //  кривизна Т конца спана
+//  HEAP[176]=kspan; //  Номер следующего спана
+//  HEAP[177]=kolspan; //  Количество спанов
+    X1n=HEAP[170];
+    Y1n=HEAP[171];
+    X2n=HEAP[173];
+    Y2n=HEAP[174];
+}
+       if (KontYes==0 && countTv>=0 )  //  не нашли точку врезки - надо что-то делать
+	{
+	   TVrezx=Tvx[0];
+           TVrexy=Tvy[0];
+           SPAN1=SpanM[countTv];
+           POS1=PosM[countTv];
+           SpProf=SProfM[countTv];
+           SPAN0=SPAN1;
+           POS0=POS1;
+           figna=Lange*0.5; 
+          switch(SpProf)
+         {
+           case 0: vkasat1=0.0;
+      	           if (((Sposob==1) || (Sposob==2)|| (Sposob==5)) && LineXod=='Y')
+                    {
+                      vkasat1=vkasat;
+                    }
+                    MOVE (KONT,Lange*0.7,SPAN1,POS1,-vkasat1);
+                    break;
+           case 1:
+                   MOVE(KONT,Lange*0.7,SPAN1,POS1,-Lange*0.7);
+                   break;
+           case 2:
+                   MOVE(KONT,Lange*0.7,SPAN1,POS1,Lange*0.7);
+                   break;
+             }
+ //          print("2=SPAN1="+str(SPAN1));
+ //          print("[2=Dx]="+str(TVrezx)+"[Dy]="+str(TVrexy)+"[2]=");
+ //          W(-1);
+        }
+      if (KontYes==0 && countTv==-1)  //  не нашли точку врезки - надо что-то делать
+	{
+               figna=5; 
+ A1000:         KONT=KONT0;
+		SPAN1=SPAN0;
+		POS1=POS0;
+	        NEWFUN(401,KONT,SPAN1); // Получить координаты начала спана и конца 
+	        if (abs(HEAP[172])<0.001)
+	        {
+                   SpProf0=1;
+                   SpProf=1;
+                   POS0=0;
+                   POS1=POS0;
+	       	}
+		switch(SpProf0)
+         {
+           case 0: vkasat1=0.0;
+                    MOVE (KONT0,figna,SPAN0,POS0,0);
+                    break;
+           case 1:
+                   MOVE(KONT0,figna,SPAN0,POS0,-figna);
+                   break;
+           case 2:
+                   MOVE(KONT0,figna,SPAN0,POS0,figna);
+         
+                   break;
+             }  
+         NEWFUN(402,XCURR,YCURR);      // Проверка алгоритма определениЯ точек врезки - не навреди соседа
+         PInner=HEAP[182]; //  Точка 1- внутри контура,0- вне контура 
+         if (PInner==1 && NKCU!=KCUList ) // точка врезки  внутри другого контура
+         { // уменьшаем точку врезки - донельзЯ
+           figna=figna/2.0;	
+           kasatel=figna/2;
+           spanvx=figna/2;
+           normalv=figna/4.0;	
+           kasatel=figna/4.0;
+           N(-1);
+           D(1);	
+           goto A1000;	
+         }        
+	}
+     KL();
+     LL();
+     if (KontYes==0)  //  не нашли точку врезки - надо что-то делать
+	{
+		switch(SpProf0)
+         {
+           case 0: vkasat1=0.0;
+                    MOVE (KONT0,figna,SPAN0,POS0,0);
+                    break;
+           case 1:
+                   MOVE(KONT0,0,SPAN0,POS0,-figna);
+                   break;
+           case 2:
+                   MOVE(KONT0,figna,SPAN0,POS0,0);
+                   break;
+             }  
+       
+	}
+     if (((Sposob==1)||(Sposob==2)||(Sposob==5))&&LineXod=='Y'&&SpProf==0)
+     {       
+      if (Lange>vnormal) MOVE(KONT,vnormal,SPAN1,POS1,-vkasat);
+     }
+     spoc=Sposob;
+     if (spoc>3) spoc=spoc-4;
+     LEAD(Spoc);
+     if (KontYes==0)  //  не нашли точку врезки - надо что-то делать
+	{
+           if (figna<spanvx) spanvx=figna; 
+        }
+     spano=SPAN1;
+     switch(SpProf)
+       {
+         case 0: PROF(KONT,0,SPAN1,POS1,0,SPAN1,POS1,-0.001);
+                 if (Sposob>1) MOVE(KONT,normalv,SPAN1,POS1,kasatel);
+                break;
+         case 1: if (SPAN1-1<1) SPAN11=KolCpan;
+                  else SPAN11=SPAN1-1;
+                 POS11=1;
+                 PROF(KONT,0,SPAN1,0,0,SPAN11,1,0);
+                 MOVE(KONT,0,SPAN11,1,spanvx);
+                 spano=SPAN11;
+                 break;
+         case 2: if (SPAN1+1>KolCpan) SPAN11=1;
+                 else SPAN11=SPAN1+1;
+                 PROF(KONT,0,SPAN11,0,0,SPAN1,1,0);
+                 MOVE(KONT,0,SPAN1,1,spanvx);
+                 spano=SPAN1;
+                 break;
+       }
+     
+    }
+    OFT();
+    if (SpProf>0) 
+    {
+      if (ZadXod=='Y') MOVE (KONT,0,spano,1,spanvx+10);
+    }
+    else
+    {
+      if (ZadXod=='Y') LINEM(TVrezx,TVrexy,0);
+    }
+    BLOK();
+  }
+fclose(Filt);

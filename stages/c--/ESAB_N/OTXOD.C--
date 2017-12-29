@@ -1,0 +1,76 @@
+char OK1,Fiks;
+extern float Lange;    // дистанциЯ врезки
+extern float spanvx;   //    выход из способа резки УГОЛ
+extern float kasatel;  //    Выход по касательной из способа КОНТУР
+extern float normalv;  //  Выход по нормали
+extern float pramoid;  //  прЯмой путь перед врезкой по дуге
+extern float vkasat;   // отступ по касательной от точки врезки
+extern float vnormal;  // отступ по нормали от точки врезки
+extern char  Fik;  // фиксированнаЯ резка
+extern char  Korr; // Y- есть коррекциЯ,N - нет коррекции
+extern char  CutYes; // Y- есть диаметр реза в Сириусе, N -  нет
+extern char LineXod; // Y -  линейный ход перед дугой, N - нет 
+extern char ZadXod;  // Y -  Возврат в точку врезки, N - нет 
+extern char ListOb;  // Y -  Обход листа, N - нет 
+extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
+extern float W7,W4,W87,W86; // номер контура, номер спана, точка врезки
+extern float W12,W111;
+extern float x1,y1,x2,y2,tp,x3,y3,xt,yt;
+extern long pin; // признак 1- открытаЯ подпр-ма 0- нет подпрограммы
+extern long npodpr;
+extern float centrx,centry,vilo;  // центр малого контура
+extern long kontmal;  // признак малого контура  0-малый контур, 1- большой
+extern long kontl;   // признак контура< 20mm  0-малый контур, 1- большой
+float  KolSpan,PosSpan;
+float TVrezx,TVrexy;
+float vkasat1;
+long   ppod;  // признак начала подпрограммы
+long kadr,Topik;
+long blokk;  //  число вырезанных блоков 
+ 
+ kadr=0;
+ npodpr=0;
+ OK1='Y';
+ ppod=0;
+ blokk=0;
+ KCURVE(1.0);
+ while(kadr!=1)
+ {
+  blokk++;
+  Fiks=Fik; 	
+  if(Fiks!='Y')
+  {
+   print("-Укажите точку N - ближайщая, U- угол, (CR)- курсором, ESC-выход ");
+   W(-1);
+   print("                                                                      ");
+   if (S_GETCH==27)
+   {
+     EOFF();  
+     print("                                                                      ");
+     break; /* нажата клавиша ESC */
+   }
+   if (S_GETCH==78)
+   {
+     xt=HEAP[22];     // точка курсора -врезка
+     yt=HEAP[21];     // точка курсора -врезка
+     NEWFUN(324,xt,yt);      // Найти ближайший контур от точки врезки  
+     SPAN(xt,yt,0.0);    // 3 параметра типа float 
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+   }
+   else
+   {
+     xt=HEAP[22];     // точка курсора -врезка
+     yt=HEAP[21];     // точка курсора -врезка
+     SPAN(xt,yt,0.0);    // 3 параметра типа float 
+     TVrezx=XCURR;
+     TVrexy=YCURR;
+   }
+// HEAP[99]- Содержит расстояние от точки до ближайшего контура (в мм);
+// HEAP[100]- Ближайшая точка по Х на контуре;
+// HEAP[101]- Ближайшая точка по У на контуре;
+// HEAP[102]- номер контура;
+// HEAP[103]- Номер спана;
+  }
+ }
+ return;

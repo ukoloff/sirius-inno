@@ -58,13 +58,13 @@ while(! feof(Filt) )
  {
   XPB:= Val(substr(stroka,7,12));    /* Ћевая нижняя точка */
   YPB:= Val(substr(stroka,19,12));  /* Ћевая нижняя точка */
-  XPN:= Val(substr(stroka,28,12));  /* Ћевая верхняя точка */
-  YPN:= Val(substr(stroka,39,12));  /* Ћевая верхняя точка */
+  XPN:= Val(substr(stroka,28,12));  /* ѕравая верхняя точка */
+  YPN:= Val(substr(stroka,39,12));  /* ѕравая верхняя точка */
  }
  else   // сортировка слева
  {
-  XPN:= Val(substr(stroka,7,12));    /* ѕравая нижняя точка */
-  YPN:= Val(substr(stroka,19,12));  /* ѕравая нижняя точка */
+  XPN:= Val(substr(stroka,7,12));    /* Ћевая нижняя точка */
+  YPN:= Val(substr(stroka,19,12));  /* Ћевая нижняя точка  */
   XPB:= Val(substr(stroka,28,12));  /* ѕравая верхняя точка */
   YPB:= Val(substr(stroka,39,12));  /* ѕравая верхняя точка */
   }
@@ -73,6 +73,14 @@ while(! feof(Filt) )
   kontl=1;
   kontmal=1;
   W7=KONT;
+   NEWFUN(328,0,W7);      // ѕроверка вырезан ли контур
+   if (HEAP[117]==1)  // контур уже вырезан
+   {
+//      print("  онтур вырезан- Ќажмите любую клавишу");
+//      W(-1);
+//      print("                              ");
+      continue;
+    }
   malkon();
   if (kontl==0)
     {

@@ -1,0 +1,464 @@
+#path "e:\paket\bin\c--\trum\";
+/* обьявление и инициализация переменных */
+char OK,OK1,ch,OKK,OOK;             /* переменная для поддержки диалога          */
+char R38[5],R39[9];   /* переменные для присосок */
+static int loop,loop1,W30,W31,W33,loop2;  /* переменные поддержки цикла    */
+extern int Rectang;
+static int loop4;
+static int menu_1,menu_2,menu_3,menu_4,menu_5,menu_6;/* Предыдущий выбор меню запомнить */
+char old[64],olp[64];       /* переменные для ввода имен файлов и партидов */
+extern float UdalBl[300];  /* для удаления блока команд */
+extern int NomUdBl; /* запомнить количество команд в блоке */
+extern char ImpulsP; /*импульсный режим 1 ,нет 0 */
+extern float KolDet;  /* количетво деталей */
+extern float Uder1,Uder2,Uder3;/* позиции прихватов */
+extern float PosTmX[50]; /* позиция Х подпрограмм перед маркировкой */
+extern float PosTmY[50]; /* позиция У подпрограмм перед маркировкой */
+extern int TekBl; /* текущий блок */
+extern int TekGol; /* текущая головка плазма-0 вырубка-1*/
+extern int W100; /*то ли номер подпрограммы или текущая подпрограмма */
+extern float jashik; /*обьекты лотков */
+extern float SkorVis;
+extern int LaserYes,LaserEng; /*плазма ON/OFF и мощность плазма */
+extern char OK2,OK3;
+extern float W71,W73,W74,W75,W72;     /* внешние переменные      */
+extern float KolIns;
+extern float W7,W8,W86,W87,W6,W1,W2,W10;    /* внешние переменные   */
+extern float XW1,YW1,W4,W5,W91,W110,W120,W144,W145; /* внешние переменные  */
+extern int XodPriz;  /* признак одиночного хода, с задержкой, с прижимом */
+  /* размеры листа и шаг детали */
+extern float SizeLx,SizeLy,Det1Dx,Det2Dy,Gabx,Gaby,NulToch;
+extern float SizeLx1,SizeLy1;
+extern float Array1[50];
+extern float Array2[50];
+extern int Contur;
+extern float NumSub;        // Количество подпрограмм
+extern float KontStr;
+extern int   Sposob;
+extern int   Perv;   /*0-первый раз загружается 1- не первый раз загружается */
+float        W70,W60,W111,NumTool,TekTok,TUL;
+/* для плазма */
+extern float Ckoroct,Impuls,Tolsin,Impuls1; /*скорость,импульс,толщина,импульс*/
+/* для вырубки и высечки */
+extern float DiamPez1,DiamPez2; /*диаметр вырубки 1 и диаметр 2*/
+extern float PerSpan,KonSpan; /* подход к началу и концу спана */
+int          Filt,Adres,W12,nom,i,W35,loop5;
+/*ERA(); CEN(); DRA(0);  сириусная команда чистки экрана, центровки и рисования     */
+OK:='Y';
+print("Первый раз([Y]/N)>"); /* печатать на нижней ком строке */
+read(OK);    /* ввод символа  Y или  N или ничего ,           */
+if (Ok=='Y')
+ {
+  LOAD(); // Команды Сириуса, пишутся заглавными буквами
+  CUR();
+  CEN(5);
+  DRA(0);
+  old=DBNAM;
+  ACCESS("9000");
+  LOAD();
+  ACCESS("9070");
+  LOAD();
+  ACCESS("9050");
+  LOAD();
+  ACCESS("9200");
+  LOAD();
+  ACCESS(old);
+  OK:='Y';
+  print("Загрузить инструменты([Y]/N)>"); /* печатать на нижней ком строке */
+  read(OOK);    /* ввод символа  Y или  N или ничего ,           */
+  if (OOK=='N')
+  {
+   SEQ(1);
+   if (KURSEQ==-1) NEW(1);
+   OALL();
+  }
+  else
+  {           /* если ничего не ввели остается старое значение переменных   */
+  OK1:='N';
+  KolIns=8000;
+  KontStr=0;
+  Filt:=fopen("e:\\paket\\bin\\instrm.cur","wt");
+ /* Filt:=fopen("instrm.cur","wt"); */
+  fprint(Filt,"N   Форм 1-Разм  2-Разм 3-Раз Win     Smin      Smax Ntool\n");
+ /*fprint(Filt,"N Форм XDПн   YDПн    XDMат YDMат  DC   Зазор TCталь20%  TAM15% Ntool\n"); */
+  while(OK1=='N')
+   {
+     OK1='Y';
+     W74:=5.0;
+     W10:=W74/2.0;
+     W71:=60;
+     SIMENU("PUANSONS.SYM");
+     print(substr(FLAGC,0,(strlen(FLAGC)-1)));
+     print("                                                             ");
+     OK3='Y';
+     print("Выбор правильный? ([Y]/N)");
+     read(OK3);
+     if (OK3== 'Y')
+     {
+      KolIns++;
+      KontStr++;
+      W74:=Val(substr(FLAGC,12,5));
+      W10:=W74/2;
+      TOOL(KolIns,4,0.0,W71,"");
+      fprint(Filt,str(KontStr,1)+"  "+substr(FLAGC,3,strlen(FLAGC)-4)+"   "+str(KolIns,4)+"\n");
+     }
+     OK1='N';
+     print("Все инструменты введены? (Y/[N])");
+     read(OK1);
+   }
+   fclose(Filt);
+   OK1:='N';
+   while(OK1=='N')
+   {
+    SIMENU("ST.TXT");
+    print(substr(FLAGC,0,strlen(FLAGC)-1));
+    OK1='Y';
+    print("                                                             ");
+    print("Выбор правильный? ([Y]/N)");
+    read(OK1);
+   }
+   Ckoroct:=40.0;
+   Ckoroct:=Val(substr(FLAGC,28,5)); /* СКОРОСТЬ РЕЗКИ */
+   Impuls:= Val(substr(FLAGC,36,4)); /* ЗНАЧЕНИЕ S ДЛЯ ПЛАЗМЫ */
+   Impuls1:= Val(substr(FLAGC,44,5));/* ЗНАЧЕНИЕ СОПЛА */
+   Tolsin:=  Val(substr(FLAGC,17,4));/* ТОЛЩИНА ЛИСТА */
+   TOOL(8018,4,0.0,Ckoroct,"");
+   if (Ckoroct<0.001) Ckoroct=1.00;
+   SEQ(1);
+   if (KURSEQ==-1)
+     NEW(1);
+   CEN();
+   DRA(0);     /* сириусная команда центровки                   */
+   N(9999);   /* сириусная команда прогонки последовательности */
+   CUR(); CEN();DRA(0);
+   FHC(Ckoroct);
+   FHR(Ckoroct);
+   CUTTER(0);
+   OK='N';
+   ERA(); CEN(); DRA(0);
+   NumSub=0;
+   OK1:='N';
+   while(OK1=='N')
+   {
+    razmer1();
+    OK1='Y';
+    print("                                                             ");
+    print("Все верно ([Y]/N)");
+    read(OK1);
+   }
+   dwigli1();
+   uderg1();
+   FHR(20);
+   Perv=0;
+   print("                                                             ");
+   TUL=100.0;
+   print("Точка установки листа("+str(TUL,8)+"mm)>");
+   read(TUL);
+   LINEM(TUL,480.0,1); /*^^^ проверить на станке !!! */
+   STOP();
+   /****снять размер листа по У ,координаты нижнейлевой точки детали*/
+   /***размеры между рядами****************************************/
+   W100=0;
+   LaserYes=0;
+   LaserEng=1;
+   ERA();CUR(); CEN();DRA(0);
+   Contur=0;
+   NomUdBl=0;
+  /* print("                                                             ");
+   print("Толщина листа>");
+   read(Tolsin);  */
+   KolDet=1;
+   Uder1=250;
+   Uder2=1000;
+   Uder3=1750;/* позиции прихватов */
+   SkorVis=265;
+  }
+ }
+loop=0;
+NulToch=0.0;
+menu_1=9;
+menu_2=4;
+menu_3=6;
+menu_4=7;
+menu_5=8;
+menu_6=8;
+while(loop==0)
+{
+print("Инс=0,OпРяд=1,Выруб=2,Высеч=3,Лист=4,Плаз=5,Окно=6,Тел=7,Ряды=8,Конец=9>");
+ W(-1);
+ print("                                                                           ");
+ W31=S_GETCH-48;
+ if (W31<0) W31=menu_1;
+ if (W31<0) W31=1;
+ menu_1=W31;
+  switch(W31)
+  {
+       case 0:loop5=1;
+              while(loop5==1)
+               {
+                 print("ЗагИнстр=1,ВырубВысеч=2,ПлазИнс=3,Выход=4>");
+                 W(-1);
+                 print("                                                                           ");
+                 W35=S_GETCH-48;
+                 if (W35<0) W35=menu_2;
+                 if (W35<0) W35=5;
+                 menu_2=W35;
+                 W6=0;
+                 switch(W35)
+                  {
+                   case 1:
+                          Perv=1;
+                         	INSTRUM();
+                          loop5=0;
+                          break;
+                   case 2:/* M(1060); */ /* INSERT("G60"); */
+                          M(1055);  /* INSERT("G55"); */
+                          print("                                                             ");
+                          print("Остонов нужен? ([Y]/N)");
+                          OK1='Y';
+                          read(OK1);
+                          if (OK1=='Y') STOP();
+                          LaserYes=0;
+                          CUTTER(0.0);
+                          TekTok=XCURR;
+                          /*LINEM(TekTok,SizeLy1,1); */
+                          NomUdBl++;
+                          UdalBl[NomUdBl]=4;
+                          break;
+                   case 3: M(1054);  /* INSERT("G54");  плазма */
+                          LaserYes=1;
+                          TekTok=XCURR;
+                          /* LINEM(TekTok,SizeLy1,1); */
+                          LOADTL(8018.0,19.0,19.0,0,0); /* загрузить плазму */
+                          CUTTER(0.0);
+                          FHC(Ckoroct);
+                          W6=0;
+                          W6=W6+5;
+                          ImpulsP=0;
+                          NomUdBl++;
+                          UdalBl[NomUdBl]=W6;
+                          break;
+                   case 4:loop5=0;
+                          break;
+                  }
+               }
+              break;
+       case 1:razmer();
+              break;
+       case 2:loop4=1;
+              while(loop4==1)
+               {
+    print("Инстр=0,Выруб=1,ВырТВр=2,ПлЛ=3,ПлП=4,УстВыр=5,ПП=6,Ряд=7,Точк=8,Вых=9>");
+                 W(-1);
+                 print("                                                                           ");
+                 W35=S_GETCH-48;
+                 if (W35<0) W35=menu_3;
+                 if (W35<0) W35=9;
+                 menu_3=W35;
+                 W6=0;
+                 switch(W35)
+                  {
+                   case 0:
+                          Perv=1;
+                          INSTRUM();
+                          break;
+                   case 1:SHIFTM();
+                          LaserYes=0;
+                          VYRUBKA();
+                          break;
+                   case 2:SHIFTM();
+                          LaserYes=0;
+                          VYRUBTB();
+                          break;
+                   case 3:SHIFTL();
+                          LaserYes=1;
+                          LASERL();
+                          break;
+                   case 4:SHIFTL();
+                          LaserYes=1;
+                          LASERR();
+                          break;
+                   case 5:SHIFTM();
+                          LaserYes=0;
+                          USTVIR();
+                          break;
+                   case 6:SUBR();       /* Подпрограммы ряды*/
+                          break;
+                   case 7:pprog();      /* Подпрограммы ряды*/
+                          break;
+                   case 8:tochka();
+                   case 9:loop4=0;
+                          break;
+                  }
+               }
+              break;
+       case 3: loop4=1;
+              while(loop4==1)
+               {
+                 print("Инстр=0,ВысечЛ=1,ВысечПр=2,ОтУдар=3,СкорПоз=4,РазрЛ=5,РазрП=6,Выход=7>");
+                 W(-1);
+                 print("                                                                           ");
+                 W35=S_GETCH-48;
+                 if (W35<0) W35=menu_4;
+                 if (W35<0) W35=8;
+                 menu_4=W35;
+                 W6=0;
+                 switch(W35)
+                  {
+                   case 0:Perv=1;
+                          INSTRUM();
+                          break;
+                   case 1:SHIFTM();
+                          LaserYes=0;
+                          VYSECHKA();  /* ВЫСЕЧКА ЛЕВАЯ */
+                          break;
+                   case 2:SHIFTM();
+                          LaserYes=0;
+                          VYSECHKR();  /* высечка правая */
+                          break;
+                   case 3:SHIFTM();
+                          LaserYes=0;
+                          OTUDAR();    /* отдельный удар */
+                          break;
+                   case 4:LaserYes=0;  /* скорость позиционирования */
+                          CKOR();
+                          break;
+                   case 5:RAZRLEV();   /* высечка с разрывом левый */
+                          LaserYes=0;
+                          break;
+                   case 6:RAZRPRAV();  /* высечка с разрывом правый */
+                          LaserYes=0;
+                          break;
+                   /*case 7:magin();
+                          break;    */
+                   case 7:loop4=0;
+                          break;
+                  }
+               }
+              break;
+       case 4:loop2=0;
+             while(loop2==0)
+               {
+                 print("Держат=1,ДвигЛ=2,ДвигЦ=3,КонецВлк=4,Провер=5,Удал=6,Чистка=7,Меню=8>");
+                 W(-1);
+                 print("                                                                           ");
+                 W33=S_GETCH-48;
+                 if (W33<0) W33=menu_5;
+                 if (W33<0) W33=7;
+                 menu_5=W33;
+                 W6=0;
+                 switch(W33)
+                  {
+                    case 1:SHIFTM();
+                           LaserYes=0;
+                           UDerg();
+                           break;
+                    case 2:SHIFTM();
+                           LaserYes=0;
+                           DwigLi();
+                           break;
+                    case 3:SHIFTM();
+                           LaserYes=0;
+                           DwigZi();
+                           NomUdBl++;
+                           UdalBl[NomUdBl]=1;
+                           break;
+                    case 4:W6=0;
+                           TMARK(2,NumSub);
+                           NomUdBl++;
+                           UdalBl[NomUdBl]=1;
+                           break;
+                    case 5:PRB();
+                           break;
+                    case 6:O();
+                           break;
+                    case 7:OALL();
+                           break;
+                    case 8:loop2:=1;
+                           break;
+                  }
+               }
+       break;
+       case 5:
+               OK='N';
+               if (LaserYes==0)
+               {
+                 print("                                                     ");
+                 print("Сменить инструмент на плазму([Y]/N>");
+                 OK='Y';
+                 read(OK);
+               }
+              if (OK=='Y');
+              {
+                M(1054);  /*INSERT("G54"); */
+                INSERT(" S"+str(Impuls,4));
+                CUTTER(0.0);
+                FHC(Ckoroct);
+                NomUdBl++;
+                UdalBl[NomUdBl]=3;
+                LaserYes=1;
+              }
+ /*          ST1TR();
+           STTR(); */ /*  старт подпрограммы STTR из файла STTR.C--              */
+ /*               внимание !
+                  имена подпрограмм при вызове должны совпадать с именами
+                  файлов их содержащих
+                  внимание !
+                  имена подпрограмм не должны совпадать с именами функций
+                  сириусных   команд    */
+          loop1=1;
+          Sposob=0;
+          while(loop1==1)
+          {
+            print("Настpойка=0,ЗмЛев=1,ЗмПpав=2,Лев=3,Пpав=4,Меню=5,Окно=6,ППpог=7,Выход=8>");
+            W(-1);
+            print("                                                                           ");
+            W30=S_GETCH-48;
+            if (W30<0) W30=menu_6;
+            if (W30<0) W30=6;
+            menu_6=W30;
+            W6=0;
+            switch(W30)
+            {
+              case 0:NASTR();
+                    break;
+              case 1:OL();
+                    break;
+              case 2:OR();
+                    break;
+              case 3:DL();
+                    break;
+                    Sposob=0;
+              case 4:DR();
+                    Sposob=0;
+                    break;
+              case 5: PR();
+                      break;
+              case 6:
+                     magin();
+                     break;
+              case 7:  SUBR();
+                     break;
+              case 8:
+                     loop1=0;
+                     break;
+              default:;
+                                                                                 }
+          }
+           break;
+   case 6:
+           magin();
+           break;
+   case 7: W6=0;
+           ;      /*выброс деталей в ящик */
+           NomUdBl++;
+           UdalBl[NomUdBl]=W6;
+           break;
+   case 8: pprog();      /* Подпрограммы-РЯДЫ */
+           break;
+   case 9: loop=1;      /*      ВЫХОД С СИСТЕМЫ */
+           vfail();
+           break;
+  default:;
+  }
+}

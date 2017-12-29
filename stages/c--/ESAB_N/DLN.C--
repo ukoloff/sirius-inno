@@ -55,6 +55,13 @@ long blokk;  //  число вырезанных блоков
    LINEM(xt,yt,W111);
    TVrezx=XCURR;
    TVrexy=YCURR;
+    NEWFUN(402,xt,yt);      // Проверка алгоритма определениЯ точек врезки
+//    PHEAP.M.HEAP[178]=NKCU; //  Номер контура
+//             PHEAP.M.HEAP[179]=ISPA; //  Номер спана
+//			   PHEAP.M.HEAP[180]=xn; //  Точка на контуре Х
+//            PHEAP.M.HEAP[181]=yn; //  Точка на контуре У
+//			   PHEAP.M.HEAP[182]=PInner; //  Точка 1- внутри контура,0- вне контура 
+//			   PHEAP.M.HEAP[183]=DisKon; //  ДистанциЯ от точки врезки до контура  
   }
  if(Fiks!='Y')
   print("-Укажите контуp(CR-резка,K-косой рез,ESC-выход");

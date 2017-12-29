@@ -1,0 +1,15 @@
+SEQ(1);
+if (KURSEQ==-1)
+{
+ R();
+ D(9999);
+ FILE();
+ FIN();
+}
+else
+{
+ R();
+ D(9999);
+ FILE();
+ FIN();
+}

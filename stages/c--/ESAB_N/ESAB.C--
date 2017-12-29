@@ -1,8 +1,10 @@
 /* обьявление и инициализация переменных */
 char OK; // переменная для поддержки диалога
 char OLD[64],OLP[64]; // переменные для ввода имен файлов и партидов 
-extern float W144,W145,DCutt; // внешние переменные
+extern float W144,W145,DCutt,DCuttR; // внешние переменные
 extern float XFrom,YFrom;
+extern float XMINList,YMINList,XMAXList,YMAXList;
+extern float KCUList,DETList; 
 extern float Lange;    // дистанция врезки
 extern float spanvx;   //    выход из способа резки ”√ќЋ
 extern float kasatel;  //    ¬ыход по касательной из способа  ќЌ“”–
@@ -20,12 +22,14 @@ extern char  FromT;  // Y -  “очка FROM  с правой стороны, N - нет
 extern long Sposob;  // 0,1,2,3,4,5 - способы подхода и выхода
 extern long pin;  //  для маркировки подпрограмм
 extern float pinok; // для начала подпрограмм
+extern long Fpoint; // массив позиций перемычек - для сопоставления близких перемычек
 long BadPar;
 float W111,Kom;
 
 BadPar=0;
 pinok=0;
 pin=0;
+Fpoint=0;
 LOAD(); //  оманды —ириуса, пишутся заглавными буквами
 SEQ(1);
 if (KURSEQ==-1)
@@ -80,13 +84,35 @@ nastr1();
  if((Sposob<0) || (Sposob>5)) BadPar=14;  // 0,1,2,3,4,5 - способы подхода и выхода
  if (BadPar>0) nastr();
 // *****************************************************
+
+   NEWFUN(347,0,0);  //     ¬ычислить самую габаритную деталь и считать ее листом
+   KCUList=HEAP[157];
+   DETList=HEAP[158];
+//  HEAP ==157 - Ќомер внешнего контура листа
+//  HEAP ==158 - Ќомер детали листа
+   XMINList=HEAP[159];
+   YMINList=HEAP[160];
+   XMAXList=HEAP[161];
+   YMAXList=HEAP[162];
+//  HEAP ==159 - XMIN
+//  HEAP ==160 - YMIN
+//  HEAP ==161 - XMAX
+//  HEAP ==162 Ц YMAX
 W111=1;
 if (OK!='N') /* проверка введенного символа на неравенство с буквой N */
 {
  ST1();
  ST(); /*  старт подпрограммы ST из файла ST.C--              */
- if (CutYes=='Y') CUTTER(DCutt);
- else  CUTTER(0.0);
+ if (CutYes=='Y') 
+ 	{
+ 	  CUTTER(DCutt);
+ 	  DCuttR=DCutt;
+   }
+ else
+ 	{  
+ 	  CUTTER(0.0);
+ 	  DCuttR=0.0;
+   }
 //  ¬Ќ»ћјЌ»≈!
 // 1)имена подпрограмм при вызове должны совпадать с именами
 // файлов их содержащих
